@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.8962114847306621,
+      "y": 7.143666595025498
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Lock Target in Auto"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Tuning square"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Dont Lock Target in Auto"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "New Path"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
