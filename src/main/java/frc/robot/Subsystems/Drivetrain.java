@@ -4,7 +4,7 @@
 
 package frc.robot.Subsystems;
 
-import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -30,9 +30,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ID;
 import frc.robot.Constants.Offsets;
-import frc.robot.Utils.LimelightHelpers;
-import frc.robot.Utils.Aimlock.DoState;
-import frc.robot.Utils.Aimlock;
 import frc.robot.SwerveModule;
 import frc.robot.Constants.DriveTrain;
 import frc.robot.Constants.PipeLineID;
@@ -99,7 +96,6 @@ public class Drivetrain extends SubsystemBase {
             DriveTrain.driveFeedForward);
 
     private final Pigeon2 m_gyro;
-    private final CameraSubsystem m_camera;
 
     private boolean fieldRelative = true;
     private DirectionOption m_forwardDirection = DirectionOption.FORWARD;
@@ -118,19 +114,16 @@ public class Drivetrain extends SubsystemBase {
             m_frontLeftLocation, m_frontRightLocation, m_backLeftLocation, m_backRightLocation);
 
     private final SwerveDriveOdometry m_odometry;
-    private Aimlock m_aim;
 
     private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds();
     private Pose2d robotFieldPosition;
     private boolean lockTargetInAuto = false;
 
-    public Drivetrain(Pigeon2 m_gyro, CameraSubsystem m_camera) {
+    public Drivetrain(Pigeon2 m_gyro) {
         // Zero at beginning of match. Zero = whatever direction the robot (more
         // specifically the gyro) is facing
         this.m_gyro = m_gyro;
         this.resetGyro();
-
-        this.m_camera = m_camera;
 
         m_odometry = new SwerveDriveOdometry(
                 m_kinematics,
@@ -147,37 +140,33 @@ public class Drivetrain extends SubsystemBase {
         robotFieldPosition = getRoboPose2d();
 
         // Configure AutoBuilder last
-        AutoBuilder.configureHolonomic(
-                this::getRoboPose2d, // Robot pose supplier
-                this::resetOdo, // Method to reset odometry (will be called if your auto has a starting pose)
-                this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-                this::driveInAuto, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-                new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your
-                                                 // Constants class
-                        new PIDConstants(7.4, 0.0, 0.0), // Translation PID constants p used to be 7
-                        new PIDConstants(5.4, 0.0, 0.0), // Rotation PID constants
-                        kMaxPossibleSpeed, // Max module speed, in m/s
-                        DriveTrain.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to
-                                                     // furthest module.
-                        new ReplanningConfig() // Default path replanning config. See the API for the options here
-                ),
-                () -> {
-                    // Boolean supplier that controls when the path will be mirrored for the red
-                    // alliance
-                    // This will flip the path being followed to the red side of the field.
-                    // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-                    var alliance = DriverStation.getAlliance();
-                    if (alliance.isPresent()) {
-                        return alliance.get() == DriverStation.Alliance.Red;
-                    }
-                    return false;
-                },
-                this // Reference to this subsystem to set requirements
-        );
-    }
-
-    public void setAim(Aimlock m_aim) {
-        this.m_aim = m_aim;
+        // AutoBuilder.configureHolonomic(
+        //         this::getRoboPose2d, // Robot pose supplier
+        //         this::resetOdo, // Method to reset odometry (will be called if your auto has a starting pose)
+        //         this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        //         this::driveInAuto, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+        //         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your
+        //                                          // Constants class
+        //                 new PIDConstants(7.4, 0.0, 0.0), // Translation PID constants p used to be 7
+        //                 new PIDConstants(5.4, 0.0, 0.0), // Rotation PID constants
+        //                 kMaxPossibleSpeed, // Max module speed, in m/s
+        //                 DriveTrain.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to
+        //                                              // furthest module.
+        //                 new ReplanningConfig() // Default path replanning config. See the API for the options here
+        //         ),
+        //         () -> {
+        //             // Boolean supplier that controls when the path will be mirrored for the red
+        //             // alliance
+        //             // This will flip the path being followed to the red side of the field.
+        //             // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+        //             var alliance = DriverStation.getAlliance();
+        //             if (alliance.isPresent()) {
+        //                 return alliance.get() == DriverStation.Alliance.Red;
+        //             }
+        //             return false;
+        //         },
+        //         this // Reference to this subsystem to set requirements
+        // );
     }
 
     public void setLockTargetInAuto(boolean lock) {
@@ -271,7 +260,7 @@ public class Drivetrain extends SubsystemBase {
     public Rotation2d getGyroYawRotation2d() {
         // return Rotation2d.fromDegrees(MathUtil.inputModulus(m_gyro.getYaw(), -180,
         // 180));
-        return Rotation2d.fromDegrees(m_gyro.getYaw());
+        return Rotation2d.fromDegrees(m_gyro.getYaw().getValue());
     }
 
     /**
@@ -302,88 +291,38 @@ public class Drivetrain extends SubsystemBase {
         this.layout.setDesiredRotSpeed(Math.toDegrees(rotSpeed));
     }
 
-    /**
-     * Pathplanner uses this method in order to interface with our Drivetrain.
-     * 
-     * @param chassisSpeeds Robot relative ChassisSpeeds of the robot containing X,
-     *                      Y, and Rotational Velocities.
-     */
-    public void driveInAuto(ChassisSpeeds chassisSpeeds) {
-        // SwerveModuleState[] swerveModuleStates =
-        // m_kinematics.toSwerveModuleStates(chassisSpeeds);
-        // comment: if speakermode, use speakeraim, if not speakermode, use piece aim.
-        // if using piece aim and dont see a piece, follow normal path.
-        SwerveModuleState[] swerveModuleStates = m_kinematics.toSwerveModuleStates(
-                lockTargetInAuto
-                        ? ChassisSpeeds.fromRobotRelativeSpeeds(chassisSpeeds.vxMetersPerSecond,
-                                chassisSpeeds.vyMetersPerSecond,
-                                Aimlock.hasTarget() ? m_aim.getRotationSpeedForTarget()
-                                        : chassisSpeeds.omegaRadiansPerSecond, // comment
-                                getGyroYawRotation2d())
-                        : chassisSpeeds);
+    // /**
+    //  * Pathplanner uses this method in order to interface with our Drivetrain.
+    //  * 
+    //  * @param chassisSpeeds Robot relative ChassisSpeeds of the robot containing X,
+    //  *                      Y, and Rotational Velocities.
+    //  */
+    // public void driveInAuto(ChassisSpeeds chassisSpeeds) {
+    //     // SwerveModuleState[] swerveModuleStates =
+    //     // m_kinematics.toSwerveModuleStates(chassisSpeeds);
+    //     // comment: if speakermode, use speakeraim, if not speakermode, use piece aim.
+    //     // if using piece aim and dont see a piece, follow normal path.
+    //     SwerveModuleState[] swerveModuleStates = m_kinematics.toSwerveModuleStates(
+    //             lockTargetInAuto
+    //                     ? ChassisSpeeds.fromRobotRelativeSpeeds(chassisSpeeds.vxMetersPerSecond,
+    //                             chassisSpeeds.vyMetersPerSecond,
+    //                             Aimlock.hasTarget() ? m_aim.getRotationSpeedForTarget()
+    //                                     : chassisSpeeds.omegaRadiansPerSecond, // comment
+    //                             getGyroYawRotation2d())
+    //                     : chassisSpeeds);
 
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxPossibleSpeed);
+    //     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxPossibleSpeed);
 
-        this.layout.setDesiredXSpeed(chassisSpeeds.vxMetersPerSecond);
-        this.layout.setDesiredYSpeed(chassisSpeeds.vyMetersPerSecond);
-        this.layout.setDesiredRotSpeed(Math.toDegrees(chassisSpeeds.omegaRadiansPerSecond));
+    //     this.layout.setDesiredXSpeed(chassisSpeeds.vxMetersPerSecond);
+    //     this.layout.setDesiredYSpeed(chassisSpeeds.vyMetersPerSecond);
+    //     this.layout.setDesiredRotSpeed(Math.toDegrees(chassisSpeeds.omegaRadiansPerSecond));
 
-        // passing back the math from kinematics to the swerves themselves.
-        m_frontLeft.setDesiredState(swerveModuleStates[0]);
-        m_frontRight.setDesiredState(swerveModuleStates[1]);
-        m_backLeft.setDesiredState(swerveModuleStates[2]);
-        m_backRight.setDesiredState(swerveModuleStates[3]);
-    }
-
-    /**
-     * What this code essentially does is when you're holding down the left button
-     * (in robot), just drive like normal until you see a game piece.
-     * once you see it, its locked. from this point, you may drive around as normal,
-     * but the aimlock will handle the robot's orientation.
-     * If you then press the left trigger (in robot), the robot will "hard lock"
-     * onto the piece, and you will only be able
-     * to go forwards and backwards (robot oriented), in order to perfectly pick up
-     * the piece.
-     * With proper tuning it will be able to lock, and stay locked onto the
-     * tag/piece no matter how fast we are driving.
-     */
-    public void lockPiece(double xSpeed, double ySpeed, double rotSpeed, boolean fieldRelative, boolean hardLocked) {
-        SwerveModuleState[] swerveModuleStates; // MAKE SURE swervestates can be init like this with this kinda array
-        if (Aimlock.hasTarget() || Aimlock.getDoState() == DoState.SPEAKER) {
-            rotSpeed = m_aim.getRotationSpeedForTarget();
-            if (hardLocked) {
-                swerveModuleStates = m_kinematics.toSwerveModuleStates(
-                        new ChassisSpeeds(xSpeed, 0, rotSpeed));
-            } else {
-                swerveModuleStates = m_kinematics.toSwerveModuleStates(
-                        ChassisSpeeds.fromFieldRelativeSpeeds(
-                                xSpeed, ySpeed, rotSpeed, getGyroYawRotation2d()));
-            }
-        } else {
-            if (hardLocked) {
-                swerveModuleStates = m_kinematics.toSwerveModuleStates(
-                        new ChassisSpeeds(xSpeed, 0, rotSpeed));
-            } else {
-                swerveModuleStates = m_kinematics.toSwerveModuleStates(
-                        fieldRelative
-                                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotSpeed,
-                                        getGyroYawRotation2d())
-                                : new ChassisSpeeds(xSpeed, ySpeed, rotSpeed));
-            }
-        }
-
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxPossibleSpeed);
-
-        // passing back the math from kinematics to the swerves themselves.
-        m_frontLeft.setDesiredState(swerveModuleStates[0]);
-        m_frontRight.setDesiredState(swerveModuleStates[1]);
-        m_backLeft.setDesiredState(swerveModuleStates[2]);
-        m_backRight.setDesiredState(swerveModuleStates[3]);
-
-        this.layout.setDesiredXSpeed(xSpeed);
-        this.layout.setDesiredYSpeed(ySpeed);
-        this.layout.setDesiredRotSpeed(Math.toDegrees(rotSpeed));
-    }
+    //     // passing back the math from kinematics to the swerves themselves.
+    //     m_frontLeft.setDesiredState(swerveModuleStates[0]);
+    //     m_frontRight.setDesiredState(swerveModuleStates[1]);
+    //     m_backLeft.setDesiredState(swerveModuleStates[2]);
+    //     m_backRight.setDesiredState(swerveModuleStates[3]);
+    // }
 
     public Pose2d getRoboPose2d() {
         return m_odometry.getPoseMeters();
@@ -399,22 +338,22 @@ public class Drivetrain extends SubsystemBase {
      * @param angle2
      * @return
      */
-    public Pose2d calcRoboPose2dWithVision(double length, double angle1, double angle2) {
-        double L = length; // dist between the two april tags
-        double a1 = angle1; // angle (from the camera) of the close april tag (a1) and the far april tag
-                            // (a2)
-        double a2 = angle2;
-        double gyroOffset = 0;
-        double roboAngle = -m_gyro.getYaw() + gyroOffset; // angle of the robot (0 degrees = facing the drivers)
+    // public Pose2d calcRoboPose2dWithVision(double length, double angle1, double angle2) {
+    //     double L = length; // dist between the two april tags
+    //     double a1 = angle1; // angle (from the camera) of the close april tag (a1) and the far april tag
+    //                         // (a2)
+    //     double a2 = angle2;
+    //     double gyroOffset = 0;
+    //     double roboAngle = -m_gyro.getYaw() + gyroOffset; // angle of the robot (0 degrees = facing the drivers)
 
-        double X = (L * Math.sin(Math.toRadians(90 + roboAngle + a2)) * Math.sin(Math.toRadians(90 - roboAngle - a1)))
-                / Math.sin(Math.toRadians(Math.abs(a2 - a1)));
+    //     double X = (L * Math.sin(Math.toRadians(90 + roboAngle + a2)) * Math.sin(Math.toRadians(90 - roboAngle - a1)))
+    //             / Math.sin(Math.toRadians(Math.abs(a2 - a1)));
 
-        double Y = (L * Math.sin(Math.toRadians(90 + roboAngle + a2)) * Math.cos(Math.toRadians(90 - roboAngle - a1)))
-                / Math.sin(Math.toRadians(Math.abs(a2 - a1)));
+    //     double Y = (L * Math.sin(Math.toRadians(90 + roboAngle + a2)) * Math.cos(Math.toRadians(90 - roboAngle - a1)))
+    //             / Math.sin(Math.toRadians(Math.abs(a2 - a1)));
 
-        return new Pose2d(X, Y, getGyroYawRotation2d());
-    }
+    //     return new Pose2d(X, Y, getGyroYawRotation2d());
+    // }
 
     public void stopDriving() {
         SwerveModuleState[] swerveModuleStates = m_kinematics.toSwerveModuleStates(
@@ -435,10 +374,6 @@ public class Drivetrain extends SubsystemBase {
 
     /** Updates the field relative position of the robot. */
     public void updateOdometry() {
-        this.layout.setLimelightFRTargetAngle(getRoboPose2d().getRotation().getDegrees() - LimelightHelpers.getTX(""));
-        this.layout.setActualAngleToSpeaker(m_aim.getAngleToSpeaker());
-        this.layout.setDesiredAngleToSpeaker(Math.toDegrees(m_aim.getSpeakerAimTargetAngle()));
-        this.layout.setLimelightRRTargetAngle(m_aim.getLLAngleToTarget());
         m_odometry.update(
                 getGyroYawRotation2d(),
                 getModulePositions());
@@ -457,7 +392,7 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        resetOdo(m_camera.resetOdoLimelight());
+        // resetOdo(m_camera.resetOdoLimelight());
         updateOdometry();
     }
 }

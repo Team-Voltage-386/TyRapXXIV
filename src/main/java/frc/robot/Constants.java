@@ -53,8 +53,8 @@ public class Constants {
     }
 
     public static class DriveTrain {
-        public static final double kDistanceMiddleToFrontMotor = 0.365125;
-        public static final double kDistanceMiddleToSideMotor = 0.263525;
+        public static final double kDistanceMiddleToFrontMotor = 0.314325;
+        public static final double kDistanceMiddleToSideMotor = 0.314325;
         public static final double kDriveBaseRadius = Math.sqrt( //distance from the middle to the furthest wheel
         kDistanceMiddleToFrontMotor*kDistanceMiddleToFrontMotor +
         kDistanceMiddleToSideMotor*kDistanceMiddleToSideMotor);
@@ -67,10 +67,17 @@ public class Constants {
         public static final double kTranslationPathPlannerP = 5; //shouldnt need anything other than P
         public static final double kRotationPathPlannerP = 4.5;
         //ITS TUNED. NO TOUCH!
-        public static final double[] turnPID = { 5, 1.0, 0.0 }; // p = 11.25
-        public static final double[] drivePID = { 0.5, 0.11, 0.11 }; // { 0.1, 1.5, 0.0 };
-        public static final double[] turnFeedForward = { 0.0, 0.45 }; // was 0.46   
-        public static final double[] driveFeedForward = { 0.0, 2.74 }; // { 0.0, 2.75 };
+        public static final double[] turnPID = { 0, 0.0, 0.0 };
+        public static final double[] drivePID = { 0.0, 0.00, 0.00 };
+        public static final double[] turnFeedForward = { 0.0, 0.00 };
+        public static final double[] driveFeedForward = { 0.0, 0.0 };
+
+        /*
+         * public static final double[] turnPID = { 5, 1.0, 0.0 };
+        public static final double[] drivePID = { 0.5, 0.11, 0.11 };
+        public static final double[] turnFeedForward = { 0.0, 0.45 };
+        public static final double[] driveFeedForward = { 0.0, 2.74 };
+         */
     };
 
     public static final class Modules {
@@ -98,9 +105,9 @@ public class Constants {
         /**
          * Encoder offsets
          */
-        public static final double kFrontLeftOffset = 3.0683;
-        public static final double kFrontRightOffset = -1.8806;
-        public static final double kBackLeftOffset = -0.8590;
-        public static final double kBackRightOffset = -0.3344;
+        public static final double kFrontLeftOffset = -0.40;
+        public static final double kFrontRightOffset = -1.62;
+        public static final double kBackLeftOffset = -1.53;
+        public static final double kBackRightOffset = 0.86;
     }
 }

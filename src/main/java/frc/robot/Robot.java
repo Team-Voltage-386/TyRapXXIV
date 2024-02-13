@@ -15,29 +15,21 @@ public class Robot extends TimedRobot {
     
     private final RobotContainer m_containter = new RobotContainer();
 
-    private Command autonomousCommand;
-
     @Override
     public void robotInit() {
-        autonomousCommand = m_containter.getAutonomousCommand();
     }
 
     @Override
     public void autonomousInit() {
-        autonomousCommand.schedule();
     }
 
     @Override
     public void teleopInit() {
-        autonomousCommand.cancel();
-        m_containter.resetShooterPos();
+        //m_containter.resetShooterPos();
     }
 
     @Override
     public void autonomousPeriodic() {
-        if(autonomousCommand.isFinished()) {
-            System.out.println("FINISHED AUTO!");
-        }
     } 
 
     @Override
@@ -53,7 +45,7 @@ public class Robot extends TimedRobot {
     public void disabledPeriodic() {
         // Only needed when measuring and configuring the encoder offsets. Can comment
         // out when not used
-        //m_swerve.print();
+        m_containter.print();
     }
 
     

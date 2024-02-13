@@ -18,7 +18,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Modules;
 
@@ -75,6 +77,9 @@ public class SwerveModule {
     // We leave them here in case you'd like to reference them
     private final SimpleMotorFeedforward m_driveFeedforward;
     private final SimpleMotorFeedforward m_turnFeedforward;
+
+    private GenericEntry encoderOffset;
+    private GenericEntry absEncoderOffset;
 
     /**
      * Constructs a SwerveModule with a drive motor, turning motor, drive encoder
@@ -150,6 +155,9 @@ public class SwerveModule {
 
         m_turnFeedforward = new SimpleMotorFeedforward(turnFeedForward[0], turnFeedForward[1]);
         m_driveFeedforward = new SimpleMotorFeedforward(driveFeedForward[0], driveFeedForward[1]);
+
+        this.encoderOffset = Shuffleboard.getTab(m_swerveModuleName).add("Relative Encoder Offset", 0.0).withPosition(0, 0).withSize(2, 1).getEntry();
+        this.absEncoderOffset = Shuffleboard.getTab(m_swerveModuleName).add("Absolute Encoder Offset", 0.0).withPosition(0, 1).withSize(2, 1).getEntry();
     }
 
     /**
@@ -265,6 +273,8 @@ public class SwerveModule {
      * Put info on smart dashboard
      */
     public void print() {
+        encoderOffset.setDouble(m_turningEncoder.getAbsolutePosition().getValue() * 2 * Math.PI);
+        absEncoderOffset.setDouble(this.getActualTurningPosition());
         
         // SmartDashboard.putNumber(m_swerveModuleName + " Actual Turning Position",
         // getActualTurningPosition());
