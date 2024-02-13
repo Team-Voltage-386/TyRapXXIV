@@ -39,8 +39,8 @@ public class Constants {
     }
 
     public static class PipeLineID { //todo update these to actually use them in game
-        public static final int kNoteID = 1;
-        public static final int kSpeakerID = 0;
+        public static final int kNoteID = 0;
+        public static final int kSpeakerID = 1;
         public static final int kAmpID = 2;
         public static final int kSourceID = 3;
     }

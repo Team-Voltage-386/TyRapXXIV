@@ -27,7 +27,7 @@ public class Aimlock {
     public Aimlock (Drivetrain m_swerve, ShooterSubsystem m_shooter) {
         this.m_swerve = m_swerve;
         this.m_shooter = m_shooter;
-        setPipeline(PipeLineID.kNoteID);
+        setPipeline(PipeLineID.kSpeakerID);
     }
 
     //PID/FF for chassis rotation speed
@@ -88,8 +88,7 @@ public class Aimlock {
      * get field relative angle to speaker
      */
     public double getAngleToSpeaker() {
-        double toSpeakerAngle = Math.toDegrees(Math.atan((5.55 - m_swerve.getRoboPose2d().getY())/(m_swerve.getRoboPose2d().getX() - 0.3)));
-        return hasTarget()? getLLFRAngleToTarget() : toSpeakerAngle;
+        return getLLFRAngleToTarget();
     }
 
     /**
@@ -122,7 +121,7 @@ public class Aimlock {
         if(hasTarget())
             return angle;
         else 
-            return 0;
+            return m_swerve.getRoboPose2d().getRotation().getDegrees();
     }
 
     /**

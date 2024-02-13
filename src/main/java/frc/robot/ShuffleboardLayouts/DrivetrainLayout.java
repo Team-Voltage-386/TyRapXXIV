@@ -14,6 +14,9 @@ public class DrivetrainLayout {
     private GenericEntry limelightTagID;
     private GenericEntry actualAngleToSpeaker;
     private GenericEntry desiredAngleToSpeaker;
+    private GenericEntry xPos;
+    private GenericEntry yPos;
+    private GenericEntry rot;
 
     public DrivetrainLayout() {
         driveTab = Shuffleboard.getTab("Drive tab");
@@ -30,6 +33,13 @@ public class DrivetrainLayout {
                 .withPosition(0, 4).withSize(2, 1).getEntry();
         desiredAngleToSpeaker = driveTab.add("Desired Angle to Speaker", 0.0)
                 .withPosition(2, 4).withSize(2, 1).getEntry();
+
+        xPos = driveTab.add("X", 0.0)
+                .withPosition(5, 1).withSize(1, 1).getEntry();
+        yPos = driveTab.add("Y", 0.0)
+                .withPosition(6, 1).withSize(1, 1).getEntry();
+        rot = driveTab.add("Rot", 0.0)
+                .withPosition(7, 1).withSize(1, 1).getEntry();
     }
 
     public GenericEntry getDesiredXSpeed() {
@@ -96,5 +106,15 @@ public class DrivetrainLayout {
         this.desiredAngleToSpeaker.setDouble(desiredAngleToSpeaker);
     }
 
-    
+    public void setxPos(double xPos) {
+        this.xPos.setDouble(xPos);
+    }
+
+    public void setyPos(double yPos) {
+        this.yPos.setDouble(yPos);
+    }
+
+    public void setRot(double rot) {
+        this.rot.setDouble(rot);
+    }
 }

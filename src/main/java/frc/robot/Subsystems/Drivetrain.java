@@ -4,7 +4,8 @@
 
 package frc.robot.Subsystems;
 
-import com.ctre.phoenix.sensors.Pigeon2;
+import javax.swing.text.StyleContext.SmallAttributeSet;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
@@ -26,6 +27,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ID;
@@ -271,7 +273,7 @@ public class Drivetrain extends SubsystemBase {
     public Rotation2d getGyroYawRotation2d() {
         // return Rotation2d.fromDegrees(MathUtil.inputModulus(m_gyro.getYaw(), -180,
         // 180));
-        return Rotation2d.fromDegrees(m_gyro.getYaw());
+        return Rotation2d.fromDegrees(m_gyro.getYaw().getValue());
     }
 
     /**
@@ -349,7 +351,7 @@ public class Drivetrain extends SubsystemBase {
      */
     public void lockPiece(double xSpeed, double ySpeed, double rotSpeed, boolean fieldRelative, boolean hardLocked) {
         SwerveModuleState[] swerveModuleStates; // MAKE SURE swervestates can be init like this with this kinda array
-        if (Aimlock.hasTarget() || Aimlock.getDoState() == DoState.SPEAKER) {
+        if (Aimlock.hasTarget()) {
             rotSpeed = m_aim.getRotationSpeedForTarget();
             if (hardLocked) {
                 swerveModuleStates = m_kinematics.toSwerveModuleStates(
@@ -405,7 +407,7 @@ public class Drivetrain extends SubsystemBase {
                             // (a2)
         double a2 = angle2;
         double gyroOffset = 0;
-        double roboAngle = -m_gyro.getYaw() + gyroOffset; // angle of the robot (0 degrees = facing the drivers)
+        double roboAngle = -m_gyro.getYaw().getValue() + gyroOffset; // angle of the robot (0 degrees = facing the drivers)
 
         double X = (L * Math.sin(Math.toRadians(90 + roboAngle + a2)) * Math.sin(Math.toRadians(90 - roboAngle - a1)))
                 / Math.sin(Math.toRadians(Math.abs(a2 - a1)));
@@ -435,10 +437,7 @@ public class Drivetrain extends SubsystemBase {
 
     /** Updates the field relative position of the robot. */
     public void updateOdometry() {
-        this.layout.setLimelightFRTargetAngle(getRoboPose2d().getRotation().getDegrees() - LimelightHelpers.getTX(""));
-        this.layout.setActualAngleToSpeaker(m_aim.getAngleToSpeaker());
-        this.layout.setDesiredAngleToSpeaker(Math.toDegrees(m_aim.getSpeakerAimTargetAngle()));
-        this.layout.setLimelightRRTargetAngle(m_aim.getLLAngleToTarget());
+
         m_odometry.update(
                 getGyroYawRotation2d(),
                 getModulePositions());
@@ -459,5 +458,13 @@ public class Drivetrain extends SubsystemBase {
     public void periodic() {
         resetOdo(m_camera.resetOdoLimelight());
         updateOdometry();
+
+        this.layout.setLimelightFRTargetAngle(getRoboPose2d().getRotation().getDegrees() - LimelightHelpers.getTX(""));
+        this.layout.setActualAngleToSpeaker(m_aim.getAngleToSpeaker());
+        this.layout.setDesiredAngleToSpeaker(Math.toDegrees(m_aim.getSpeakerAimTargetAngle()));
+        this.layout.setLimelightRRTargetAngle(m_aim.getLLAngleToTarget());
+        this.layout.setxPos(m_odometry.getPoseMeters().getX());
+        this.layout.setyPos(m_odometry.getPoseMeters().getY());
+        this.layout.setRot(m_odometry.getPoseMeters().getRotation().getDegrees());
     }
 }

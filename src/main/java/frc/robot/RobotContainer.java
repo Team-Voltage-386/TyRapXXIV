@@ -4,7 +4,8 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix6.configs.MountPoseConfigs;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.fasterxml.jackson.databind.module.SimpleKeyDeserializers;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -58,6 +59,7 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    m_gyro.getConfigurator().apply(new MountPoseConfigs().withMountPoseYaw(-90));
     //pass le aimbot. once we convert all this to command based we will pass the aim to the command instead of the subsystem. make it work for now, then we will make it right!
     m_swerve.setAim(m_aim);
     m_shooter.setAim(m_aim);
