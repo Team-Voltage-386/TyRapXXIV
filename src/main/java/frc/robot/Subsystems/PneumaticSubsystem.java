@@ -8,24 +8,31 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class PneumaticSubsystem extends SubsystemBase {
     private DoubleSolenoid m_handOff;
     private DoubleSolenoid m_intake;
+    private DoubleSolenoid m_stabilizer;
     private boolean m_liftDeployed = false;
     private boolean m_intakeDeployed = false;
+    private boolean m_stabilizerDeployed = false;
 
     public PneumaticSubsystem() {
         this.m_handOff = new DoubleSolenoid(0, PneumaticsModuleType.CTREPCM, 2, 3);
         this.m_intake = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 4, 5);
+        this.m_stabilizer = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 6, 7);
     }
 
     //handoff shit
 
     public void enableLift() {
-        this.m_handOff.set(Value.kForward);
-        this.liftOut(true);
+        if(!getLiftDeployed()) {
+            this.m_handOff.set(Value.kForward);
+            this.liftOut(true);
+        }
     }
 
     public void disableLift() {
-        this.m_handOff.set(Value.kReverse);
-        this.liftOut(false);
+        if(getLiftDeployed()) {
+            this.m_handOff.set(Value.kReverse);
+            this.liftOut(false);
+        }
     }
 
     public void toggleLift() {
@@ -48,21 +55,25 @@ public class PneumaticSubsystem extends SubsystemBase {
     // intake shit
 
     public void enableIntake() {
-        this.m_intake.set(Value.kForward);
-        this.intakeOut(true);
+        if(!getIntakeDeployed()) {
+            this.m_intake.set(Value.kForward);
+            this.intakeOut(true);
+        }
     }
 
     public void disableIntake() {
-        this.m_intake.set(Value.kReverse);
-        this.intakeOut(false);
+        if(getIntakeDeployed()) {
+            this.m_intake.set(Value.kReverse);
+            this.intakeOut(false);
+        }
     }
 
     public void toggleIntake() {
         if(getIntakeDeployed()) {
-            disableLift();
+            disableIntake();
         }
         else {
-            enableLift();
+            enableIntake();
         }
     }
 
@@ -72,5 +83,37 @@ public class PneumaticSubsystem extends SubsystemBase {
 
     public void intakeOut(boolean isIntakeOut) {
         this.m_intakeDeployed = isIntakeOut;
+    }
+
+    //stabilizer shit
+    public void enableStabilizer() {
+        if(!getStabilizerDeployed()) {
+            this.m_stabilizer.set(Value.kForward);
+            this.stabilizerOut(true);
+        }
+    }
+
+    public void disableStabilizer() {
+        if(getStabilizerDeployed()) {
+            this.m_intake.set(Value.kReverse);
+            this.stabilizerOut(false);
+        }
+    }
+
+    public void toggleStabilizer() {
+        if(getIntakeDeployed()) {
+            disableStabilizer();
+        }
+        else {
+            enableStabilizer();
+        }
+    }
+
+    public boolean getStabilizerDeployed() {
+        return m_stabilizerDeployed;
+    }
+
+    public void stabilizerOut(boolean isIntakeOut) {
+        this.m_stabilizerDeployed = isIntakeOut;
     }
 }

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Controller;
@@ -35,6 +36,7 @@ import frc.robot.Commands.Drive;
 import frc.robot.Commands.StopDrive;
 import frc.robot.Commands.lockTarget;
 import frc.robot.Commands.resetOdo;
+import frc.robot.Commands.ResetPneumatics;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -50,7 +52,7 @@ public class RobotContainer {
   private static final Pigeon2 m_gyro = new Pigeon2(ID.kGyro);
   private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
   public final Drivetrain m_swerve = new Drivetrain(m_gyro, m_cameraSubsystem);
-  // public final PneumaticSubsystem m_pneumatics = new PneumaticSubsystem();
+  public final PneumaticSubsystem m_pneumatics = new PneumaticSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final Aimlock m_aim = new Aimlock(m_swerve, m_shooter);
   private final RumbleSubsystem m_rumble = new RumbleSubsystem(m_driveController);
@@ -165,11 +167,11 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return path1;
+    return new ParallelCommandGroup(path1, new ResetPneumatics(m_pneumatics));
   }
 
   public Command getTeleOpCommand() {
-    return driveCommand;
+    return new ParallelCommandGroup(driveCommand, new ResetPneumatics(m_pneumatics));
   }
 
   /**
