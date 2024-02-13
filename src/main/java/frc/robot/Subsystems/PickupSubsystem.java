@@ -42,15 +42,20 @@ public class PickupSubsystem extends SubsystemBase {
     }
 
 
-    public void setMotors() {
+    public void runMotors() {
         // frontIntakeMotor.setVoltage(pickupPID.calculate(getFrontRealIntakeRPM(), goalRPM) + pickupFF.calculate(goalRPM));
         backIntakeMotor.setVoltage(pickupPID.calculate(getBackRealIntakeRPM(), goalRPM) + pickupFF.calculate(goalRPM));
+    }
+
+    public void stopMotors() {
+        // frontIntakeMotor.setVoltage(0);
+        backIntakeMotor.setVoltage(0);
     }
 
     @Override
     public void periodic() {
         SmartDashboard.putNumber("intake RPM", getBackRealIntakeRPM());
         SmartDashboard.putNumber("Target RPM", goalRPM);
-        setMotors();
+        runMotors();
     }
 }

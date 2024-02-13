@@ -19,6 +19,7 @@ public class ToggleIntake extends Command {
     @Override
     public void schedule() { //very slow rn
         if(stowed) { //if stowed
+            m_pickup.runMotors();
             m_pneumatics.toggleIntake();
             Timer.delay(0.5);
             m_pneumatics.toggleLift();
@@ -26,6 +27,7 @@ public class ToggleIntake extends Command {
             m_pneumatics.toggleStabilizer();
         }
         else { //if intake is out
+            m_pickup.stopMotors();
             m_pneumatics.toggleIntake();
             Timer.delay(0.5);
             m_pneumatics.toggleStabilizer();
