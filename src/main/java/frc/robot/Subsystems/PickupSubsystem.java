@@ -6,13 +6,17 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.ID;
 
 public class PickupSubsystem extends SubsystemBase {
 
     double goalRPM = 200;
+
+    DigitalInput holdingPieceDetector;
 
     // CANSparkMax frontIntakeMotor;
     CANSparkMax backIntakeMotor;
@@ -21,6 +25,7 @@ public class PickupSubsystem extends SubsystemBase {
     SimpleMotorFeedforward pickupFF = new SimpleMotorFeedforward(0, 0.0085);
 
     public PickupSubsystem () {
+        holdingPieceDetector = new DigitalInput(ID.kPieceDetector);
         // frontIntakeMotor = new CANSparkMax(0, MotorType.kBrushless);
         backIntakeMotor = new CANSparkMax(ID.kShooterAimMotorID, MotorType.kBrushless);
     }
@@ -50,6 +55,10 @@ public class PickupSubsystem extends SubsystemBase {
     public void stopMotors() {
         // frontIntakeMotor.setVoltage(0);
         backIntakeMotor.setVoltage(0);
+    }
+
+    public boolean isHoldingPiece() {
+        return holdingPieceDetector.get();
     }
 
     @Override

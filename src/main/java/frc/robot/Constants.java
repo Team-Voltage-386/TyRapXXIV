@@ -31,6 +31,8 @@ public class Constants {
         public static final int kShooterAimMotorID = 14;
         public static final int kShooterMotorID = 15;
         public static final int kRollerMotorID = 16;
+
+        public static final int kPieceDetector = 17;
     }
 
     public static class Deadbands {

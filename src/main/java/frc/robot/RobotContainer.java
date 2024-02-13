@@ -34,6 +34,7 @@ import frc.robot.Subsystems.RumbleSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Commands.Drive;
 import frc.robot.Commands.StopDrive;
+import frc.robot.Commands.ToggleIntake;
 import frc.robot.Commands.lockTarget;
 import frc.robot.Commands.resetOdo;
 import frc.robot.Commands.ResetPneumatics;
@@ -56,7 +57,7 @@ public class RobotContainer {
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final Aimlock m_aim = new Aimlock(m_swerve, m_shooter);
   private final RumbleSubsystem m_rumble = new RumbleSubsystem(m_driveController);
-  // private final PickupSubsystem m_pickup = new PickupSubsystem();
+  private final PickupSubsystem m_pickup = new PickupSubsystem();
   Command driveCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -117,6 +118,9 @@ public class RobotContainer {
     m_manipController.b().onTrue(Commands.runOnce(()-> Aimlock.setDoState(DoState.AMP)));
     m_manipController.y().onTrue(Commands.runOnce(()-> Aimlock.setDoState(DoState.SOURCE)));
     new Trigger(()-> m_cameraSubsystem.isLLOdoGood(5.0)).whileTrue(m_rumble.setRumbleCommand(RumbleType.kBothRumble, 0.5, 0.25));
+    
+    //when we get a piece, close the intake
+    new Trigger(()-> m_pickup.isHoldingPiece()).and(()-> m_pneumatics.getIntakeDeployed()).onTrue(new ToggleIntake(m_pickup, m_pneumatics));
   }
 
   Command path1;

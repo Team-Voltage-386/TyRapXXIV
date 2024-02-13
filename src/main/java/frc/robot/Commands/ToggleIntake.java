@@ -25,6 +25,7 @@ public class ToggleIntake extends Command {
             m_pneumatics.toggleLift();
             Timer.delay(0.5);
             m_pneumatics.toggleStabilizer();
+            stowed = false;
         }
         else { //if intake is out
             m_pickup.stopMotors();
@@ -33,6 +34,7 @@ public class ToggleIntake extends Command {
             m_pneumatics.toggleStabilizer();
             Timer.delay(0.5);
             m_pneumatics.toggleLift();
+            stowed = true;
         }
     }
     
