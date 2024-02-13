@@ -5,13 +5,6 @@
 package frc.robot.Subsystems;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
-
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -20,9 +13,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
@@ -32,7 +22,6 @@ import frc.robot.Constants.ID;
 import frc.robot.Constants.Offsets;
 import frc.robot.SwerveModule;
 import frc.robot.Constants.DriveTrain;
-import frc.robot.Constants.PipeLineID;
 import frc.robot.ShuffleboardLayouts.DrivetrainLayout;
 
 /** Represents a swerve drive style drivetrain. */
@@ -138,35 +127,6 @@ public class Drivetrain extends SubsystemBase {
                         new Translation2d(2.0, 6.0), Rotation2d.fromDegrees(0.0)));
 
         robotFieldPosition = getRoboPose2d();
-
-        // Configure AutoBuilder last
-        // AutoBuilder.configureHolonomic(
-        //         this::getRoboPose2d, // Robot pose supplier
-        //         this::resetOdo, // Method to reset odometry (will be called if your auto has a starting pose)
-        //         this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-        //         this::driveInAuto, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-        //         new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your
-        //                                          // Constants class
-        //                 new PIDConstants(7.4, 0.0, 0.0), // Translation PID constants p used to be 7
-        //                 new PIDConstants(5.4, 0.0, 0.0), // Rotation PID constants
-        //                 kMaxPossibleSpeed, // Max module speed, in m/s
-        //                 DriveTrain.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to
-        //                                              // furthest module.
-        //                 new ReplanningConfig() // Default path replanning config. See the API for the options here
-        //         ),
-        //         () -> {
-        //             // Boolean supplier that controls when the path will be mirrored for the red
-        //             // alliance
-        //             // This will flip the path being followed to the red side of the field.
-        //             // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-        //             var alliance = DriverStation.getAlliance();
-        //             if (alliance.isPresent()) {
-        //                 return alliance.get() == DriverStation.Alliance.Red;
-        //             }
-        //             return false;
-        //         },
-        //         this // Reference to this subsystem to set requirements
-        // );
     }
 
     public void setLockTargetInAuto(boolean lock) {
@@ -195,11 +155,9 @@ public class Drivetrain extends SubsystemBase {
      * @param pose
      */
     public void resetOdo(Pose2d pose) {
-        // System.out.println(getGyroYawRotation2d().getDegrees());
-        // System.out.println(pose.getX() + " " + pose.getY() + " " +
-        // pose.getRotation().getDegrees());
-        if (pose != null)
+        if (pose != null) {
             m_odometry.resetPosition(getGyroYawRotation2d(), getModulePositions(), pose);
+        }
     }
 
     public ChassisSpeeds getChassisSpeeds() {
@@ -258,8 +216,6 @@ public class Drivetrain extends SubsystemBase {
      * @return chasis angle in Rotation2d
      */
     public Rotation2d getGyroYawRotation2d() {
-        // return Rotation2d.fromDegrees(MathUtil.inputModulus(m_gyro.getYaw(), -180,
-        // 180));
         return Rotation2d.fromDegrees(m_gyro.getYaw().getValue());
     }
 
@@ -291,69 +247,9 @@ public class Drivetrain extends SubsystemBase {
         this.layout.setDesiredRotSpeed(Math.toDegrees(rotSpeed));
     }
 
-    // /**
-    //  * Pathplanner uses this method in order to interface with our Drivetrain.
-    //  * 
-    //  * @param chassisSpeeds Robot relative ChassisSpeeds of the robot containing X,
-    //  *                      Y, and Rotational Velocities.
-    //  */
-    // public void driveInAuto(ChassisSpeeds chassisSpeeds) {
-    //     // SwerveModuleState[] swerveModuleStates =
-    //     // m_kinematics.toSwerveModuleStates(chassisSpeeds);
-    //     // comment: if speakermode, use speakeraim, if not speakermode, use piece aim.
-    //     // if using piece aim and dont see a piece, follow normal path.
-    //     SwerveModuleState[] swerveModuleStates = m_kinematics.toSwerveModuleStates(
-    //             lockTargetInAuto
-    //                     ? ChassisSpeeds.fromRobotRelativeSpeeds(chassisSpeeds.vxMetersPerSecond,
-    //                             chassisSpeeds.vyMetersPerSecond,
-    //                             Aimlock.hasTarget() ? m_aim.getRotationSpeedForTarget()
-    //                                     : chassisSpeeds.omegaRadiansPerSecond, // comment
-    //                             getGyroYawRotation2d())
-    //                     : chassisSpeeds);
-
-    //     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxPossibleSpeed);
-
-    //     this.layout.setDesiredXSpeed(chassisSpeeds.vxMetersPerSecond);
-    //     this.layout.setDesiredYSpeed(chassisSpeeds.vyMetersPerSecond);
-    //     this.layout.setDesiredRotSpeed(Math.toDegrees(chassisSpeeds.omegaRadiansPerSecond));
-
-    //     // passing back the math from kinematics to the swerves themselves.
-    //     m_frontLeft.setDesiredState(swerveModuleStates[0]);
-    //     m_frontRight.setDesiredState(swerveModuleStates[1]);
-    //     m_backLeft.setDesiredState(swerveModuleStates[2]);
-    //     m_backRight.setDesiredState(swerveModuleStates[3]);
-    // }
-
     public Pose2d getRoboPose2d() {
         return m_odometry.getPoseMeters();
     }
-
-    /**
-     * THIS IS IN DEGREES
-     * Triangulates position of robot knowing the distance between two april tags
-     * seen by the camera.
-     * 
-     * @param length
-     * @param angle1
-     * @param angle2
-     * @return
-     */
-    // public Pose2d calcRoboPose2dWithVision(double length, double angle1, double angle2) {
-    //     double L = length; // dist between the two april tags
-    //     double a1 = angle1; // angle (from the camera) of the close april tag (a1) and the far april tag
-    //                         // (a2)
-    //     double a2 = angle2;
-    //     double gyroOffset = 0;
-    //     double roboAngle = -m_gyro.getYaw() + gyroOffset; // angle of the robot (0 degrees = facing the drivers)
-
-    //     double X = (L * Math.sin(Math.toRadians(90 + roboAngle + a2)) * Math.sin(Math.toRadians(90 - roboAngle - a1)))
-    //             / Math.sin(Math.toRadians(Math.abs(a2 - a1)));
-
-    //     double Y = (L * Math.sin(Math.toRadians(90 + roboAngle + a2)) * Math.cos(Math.toRadians(90 - roboAngle - a1)))
-    //             / Math.sin(Math.toRadians(Math.abs(a2 - a1)));
-
-    //     return new Pose2d(X, Y, getGyroYawRotation2d());
-    // }
 
     public void stopDriving() {
         SwerveModuleState[] swerveModuleStates = m_kinematics.toSwerveModuleStates(

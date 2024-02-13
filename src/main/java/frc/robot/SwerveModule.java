@@ -21,7 +21,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Modules;
 
 public class SwerveModule {
@@ -259,14 +258,7 @@ public class SwerveModule {
             m_driveMotor.setVoltage(driveOutput + driveFeedforward);
         }
 
-        // SmartDashboard.putNumber("voltage to wheels", driveOutput+driveFeedforward);
-
         this.goToPosition(state.angle.getRadians());
-
-        // SmartDashboard.putNumber(m_swerveModuleName + " Target Turning Position",
-        // state.angle.getRadians());
-        // SmartDashboard.putNumber(m_swerveModuleName + " Actual Turning Position",
-        // getActualTurningPosition());
     }
 
     /**

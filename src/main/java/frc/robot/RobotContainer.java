@@ -6,16 +6,7 @@ package frc.robot;
 
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.fasterxml.jackson.databind.module.SimpleKeyDeserializers;
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -34,21 +25,15 @@ import frc.robot.Commands.resetOdo;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  //private final CommandXboxController m_manipController = new CommandXboxController(Controller.kManipController);
   private final CommandXboxController m_driveController = new CommandXboxController(Controller.kDriveController);
   private static final Pigeon2 m_gyro = new Pigeon2(ID.kGyro);
   public final Drivetrain m_swerve = new Drivetrain(m_gyro);
-  // public final PneumaticSubsystem m_pneumatics = new PneumaticSubsystem();
-  // private final PickupSubsystem m_pickup = new PickupSubsystem();
   Command driveCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     m_gyro.getConfigurator().apply(new MountPoseConfigs().withMountPoseYaw(-90));
-    
-    //pass le aimbot. once we convert all this to command based we will pass the aim to the command instead of the subsystem. make it work for now, then we will make it right!
-    //m_swerve.setAim(m_aim);
-    //m_shooter.setAim(m_aim);
+
     // Xbox controllers return negative values when we push forward.   
     driveCommand = new Drive(m_swerve);
     m_swerve.setDefaultCommand(driveCommand);
@@ -76,42 +61,13 @@ public class RobotContainer {
 
 
     //drive cont bindings
-    //m_driveController.leftBumper().onTrue(new lockTarget(m_swerve));
     m_driveController.rightBumper().onTrue((new resetOdo(m_swerve)));
-    /*
-         * Y = forward camera
-         * A = back camera
-         */
-        // m_driveController.y().onTrue(this.m_cameraSubsystem.setSourceCommand(CameraSourceOption.USB_CAMERA)
-        //         .alongWith(this.m_swerve.setDirectionOptionCommand(Drivetrain.DirectionOption.BACKWARD)));
-        // m_driveController.b().onTrue(this.m_cameraSubsystem.setSourceCommand(CameraSourceOption.FISHEYE));
-        // m_driveController.a().onTrue(this.m_cameraSubsystem.setSourceCommand(CameraSourceOption.LIMELIGHT)
-        //         .alongWith(this.m_swerve.setDirectionOptionCommand(Drivetrain.DirectionOption.FORWARD)));
-        m_driveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());
-
-    //manip cont bindings
-    // m_manipController.x().onTrue(Commands.runOnce(()-> Aimlock.setDoState(DoState.NOTE)));
-    // m_manipController.a().onTrue(Commands.runOnce(()-> Aimlock.setDoState(DoState.SPEAKER)));
-    // m_manipController.b().onTrue(Commands.runOnce(()-> Aimlock.setDoState(DoState.AMP)));
-    // m_manipController.y().onTrue(Commands.runOnce(()-> Aimlock.setDoState(DoState.SOURCE)));
-    // new Trigger(()-> m_cameraSubsystem.isLLOdoGood(5.0)).whileTrue(m_rumble.setRumbleCommand(RumbleType.kBothRumble, 0.5, 0.25));
+    m_driveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());
   }
-
-  // public Command toggleIntake() {
-  //   return Commands.runOnce(()-> m_pneumatics.toggleIntake(), m_pneumatics);
-  // }
-
-  // public Command toggleLift() {
-  //   return Commands.runOnce(()-> m_pneumatics.toggleLift(), m_pneumatics);
-  // }
 
   public Drivetrain getDrivetrain() {
     return m_swerve;
   }
-
-  // public ShooterSubsystem getShooter() {
-  //   return m_shooter; //
-  // }
 
   public Command getTeleOpCommand() {
     return driveCommand;
