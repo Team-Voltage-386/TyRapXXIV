@@ -85,6 +85,7 @@ public class Drivetrain extends SubsystemBase {
             DriveTrain.driveFeedForward);
 
     private final Pigeon2 m_gyro;
+    private final CameraSubsystem m_camera;
 
     private boolean fieldRelative = true;
     private DirectionOption m_forwardDirection = DirectionOption.FORWARD;
@@ -108,11 +109,12 @@ public class Drivetrain extends SubsystemBase {
     private Pose2d robotFieldPosition;
     private boolean lockTargetInAuto = false;
 
-    public Drivetrain(Pigeon2 m_gyro) {
+    public Drivetrain(Pigeon2 gyro, CameraSubsystem camera) {
         // Zero at beginning of match. Zero = whatever direction the robot (more
         // specifically the gyro) is facing
-        this.m_gyro = m_gyro;
+        this.m_gyro = gyro;
         this.resetGyro();
+        this.m_camera = camera;
 
         m_odometry = new SwerveDriveOdometry(
                 m_kinematics,
@@ -122,9 +124,7 @@ public class Drivetrain extends SubsystemBase {
                         m_frontRight.getPosition(),
                         m_backLeft.getPosition(),
                         m_backRight.getPosition()
-                },
-                new Pose2d(
-                        new Translation2d(2.0, 6.0), Rotation2d.fromDegrees(0.0)));
+                });
 
         robotFieldPosition = getRoboPose2d();
     }
@@ -288,7 +288,7 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // resetOdo(m_camera.resetOdoLimelight());
+        resetOdo(m_camera.resetOdoLimelight());
         updateOdometry();
     }
 }

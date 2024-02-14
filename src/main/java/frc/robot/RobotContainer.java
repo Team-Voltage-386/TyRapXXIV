@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Controller;
 import frc.robot.Constants.ID;
+import frc.robot.Subsystems.CameraSubsystem;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.PickupSubsystem;
 import frc.robot.Subsystems.PneumaticSubsystem;
@@ -28,8 +29,9 @@ import frc.robot.Commands.resetOdo;
  */
 public class RobotContainer {
   private final CommandXboxController m_driveController = new CommandXboxController(Controller.kDriveController);
+  private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
   private static final Pigeon2 m_gyro = new Pigeon2(ID.kGyro);
-  public final Drivetrain m_swerve = new Drivetrain(m_gyro);
+  public final Drivetrain m_swerve = new Drivetrain(m_gyro, m_cameraSubsystem);
   public final PickupSubsystem m_pickup = new PickupSubsystem();
   public final PneumaticSubsystem m_pneumatics = new PneumaticSubsystem();
   Command driveCommand;
