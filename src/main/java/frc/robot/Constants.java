@@ -71,13 +71,6 @@ public class Constants {
         public static final double[] drivePID = { 0.9, 0.00, 0.00 };
         public static final double[] turnFeedForward = { 0.0, 0.3 };
         public static final double[] driveFeedForward = { 0.0, 2.65 };
-
-        /*
-         * public static final double[] turnPID = { 5, 1.0, 0.0 };
-        public static final double[] drivePID = { 0.5, 0.11, 0.11 };
-        public static final double[] turnFeedForward = { 0.0, 0.45 };
-        public static final double[] driveFeedForward = { 0.0, 2.74 };
-         */
     };
 
     public static final class Modules {
