@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Controller;
 import frc.robot.Constants.ID;
 import frc.robot.Subsystems.Drivetrain;
+import frc.robot.Subsystems.PickupSubsystem;
+import frc.robot.Subsystems.PneumaticSubsystem;
 import frc.robot.Commands.Drive;
 import frc.robot.Commands.StopDrive;
 import frc.robot.Commands.resetOdo;
@@ -28,6 +30,8 @@ public class RobotContainer {
   private final CommandXboxController m_driveController = new CommandXboxController(Controller.kDriveController);
   private static final Pigeon2 m_gyro = new Pigeon2(ID.kGyro);
   public final Drivetrain m_swerve = new Drivetrain(m_gyro);
+  public final PickupSubsystem m_pickup = new PickupSubsystem();
+  public final PneumaticSubsystem m_pneumatics = new PneumaticSubsystem();
   Command driveCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -43,6 +47,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("Lock Target in Auto", Commands.runOnce(()-> m_swerve.setLockTargetInAuto(true), m_swerve));
     NamedCommands.registerCommand("Dont Lock Target in Auto", Commands.runOnce(()-> m_swerve.setLockTargetInAuto(false), m_swerve));
 
+    m_driveController.leftBumper().whileTrue(Commands.run(()-> m_pickup.runMotors()));
+    m_driveController.leftBumper().onFalse(Commands.runOnce(()-> m_pickup.stopMotors()));
+
+    m_driveController.a().onTrue(Commands.runOnce(()-> m_pneumatics.toggleIntake()));
     // Configure the trigger bindings
     configureBindings();
     // Configure the button bindings
