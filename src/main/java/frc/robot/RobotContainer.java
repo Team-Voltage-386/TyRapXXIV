@@ -9,6 +9,7 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Controller;
@@ -80,7 +81,7 @@ public class RobotContainer {
   }
 
   public Command getTeleOpCommand() {
-    return driveCommand;
+    return new ParallelCommandGroup(driveCommand, Commands.runOnce(()-> m_pneumatics.disableIntake(), m_pneumatics));
   }
 
   public void print() {
