@@ -69,8 +69,8 @@ public class Constants {
         //ITS TUNED. NO TOUCH!
         public static final double[] turnPID = { 0, 0.0, 0.0 };
         public static final double[] drivePID = { 0.0, 0.00, 0.00 };
-        public static final double[] turnFeedForward = { 0.0, 0.00 };
-        public static final double[] driveFeedForward = { 0.0, 0.0 };
+        public static final double[] turnFeedForward = { 0.0, 0.35 };
+        public static final double[] driveFeedForward = { 0.0, 0 };
 
         /*
          * public static final double[] turnPID = { 5, 1.0, 0.0 };
@@ -105,8 +105,8 @@ public class Constants {
         /**
          * Encoder offsets
          */
-        public static final double kFrontLeftOffset = -0.40;
-        public static final double kFrontRightOffset = -1.62;
+        public static final double kFrontLeftOffset = -0.43;
+        public static final double kFrontRightOffset = -1.61;
         public static final double kBackLeftOffset = -1.53;
         public static final double kBackRightOffset = 0.86;
     }
