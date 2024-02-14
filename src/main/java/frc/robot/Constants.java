@@ -67,10 +67,10 @@ public class Constants {
         public static final double kTranslationPathPlannerP = 5; //shouldnt need anything other than P
         public static final double kRotationPathPlannerP = 4.5;
         //ITS TUNED. NO TOUCH!
-        public static final double[] turnPID = { 0, 0.0, 0.0 };
-        public static final double[] drivePID = { 0.0, 0.00, 0.00 };
-        public static final double[] turnFeedForward = { 0.0, 0.35 };
-        public static final double[] driveFeedForward = { 0.0, 0 };
+        public static final double[] turnPID = { 4.5, 0.0, 0.0 };
+        public static final double[] drivePID = { 0.9, 0.00, 0.00 };
+        public static final double[] turnFeedForward = { 0.0, 0.3 };
+        public static final double[] driveFeedForward = { 0.0, 2.65 };
 
         /*
          * public static final double[] turnPID = { 5, 1.0, 0.0 };

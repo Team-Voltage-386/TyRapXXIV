@@ -84,6 +84,8 @@ public class SwerveModule {
     private GenericEntry absEncoderOffset;
     private GenericEntry desiredTurningSpeed;
     private GenericEntry actualTurningSpeed;
+    private GenericEntry desiredDriveSpeed;
+    private GenericEntry actualDriveSpeed;
 
     /**
      * Constructs a SwerveModule with a drive motor, turning motor, drive encoder
@@ -168,6 +170,9 @@ public class SwerveModule {
 
         this.desiredTurningSpeed = Shuffleboard.getTab(m_swerveModuleName).add("Desired Turning Speed", 0.0).withPosition(3, 0).withSize(2, 1).getEntry();
         this.actualTurningSpeed = Shuffleboard.getTab(m_swerveModuleName).add("Actual Turning Speed", 0.0).withPosition(3, 1).withSize(2, 1).getEntry();
+
+        this.desiredDriveSpeed = Shuffleboard.getTab(m_swerveModuleName).add("Desired Drive Speed", 0.0).withPosition(3, 3).withSize(2, 1).getEntry();
+        this.actualDriveSpeed = Shuffleboard.getTab(m_swerveModuleName).add("Actual Drive Speed", 0.0).withPosition(3, 4).withSize(2, 1).getEntry();
     }
 
     /**
@@ -265,6 +270,9 @@ public class SwerveModule {
                 state.speedMetersPerSecond);
 
         final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
+
+        desiredDriveSpeed.setDouble(state.speedMetersPerSecond);
+        actualDriveSpeed.setDouble(currentMPS);
 
         if(desiredState.speedMetersPerSecond < 0.1){
             m_driveMotor.setVoltage(0);
