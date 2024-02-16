@@ -31,6 +31,10 @@ public class Constants {
         public static final int kShooterAimMotorID = 14;
         public static final int kShooterMotorID = 15;
         public static final int kRollerMotorID = 16;
+
+        //Elevator IDs
+        public static final int kMotorAID;
+        public static final int kMotorBID;
     }
 
     public static class Deadbands {
@@ -45,6 +49,9 @@ public class Constants {
         public static final int kSourceID = 3;
     }
 
+    public static class Elevator {
+    
+    }
     public static class Shooter {
         public static final double kShooterSpeed = 10;
         public static final double kMaxAngle = 52;
