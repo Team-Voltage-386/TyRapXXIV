@@ -456,6 +456,8 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("Target", Math.toDegrees(m_aim.getSpeakerAimTargetAngle()));
+        SmartDashboard.putNumber("rot", getRoboPose2d().getRotation().getDegrees());
         resetOdo(m_camera.resetOdoLimelight());
         updateOdometry();
 

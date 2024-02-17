@@ -30,9 +30,9 @@ public class Aimlock {
         setPipeline(PipeLineID.kSpeakerID);
     }
 
-    //PID/FF for chassis rotation speed
-    private SimpleMotorFeedforward aimFF = new SimpleMotorFeedforward(0.0, 19);
-    private ProfiledPIDController aimPID = new ProfiledPIDController(5, 0.02, 0.5, new Constraints(Math.toRadians(180), Math.toRadians(180)));
+    //PID/FF for chassis rotation speedr
+    private SimpleMotorFeedforward aimFF = new SimpleMotorFeedforward(0.0, 20);
+    private ProfiledPIDController aimPID = new ProfiledPIDController(5.5, 0.05, 0.1, new Constraints(Math.toRadians(180), Math.toRadians(180)));
     
     private SimpleMotorFeedforward RRaimFF = new SimpleMotorFeedforward(0.0, 0);
     private ProfiledPIDController RRaimPID = new ProfiledPIDController(5.2, 0.01, 0.1, 

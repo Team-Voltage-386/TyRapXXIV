@@ -53,11 +53,11 @@ public class RobotContainer {
   private static final Pigeon2 m_gyro = new Pigeon2(ID.kGyro);
   private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
   public final Drivetrain m_swerve = new Drivetrain(m_gyro, m_cameraSubsystem);
-  public final PneumaticSubsystem m_pneumatics = new PneumaticSubsystem();
+  // public final PneumaticSubsystem m_pneumatics = new PneumaticSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final Aimlock m_aim = new Aimlock(m_swerve, m_shooter);
   private final RumbleSubsystem m_rumble = new RumbleSubsystem(m_driveController);
-  private final PickupSubsystem m_pickup = new PickupSubsystem();
+  // private final PickupSubsystem m_pickup = new PickupSubsystem();
   Command driveCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -120,7 +120,7 @@ public class RobotContainer {
     new Trigger(()-> m_cameraSubsystem.isLLOdoGood(5.0)).whileTrue(m_rumble.setRumbleCommand(RumbleType.kBothRumble, 0.5, 0.25));
     
     //when we get a piece, close the intake
-    new Trigger(()-> m_pickup.isHoldingPiece()).and(()-> m_pneumatics.getIntakeDeployed()).onTrue(new ToggleIntake(m_pickup, m_pneumatics));
+    // new Trigger(()-> m_pickup.isHoldingPiece()).and(()-> m_pneumatics.getIntakeDeployed()).onTrue(new ToggleIntake(m_pickup, m_pneumatics));
   }
 
   Command path1;
@@ -171,11 +171,11 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new ParallelCommandGroup(path1, new ResetPneumatics(m_pneumatics));
+    return new ParallelCommandGroup(path1);//, new ResetPneumatics(m_pneumatics));
   }
 
   public Command getTeleOpCommand() {
-    return new ParallelCommandGroup(driveCommand, new ResetPneumatics(m_pneumatics));
+    return new ParallelCommandGroup(driveCommand);//, new ResetPneumatics(m_pneumatics));
   }
 
   /**
