@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc.robot.Constants.MotorConstants;
+import frc.robot.Constants.ID;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
@@ -35,7 +35,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         m_highSwitch = new DigitalInput(3);
         m_lowSwitch = new DigitalInput(4);
 
-        m_motorA = new CANSparkMax(MotorConstants.kDeviceIDMotorA, MotorType.kBrushless);
+        m_motorA = new CANSparkMax(ID.kElevatorMotorAID, MotorType.kBrushless);
+        m_motorB = new CANSparkMax(ID.kElevatorMotorBID, MotorType.kBrushless);
 
     }
 

@@ -33,8 +33,8 @@ public class Constants {
         public static final int kRollerMotorID = 16;
 
         //Elevator IDs
-        public static final int kMotorAID;
-        public static final int kMotorBID;
+        public static final int kElevatorMotorAID = 99;
+        public static final int kElevatorMotorBID = 99;
     }
 
     public static class Deadbands {
