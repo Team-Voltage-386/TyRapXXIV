@@ -4,6 +4,12 @@ import edu.wpi.first.math.util.Units;
 import frc.robot.Subsystems.Drivetrain;
 
 public class Constants {
+    public static class rioPorts
+    {
+        public static final int kLoadedPieceDetectorChannel = 0;
+        public static final int kSecondaryPieceDetectorChannel = 0;
+    }
+
     public static class ID {
         // Swerve motor controller IDs
         public static final int kFrontLeftTurn = 1;
@@ -27,10 +33,15 @@ public class Constants {
         // Pigeon
         public static final int kGyro = 13;
 
-        // Shooter motor controller IDs
-        public static final int kShooterAimMotorID = 14;
-        public static final int kShooterMotorID = 15;
-        public static final int kRollerMotorID = 16;
+        // Intake SparkMax motor IDs
+        public static final int kFrontPickupMotorID = 14;
+        public static final int kRearPickupMotorID = 15;
+
+        // Shooter motor controller IDs 
+        //TO BE ADDED!!!
+        public static final int kShooterAimMotorID = 0;
+        public static final int kShooterMotorID = 0;
+        public static final int kLoaderMotorID = 0;
     }
 
     public static class Deadbands {

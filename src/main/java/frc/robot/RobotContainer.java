@@ -53,7 +53,7 @@ public class RobotContainer {
     m_driveController.leftBumper().whileTrue(Commands.run(()-> m_pickup.runMotors()));
     m_driveController.leftBumper().onFalse(Commands.runOnce(()-> m_pickup.stopMotors()));
 
-    m_driveController.a().onTrue(Commands.runOnce(()-> m_pneumatics.toggleIntake()));
+    m_driveController.a().onTrue(Commands.runOnce(()-> m_pneumatics.enableIntake()));
     // Configure the trigger bindings
     configureBindings();
     // Configure the button bindings

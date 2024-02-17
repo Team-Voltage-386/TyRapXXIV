@@ -5,115 +5,50 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.Constants.Pneumatics;
+
 public class PneumaticSubsystem extends SubsystemBase {
-    private DoubleSolenoid m_handOff;
-    private DoubleSolenoid m_intake;
-    private DoubleSolenoid m_stabilizer;
-    private boolean m_liftDeployed = false;
-    private boolean m_intakeDeployed = false;
-    private boolean m_stabilizerDeployed = false;
+    
+    //Pneumatics to lower the pickup mechanisms to the ground
+    private DoubleSolenoid m_intakePneumatics;
+    //Pneumatics to lift a loaded note into the shooter
+    private DoubleSolenoid m_loaderPneumatics;
+    //Pneumatics to latcht the loader and lock it in place or realese it from the shooter
+    private DoubleSolenoid m_latchPneumatics;
 
     public PneumaticSubsystem() {
-        //this.m_handOff = new DoubleSolenoid(0, PneumaticsModuleType.CTREPCM, 2, 3);
-        this.m_intake = new DoubleSolenoid(0, PneumaticsModuleType.CTREPCM, 0, 1);
-        //this.m_stabilizer = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 6, 7);
+        //this.m_loaderPneumatics = new DoubleSolenoid(Pneumatics.kPneumaticsModule, PneumaticsModuleType.CTREPCM, 2, 3);
+        this.m_intakePneumatics = new DoubleSolenoid(Pneumatics.kPneumaticsModule, PneumaticsModuleType.CTREPCM, 0, 1);
+        //this.m_latchPneumatics = new DoubleSolenoid(Pneumatics.kPneumaticsModule, PneumaticsModuleType.CTREPCM, 6, 7);
     }
 
-    //handoff shit
-
-    public void enableLift() {
-        if(!getLiftDeployed()) {
-            this.m_handOff.set(Value.kForward);
-            this.liftOut(true);
-        }
+    //Brings the loader up to the shooter mechanism
+    public void enableLoader() {
+        this.m_loaderPneumatics.set(Value.kForward);
     }
 
-    public void disableLift() {
-        if(getLiftDeployed()) {
-            this.m_handOff.set(Value.kReverse);
-            this.liftOut(false);
-        }
+    //Depowers the loader so the forces of gravity can act against it 
+    public void disableLoader() {
+        this.m_loaderPneumatics.set(Value.kReverse);
     }
 
-    public void toggleLift() {
-        if(getLiftDeployed()) {
-            disableLift();
-        }
-        else {
-            enableLift();
-        }
-    }
-
-    public boolean getLiftDeployed() {
-        return m_liftDeployed;
-    }
-
-    public void liftOut(boolean isLiftOut) {
-        this.m_liftDeployed = isLiftOut;
-    }
-
-    // intake shit
-
+    //Drops the intake down in to pickup mode
     public void enableIntake() {
-        if(!getIntakeDeployed()) {
-            this.m_intake.set(Value.kForward);
-            this.intakeOut(true);
-        }
+        this.m_intakePneumatics.set(Value.kForward);
     }
 
+    //Picks up the intake back in to the frame so we can't intake a piece
     public void disableIntake() {
-        if(getIntakeDeployed()) {
-            this.m_intake.set(Value.kReverse);
-            this.intakeOut(false);
-        }
+        this.m_intakePneumatics.set(Value.kReverse);
     }
 
-    public void toggleIntake() {
-        if(getIntakeDeployed()) {
-            disableIntake();
-        }
-        else {
-            enableIntake();
-        }
+    //Locks the latch so the loader can't fall back down
+    public void enableLatch() {
+        this.m_latchPneumatics.set(Value.kForward);
     }
 
-    public boolean getIntakeDeployed() {
-        return m_intakeDeployed;
-    }
-
-    public void intakeOut(boolean isIntakeOut) {
-        this.m_intakeDeployed = isIntakeOut;
-    }
-
-    //stabilizer shit
-    public void enableStabilizer() {
-        if(!getStabilizerDeployed()) {
-            this.m_stabilizer.set(Value.kForward);
-            this.stabilizerOut(true);
-        }
-    }
-
-    public void disableStabilizer() {
-        if(getStabilizerDeployed()) {
-            this.m_intake.set(Value.kReverse);
-            this.stabilizerOut(false);
-        }
-    }
-
-    public void toggleStabilizer() {
-        if(getIntakeDeployed()) {
-            disableStabilizer();
-        }
-        else {
-            enableStabilizer();
-        }
-    }
-
-    public boolean getStabilizerDeployed() {
-        return m_stabilizerDeployed;
-    }
-
-    public void stabilizerOut(boolean isIntakeOut) {
-        this.m_stabilizerDeployed = isIntakeOut;
+    //Unlocks the latch so the loader can fall back down to the pickup position
+    public void disableLatch() {
+        this.m_intakePneumatics.set(Value.kReverse);
     }
 }
