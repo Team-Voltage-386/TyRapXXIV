@@ -27,10 +27,15 @@ public class Constants {
         // Pigeon
         public static final int kGyro = 13;
 
+        // Intake Pickup IDs
+        public static final int kFrontPickup = 14;
+        public static final int kBackPickup = 15;
+
         // Shooter motor controller IDs
-        public static final int kShooterAimMotorID = 14;
-        public static final int kShooterMotorID = 15;
-        public static final int kRollerMotorID = 16;
+        public static final int kTopShooterMotorID = 16;
+        public static final int kBottomShooterMotorID = 17;
+        public static final int kShooterAimMotorID = 18;
+        public static final int kRollerMotorID = 19;
     }
 
     public static class Deadbands {

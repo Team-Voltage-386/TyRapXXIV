@@ -26,8 +26,8 @@ public class PickupSubsystem extends SubsystemBase {
 
     public PickupSubsystem () {
         //holdingPieceDetector = new DigitalInput(ID.kPieceDetector);
-        frontIntakeMotor = new CANSparkMax(14, MotorType.kBrushless);
-        backIntakeMotor = new CANSparkMax(15, MotorType.kBrushless);
+        frontIntakeMotor = new CANSparkMax(ID.kFrontPickup, MotorType.kBrushless);
+        backIntakeMotor = new CANSparkMax(ID.kBackPickup, MotorType.kBrushless);
     }
 
     /**

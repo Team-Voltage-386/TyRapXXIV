@@ -18,6 +18,7 @@ import frc.robot.Subsystems.CameraSubsystem;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.PickupSubsystem;
 import frc.robot.Subsystems.PneumaticSubsystem;
+import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Commands.Drive;
 import frc.robot.Commands.StopDrive;
 import frc.robot.Commands.resetOdo;
@@ -35,6 +36,7 @@ public class RobotContainer {
   public final Drivetrain m_swerve = new Drivetrain(m_gyro, m_cameraSubsystem);
   public final PickupSubsystem m_pickup = new PickupSubsystem();
   public final PneumaticSubsystem m_pneumatics = new PneumaticSubsystem();
+  public final ShooterSubsystem m_shooter = new ShooterSubsystem();
   Command driveCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -74,6 +76,7 @@ public class RobotContainer {
     //drive cont bindings
     m_driveController.rightBumper().onTrue((new resetOdo(m_swerve)));
     m_driveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());
+    m_driveController.a().onTrue(Commands.runOnce(()->m_shooter.zeroShooterEncoder(), m_shooter));
   }
 
   public Drivetrain getDrivetrain() {
