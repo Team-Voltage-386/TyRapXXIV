@@ -1,9 +1,19 @@
 package frc.robot;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Subsystems.Drivetrain;
 
 public class Constants {
+    public static class Pneumatics {
+        public static final int kPneumaticsModule = 0;
+    }
+
+    public static class rioPorts {
+        public static final int kLoadedPieceDetectorChannel = 0;
+        public static final int kSecondaryPieceDetectorChannel = 0;
+    }
+
     public static class ID {
         // Swerve motor controller IDs
         public static final int kFrontLeftTurn = 1;
@@ -43,7 +53,7 @@ public class Constants {
         public static final double kRightJoyStickDeadband = 0.1;
     }
 
-    public static class PipeLineID { //todo update these to actually use them in game
+    public static class PipeLineID { // todo update these to actually use them in game
         public static final int kNoteID = 0;
         public static final int kSpeakerID = 1;
         public static final int kAmpID = 2;
@@ -60,18 +70,18 @@ public class Constants {
     public static class DriveTrain {
         public static final double kDistanceMiddleToFrontMotor = 0.314325;
         public static final double kDistanceMiddleToSideMotor = 0.314325;
-        public static final double kDriveBaseRadius = Math.sqrt( //distance from the middle to the furthest wheel
-        kDistanceMiddleToFrontMotor*kDistanceMiddleToFrontMotor +
-        kDistanceMiddleToSideMotor*kDistanceMiddleToSideMotor);
+        public static final double kDriveBaseRadius = Math.sqrt( // distance from the middle to the furthest wheel
+                kDistanceMiddleToFrontMotor * kDistanceMiddleToFrontMotor +
+                        kDistanceMiddleToSideMotor * kDistanceMiddleToSideMotor);
 
         public static final int kXForward = 1;
         public static final int kXBackward = -1;
         public static final int kYLeft = 1;
         public static final int kYRight = -1;
 
-        public static final double kTranslationPathPlannerP = 5; //shouldnt need anything other than P
+        public static final double kTranslationPathPlannerP = 5; // shouldnt need anything other than P
         public static final double kRotationPathPlannerP = 4.5;
-        //ITS TUNED. NO TOUCH!
+        // ITS TUNED. NO TOUCH!
         public static final double[] turnPID = { 4.5, 0.0, 0.0 };
         public static final double[] drivePID = { 0.9, 0.00, 0.00 };
         public static final double[] turnFeedForward = { 0.0, 0.3 };
@@ -86,8 +96,8 @@ public class Constants {
     }
 
     public static class Controller {
-        public static final int kDriveController = 0;
-        public static final int kManipController = 1;
+        public static final int kDriveControllerID = 0;
+        public static final int kManipControllerID = 1;
 
         /**
          * Rate limiters make joystick inputs more gentle; 1/3 sec from 0 to 1.
@@ -96,6 +106,9 @@ public class Constants {
         public static final double kRateLimitYSpeed = 100.0;
         public static final double kRateLimitRot = 100.0;
         public static final double kMaxNecessarySpeed = Drivetrain.kMaxPossibleSpeed * 0.8;
+
+        public static final CommandXboxController kDriveController = new CommandXboxController(kDriveControllerID);
+        public static final CommandXboxController kManipulatorController = new CommandXboxController(kManipControllerID);
     }
 
     public static class Offsets {

@@ -11,7 +11,7 @@ import frc.robot.Constants.Controller;
 
 public class Drive extends Command {
     Drivetrain dt;
-    private final XboxController m_controller = new XboxController(Controller.kDriveController);
+    private final XboxController m_controller = new XboxController(Controller.kDriveControllerID);
     private final SlewRateLimiter m_xspeedLimiter = new SlewRateLimiter(Controller.kRateLimitXSpeed);
     private final SlewRateLimiter m_yspeedLimiter = new SlewRateLimiter(Controller.kRateLimitYSpeed);
     private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(Controller.kRateLimitRot);
@@ -60,7 +60,7 @@ public class Drive extends Command {
             }
         }
     }
-    
+
     @Override
     public void execute() {
         readControllers();
