@@ -19,8 +19,10 @@ import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.PickupSubsystem;
 import frc.robot.Subsystems.PneumaticSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
+import frc.robot.Utils.Aimlock;
 import frc.robot.Commands.Drive;
 import frc.robot.Commands.StopDrive;
+import frc.robot.Commands.lockTarget;
 import frc.robot.Commands.resetOdo;
 
 /**
@@ -37,11 +39,15 @@ public class RobotContainer {
   public final PickupSubsystem m_pickup = new PickupSubsystem();
   public final PneumaticSubsystem m_pneumatics = new PneumaticSubsystem();
   public final ShooterSubsystem m_shooter = new ShooterSubsystem();
+    private final Aimlock m_aim = new Aimlock(m_swerve, m_shooter);
   Command driveCommand;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     m_gyro.getConfigurator().apply(new MountPoseConfigs().withMountPoseYaw(-90));
+
+    m_swerve.setAim(m_aim);
+    m_shooter.setAim(m_aim);
 
     // Xbox controllers return negative values when we push forward.   
     driveCommand = new Drive(m_swerve);
@@ -52,10 +58,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("Lock Target in Auto", Commands.runOnce(()-> m_swerve.setLockTargetInAuto(true), m_swerve));
     NamedCommands.registerCommand("Dont Lock Target in Auto", Commands.runOnce(()-> m_swerve.setLockTargetInAuto(false), m_swerve));
 
-    m_driveController.leftBumper().whileTrue(Commands.run(()-> m_pickup.runMotors()));
-    m_driveController.leftBumper().onFalse(Commands.runOnce(()-> m_pickup.stopMotors()));
+    // m_driveController.leftBumper().whileTrue(Commands.run(()-> m_pickup.runMotors()));
+    // m_driveController.leftBumper().onFalse(Commands.runOnce(()-> m_pickup.stopMotors()));
 
-    m_driveController.a().onTrue(Commands.runOnce(()-> m_pneumatics.toggleIntake()));
+    // m_driveController.a().onTrue(Commands.runOnce(()-> m_pneumatics.toggleIntake()));
     // Configure the trigger bindings
     configureBindings();
     // Configure the button bindings
@@ -72,7 +78,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
-
+    m_driveController.leftBumper().onTrue(new lockTarget(m_swerve));
     //drive cont bindings
     m_driveController.rightBumper().onTrue((new resetOdo(m_swerve)));
     m_driveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());

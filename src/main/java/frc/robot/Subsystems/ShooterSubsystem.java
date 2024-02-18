@@ -1,5 +1,7 @@
 package frc.robot.Subsystems;
 
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -18,13 +20,14 @@ import frc.robot.Constants.ID;
 import frc.robot.Constants.Shooter;
 // import frc.robot.Utils.Aimlock;
 // import frc.robot.Utils.LimelightHelpers;
+import frc.robot.Utils.Aimlock;
 
 public class ShooterSubsystem extends SubsystemBase {
 
     private CANSparkMax aimMotor;
     private CANSparkMax topShooterMotor;
     private CANSparkMax bottomShooterMotor;
-    // private CANSparkMax rollerMotor;
+    private TalonSRX rollerMotor;
     
     DigitalInput topLimit;
     DigitalInput bottomLimit;
@@ -34,9 +37,9 @@ public class ShooterSubsystem extends SubsystemBase {
     private SimpleMotorFeedforward m_rollFF;
 
     //if this is true it lets the handoff roller motor and the shooter rollers know to start spinning
-    private boolean hasPiece = false;
+    private boolean hasPiece = true;
 
-    // Aimlock m_aim;
+    Aimlock m_aim;
 
     /**
      * constraints in degrees
@@ -48,39 +51,46 @@ public class ShooterSubsystem extends SubsystemBase {
      * desired note speed in Meters Per Second. set kShooterSpeed to this after testing
      */
     double shootSpeed;
-    double hoodAngle;
+    // double hoodAngle;
 
     public ShooterSubsystem() {
         //init aim motor
         aimMotor = new CANSparkMax(ID.kShooterAimMotorID, MotorType.kBrushless);
-        aimMotor.setIdleMode(IdleMode.kCoast); //todo change to brake after testing
+        aimMotor.setIdleMode(IdleMode.kBrake); //todo change to brake after testing
 
         topLimit = new DigitalInput(8);
         bottomLimit = new DigitalInput(9);
 
-        m_aimPID = new ProfiledPIDController(0.0, 0, 0.0, new Constraints(40, 90));
-        m_aimFF = new ArmFeedforward(0, 0, 0);
+        m_aimPID = new ProfiledPIDController(0.19, 0.0, 0.02, new Constraints(15, 90)); //0.19
+        m_aimFF = new ArmFeedforward(0.09, 0.1, 0.225); //0.225
+
+        // m_aimPID = new ProfiledPIDController(0.0, 0.0, 0.0, new Constraints(15, 90));
+        // m_aimFF = new ArmFeedforward(0.0, 0.0, 0.0);
         
         //init shooter motors
         topShooterMotor = new CANSparkMax(ID.kTopShooterMotorID, MotorType.kBrushless);
         topShooterMotor.setIdleMode(IdleMode.kCoast);
+        topShooterMotor.setInverted(true);
         bottomShooterMotor = new CANSparkMax(ID.kBottomShooterMotorID, MotorType.kBrushless);
         bottomShooterMotor.setIdleMode(IdleMode.kCoast);
-        m_shootPID = new ProfiledPIDController(0, 0, 0, new Constraints(10, 10));
-        m_shootFF = new SimpleMotorFeedforward(0.0, 0.0);
+        bottomShooterMotor.follow(topShooterMotor, false);
+        m_shootPID = new ProfiledPIDController(0.25, 0, 0, new Constraints(10, 10));
+        m_shootFF = new SimpleMotorFeedforward(0.0, 0.45);
+
+        // m_shootPID = new ProfiledPIDController(0.0, 0, 0, new Constraints(10, 10));
+        // m_shootFF = new SimpleMotorFeedforward(0.0, 0.0);
 
         //init roller handoff motor
-        // rollerMotor = new CANSparkMax(ID.kRollerMotorID, MotorType.kBrushless);
-        // rollerMotor.setIdleMode(IdleMode.kBrake);
+        rollerMotor = new TalonSRX(ID.kRollerMotorID);
 
         //get shooter speed
-        shootSpeed = SmartDashboard.getNumber("ShootSpeed", Shooter.kShooterSpeed);
-        hoodAngle = SmartDashboard.getNumber("hood angle", 5);
+        shootSpeed = Shooter.kShooterSpeed;//SmartDashboard.getNumber("ShootSpeed", Shooter.kShooterSpeed);
+        // hoodAngle = SmartDashboard.getNumber("hood angle", 5);
     }
 
-    // public void setAim(Aimlock m_aim) {
-    //     this.m_aim = m_aim;
-    // }
+    public void setAim(Aimlock m_aim) {
+        this.m_aim = m_aim;
+    }
 
     public void setAimPos(double n) {
         aimMotor.getEncoder().setPosition(Units.degreesToRotations(n));
@@ -113,7 +123,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public void spoolMotors() {
         if(hasPiece) {
             topShooterMotor.setVoltage(m_shootFF.calculate(shootSpeed) + m_shootPID.calculate(getShooterMPS(), shootSpeed));
-            // rollerMotor.setVoltage(RollFF.calculate(Shooter.kRollerRPM));
+            rollerMotor.set(TalonSRXControlMode.PercentOutput, -0.40);
         }
     }
 
@@ -138,7 +148,7 @@ public class ShooterSubsystem extends SubsystemBase {
             double volts = m_aimPID.calculate(
                     getShooterAngle(),
                     targetAngle)
-                + m_aimFF.calculate(targetAngle, Math.toRadians(20));
+                + m_aimFF.calculate(targetAngle, targetAngle-getShooterAngle());
                     // targetAngle-getShooterAngle());
             SmartDashboard.putNumber("volts to hood", volts);
             aimMotor.setVoltage(volts);
@@ -155,9 +165,9 @@ public class ShooterSubsystem extends SubsystemBase {
         shootSpeed = SmartDashboard.getNumber("ShootSpeed", shootSpeed);
     }
 
-    public void updateHoodAngle() {
-        hoodAngle = SmartDashboard.getNumber("hood angle", hoodAngle);
-    }
+    // public void updateHoodAngle() {
+    //     hoodAngle = SmartDashboard.getNumber("hood angle", hoodAngle);
+    // }
 
     public boolean getTopLimit() {
         return !topLimit.get();
@@ -180,11 +190,15 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Raw Shooter angle", Units.rotationsToDegrees(aimMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle).getPosition()));
         SmartDashboard.putBoolean("top limit", getTopLimit());
         SmartDashboard.putBoolean("bottom limit", getBottomLimit());
+        SmartDashboard.putNumber("shooterspeed", getShooterMPS());
+        SmartDashboard.putNumber("des shoot speed", getDesiredShooterSpeed());
         // SmartDashboard.putNumber("Target angle", (m_aim.getShooterTargetAngle()));
         // SmartDashboard.putNumber("vert angle speaker", Math.toDegrees(m_aim.getVerticalAngleToSpeaker()));
         // SmartDashboard.putNumber("TY", LimelightHelpers.getTY("limelight-a"));
         // SmartDashboard.putNumber("dist speaker", m_aim.getDistToSpeaker());
         updateShootSpeed();
-        aimShooter(5);
+        SmartDashboard.putNumber("target shooter angle", m_aim.getShooterTargetAngle());
+        aimShooter(m_aim.getShooterTargetAngle());
+        spoolMotors();
     }
 }

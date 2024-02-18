@@ -23,6 +23,7 @@ import frc.robot.Constants.Offsets;
 import frc.robot.SwerveModule;
 import frc.robot.Constants.DriveTrain;
 import frc.robot.ShuffleboardLayouts.DrivetrainLayout;
+import frc.robot.Utils.Aimlock;
 
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain extends SubsystemBase {
@@ -92,6 +93,8 @@ public class Drivetrain extends SubsystemBase {
     private final ShuffleboardTab m_driveTab = Shuffleboard.getTab("drive subsystem");
     private final SimpleWidget m_fieldRelativeWidget = m_driveTab.add("drive field relative", fieldRelative);
 
+    private Aimlock m_aim;
+
     private DrivetrainLayout layout = new DrivetrainLayout();
 
     /**
@@ -127,6 +130,10 @@ public class Drivetrain extends SubsystemBase {
                 });
 
         robotFieldPosition = getRoboPose2d();
+    }
+
+    public void setAim(Aimlock m_aim) {
+        this.m_aim = m_aim;
     }
 
     public void setLockTargetInAuto(boolean lock) {
@@ -233,6 +240,44 @@ public class Drivetrain extends SubsystemBase {
                 fieldRelative
                         ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotSpeed, getGyroYawRotation2d())
                         : new ChassisSpeeds(xSpeed, ySpeed, rotSpeed));
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxPossibleSpeed);
+
+        // passing back the math from kinematics to the swerves themselves.
+        m_frontLeft.setDesiredState(swerveModuleStates[0]);
+        m_frontRight.setDesiredState(swerveModuleStates[1]);
+        m_backLeft.setDesiredState(swerveModuleStates[2]);
+        m_backRight.setDesiredState(swerveModuleStates[3]);
+
+        this.layout.setDesiredXSpeed(xSpeed);
+        this.layout.setDesiredYSpeed(ySpeed);
+        this.layout.setDesiredRotSpeed(Math.toDegrees(rotSpeed));
+    }
+
+    public void lockPiece(double xSpeed, double ySpeed, double rotSpeed, boolean fieldRelative, boolean hardLocked) {
+        SwerveModuleState[] swerveModuleStates; // MAKE SURE swervestates can be init like this with this kinda array
+        if (Aimlock.hasTarget()) {
+            rotSpeed = m_aim.getRotationSpeedForTarget();
+            if (hardLocked) {
+                swerveModuleStates = m_kinematics.toSwerveModuleStates(
+                        new ChassisSpeeds(xSpeed, 0, rotSpeed));
+            } else {
+                swerveModuleStates = m_kinematics.toSwerveModuleStates(
+                        ChassisSpeeds.fromFieldRelativeSpeeds(
+                                xSpeed, ySpeed, rotSpeed, getGyroYawRotation2d()));
+            }
+        } else {
+            if (hardLocked) {
+                swerveModuleStates = m_kinematics.toSwerveModuleStates(
+                        new ChassisSpeeds(xSpeed, 0, rotSpeed));
+            } else {
+                swerveModuleStates = m_kinematics.toSwerveModuleStates(
+                        fieldRelative
+                                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotSpeed,
+                                        getGyroYawRotation2d())
+                                : new ChassisSpeeds(xSpeed, ySpeed, rotSpeed));
+            }
+        }
 
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxPossibleSpeed);
 
