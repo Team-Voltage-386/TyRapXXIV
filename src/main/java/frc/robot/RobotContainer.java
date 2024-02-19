@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Controller;
 import frc.robot.Constants.ID;
+import frc.robot.Constants.PipeLineID;
 import frc.robot.Subsystems.CameraSubsystem;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.ShooterSubsystem;
@@ -23,6 +24,7 @@ import frc.robot.Subsystems.PickupOrchestrator;
 import frc.robot.Subsystems.PneumaticsSubsystem;
 import frc.robot.Commands.Drive;
 import frc.robot.Commands.StopDrive;
+import frc.robot.Commands.aimShooterCommand;
 import frc.robot.Commands.lockTarget;
 import frc.robot.Commands.resetOdo;
 
@@ -56,8 +58,9 @@ public class RobotContainer {
 
     m_swerve.setAim(m_aim);
     m_shooter.setAim(m_aim);
+    m_shooter.setDefaultCommand(new aimShooterCommand(m_shooter));
 
-    // Xbox controllers return negative values when we push forward.   
+    // Xbox controllers return negative values when we push forward.
     // Xbox controllers return negative values when we push forward.
     driveCommand = new Drive(m_swerve);
     m_swerve.setDefaultCommand(driveCommand);
@@ -91,8 +94,11 @@ public class RobotContainer {
   private void configureBindings() {
 
     Controller.kDriveController.leftBumper().onTrue(new lockTarget(m_swerve));
-    //drive cont bindings
-    Controller.kDriveController.a().onTrue(Commands.runOnce(()->m_shooter.zeroShooterEncoder(), m_shooter));
+    // drive cont bindings
+    Controller.kDriveController.a().onTrue(Commands.runOnce(() -> m_shooter.zeroShooterEncoder(), m_shooter));
+    Controller.kDriveController.b().onTrue(Commands.runOnce(() -> m_shooter.hasPieceToggle(), m_shooter));
+    Controller.kDriveController.x().onTrue(Commands.runOnce(() -> Aimlock.setPipeline(PipeLineID.kSpeakerID)));
+    Controller.kDriveController.y().onTrue(Commands.runOnce(() -> m_shooter.shootToggle(), m_shooter));
     // drive cont bindings
     Controller.kDriveController.rightBumper().onTrue((new resetOdo(m_swerve)));
     Controller.kDriveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());
@@ -102,6 +108,10 @@ public class RobotContainer {
     Controller.kManipulatorController.b().onTrue(m_pickup.disableIntakeCommand());
     Controller.kManipulatorController.x().onTrue(m_pickup.loadPieceCommand());
     Controller.kManipulatorController.y().onTrue(m_pickup.lowerLoaderCommand());
+    Controller.kManipulatorController.rightBumper()
+        .whileTrue(Commands.runOnce(() -> m_shooter.driveShooterManually(-0.8), m_shooter));
+    Controller.kManipulatorController.rightBumper()
+        .whileTrue(Commands.runOnce(() -> m_shooter.driveShooterManually(0.8), m_shooter));
   }
 
   public Drivetrain getDrivetrain() {

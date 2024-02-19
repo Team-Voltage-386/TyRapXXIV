@@ -32,7 +32,7 @@ public class Aimlock {
 
     //PID/FF for chassis rotation speed
     private SimpleMotorFeedforward aimFF = new SimpleMotorFeedforward(0.0, 15);
-    private ProfiledPIDController aimPID = new ProfiledPIDController(7, 0.02, 0.5, new Constraints(Math.toRadians(180), Math.toRadians(180)));
+    private ProfiledPIDController aimPID = new ProfiledPIDController(4, 0.02, 0.5, new Constraints(Math.toRadians(180), Math.toRadians(180)));
     
     private SimpleMotorFeedforward RRaimFF = new SimpleMotorFeedforward(0.0, 0);
     private ProfiledPIDController RRaimPID = new ProfiledPIDController(5.2, 0.01, 0.1, 
@@ -41,7 +41,7 @@ public class Aimlock {
     private static final String limelightName = "limelight-b";
     private double limelightHeight = Units.inchesToMeters(25.5);
     private double targetTagHeight = Units.inchesToMeters(51.88);
-    private double speakerHeight = Units.inchesToMeters(80);
+    private double speakerHeight = Units.inchesToMeters(78);
 
     /**
      * select the pipeline you want to use
@@ -156,7 +156,7 @@ public class Aimlock {
 
     public double getShooterTargetAngleSPEAKER() {
         if(!hasTarget())
-            return 3;
+            return Shooter.kMaxAngle;
 
         //motion towards target
         double M = Math.hypot(m_swerve.getChassisSpeeds().vyMetersPerSecond*Math.sin(Math.toRadians(getAngleToSpeaker())),
@@ -170,7 +170,7 @@ public class Aimlock {
         double realAngle = Math.atan(Vy/Vx);
         //the angle we NEED to shoot at to hit the target. (just the amount of degrees of error in the other direction)
         double angle = Math.toDegrees(2*getVerticalAngleToSpeaker() - realAngle) - 32;
-        
+
         SmartDashboard.putNumber("Angle before constraints", angle);
         if(angle >= Shooter.kMinAngle && angle <= Shooter.kMaxAngle)
             return angle;

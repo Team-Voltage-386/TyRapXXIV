@@ -77,7 +77,7 @@ public class PneumaticsSubsystem extends SubsystemBase {
     }
 
     public Command disableIntakeSolenoidCommand() {
-        return (runOnce(this::disableIntakeSolenoidCommand));
+        return (runOnce(this::disableIntakeSolenoid));
     }
 
     public Command enableLatchSolenoidCommand() {

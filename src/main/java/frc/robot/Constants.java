@@ -61,9 +61,9 @@ public class Constants {
     }
 
     public static class Shooter {
-        public static final double kShooterSpeed = 17.5;
-        public static final double kMaxAngle = 15;
-        public static final double kMinAngle = 5;
+        public static final double kShooterSpeed = 16;
+        public static final double kMaxAngle = 29;
+        public static final double kMinAngle = 4;
         public static final double kRollerRPM = 500;
     }
 

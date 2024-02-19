@@ -18,7 +18,7 @@ public class PickupOrchestrator extends SubsystemBase {
     private PickupMotorsSubsystem m_pickupMotors;
 
     // Temporary
-    TalonSRX motorA = new TalonSRX(19);
+    // TalonSRX motorA = new TalonSRX(19);
 
     public PickupOrchestrator(PneumaticsSubsystem pneumatics, PickupMotorsSubsystem pickupMotors) {
         m_pickupMotors = pickupMotors;
