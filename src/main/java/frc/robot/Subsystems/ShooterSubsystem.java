@@ -3,10 +3,12 @@ package frc.robot.Subsystems;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -16,6 +18,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ID;
 import frc.robot.Constants.Shooter;
 // import frc.robot.Utils.Aimlock;
@@ -28,6 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private CANSparkMax topShooterMotor;
     private CANSparkMax bottomShooterMotor;
     private TalonSRX rollerMotor;
+    private RelativeEncoder relativeEncoder;
 
     DigitalInput topLimit;
     DigitalInput bottomLimit;
@@ -60,6 +64,7 @@ public class ShooterSubsystem extends SubsystemBase {
         // init aim motor
         aimMotor = new CANSparkMax(ID.kShooterAimMotorID, MotorType.kBrushless);
         aimMotor.setIdleMode(IdleMode.kBrake); // todo change to brake after testing
+        relativeEncoder = aimMotor.getEncoder();
 
         topLimit = new DigitalInput(8);
         bottomLimit = new DigitalInput(9);
@@ -90,6 +95,22 @@ public class ShooterSubsystem extends SubsystemBase {
         shootSpeed = Shooter.kShooterSpeed;// SmartDashboard.getNumber("ShootSpeed", Shooter.kShooterSpeed);
         // hoodAngle = SmartDashboard.getNumber("hood angle", 5);
         shoot = false;
+        new Trigger(() -> getBottomLimit()).onTrue(runOnce(() -> zeroRelativeShooterEncoder()));
+    }
+
+    /**
+     * @return degrees
+     */
+    public double getRelativeShooterEncoder() {
+        return relativeEncoder.getPosition();
+    }
+
+    public void zeroRelativeShooterEncoder() {
+        relativeEncoder.setPosition(0);
+    }
+
+    public double getShooterAngleRelative() {
+        return getRelativeShooterEncoder() * (20.0 / 23.0);
     }
 
     public void hasPieceToggle() {
@@ -108,10 +129,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public Aimlock getAim() {
         return this.m_aim;
-    }
-
-    public void setAimPos(double n) {
-        aimMotor.getEncoder().setPosition(Units.degreesToRotations(n));
     }
 
     /**
@@ -137,11 +154,17 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void driveShooterManually(double power) {
         if (power > 0 && getTopLimit()) {
+            aimMotor.setVoltage(0);
         } else {
             if (power < 0 && getBottomLimit()) {
+                aimMotor.setVoltage(0);
             } else
                 aimMotor.setVoltage(power);
         }
+    }
+
+    public void stopDrivingShooter() {
+        aimMotor.setVoltage(0);
     }
 
     double previous = 0;
@@ -211,34 +234,29 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public void aimShooter(double targetAngle) {
         double volts = 0;
-        if (!getTopLimit() && !getBottomLimit() && Aimlock.hasTarget()) {
-            volts = m_aimPID.calculate(
-                    getShooterAngle(),
+        if (Aimlock.hasTarget()) {
+            // if we see the LL target, aim at it
+            volts = m_aimPID.calculate( // todo retune
+                    getShooterAngleRelative(),
                     targetAngle)
-                    + m_aimFF.calculate(targetAngle, targetAngle - getShooterAngle());
-        }
-        if (getTopLimit()) {
-            volts = -0.8;
-        }
-        if (getBottomLimit()) {
-            volts = 0.8;
-        }
-        if (!Aimlock.hasTarget()) {
-            if (!getTopLimit()) {
-                volts = 0.8;
-            } else {
-                volts = 0;
-            }
-        }
-
-        if (volts > 0 && getTopLimit()) {
+                    + m_aimFF.calculate(targetAngle, targetAngle - getShooterAngleRelative());
         } else {
-            if (volts < 0 && getBottomLimit()) {
-            } else
-                aimMotor.setVoltage(volts);
+            // if we dont see the with the limelight, go to the upper limit slowly
+            volts = 2;
         }
 
-        SmartDashboard.putNumber("volts to hood", volts);
+        // cap the voltage at 2.5
+        volts = MathUtil.clamp(volts, -2.5, 2.5);
+
+        // check if hitting limits, if hitting limit, let the motor still drive the
+        // other direction.
+        if (volts > 0 && getTopLimit()) {
+            volts = 0;
+        } else if (volts < 0 && getBottomLimit()) {
+            volts = 0;
+        }
+
+        aimMotor.setVoltage(volts);
     }
 
     public void updateShootSpeed() {
@@ -266,12 +284,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Shooter angle", getShooterAngle());
-        SmartDashboard.putNumber("Raw Shooter angle", getHex());
+        SmartDashboard.putNumber("Shooter angle (rel)", getShooterAngleRelative());
+        SmartDashboard.putNumber("Raw Shooter angle (rel)", getRelativeShooterEncoder());
         SmartDashboard.putBoolean("top limit", getTopLimit());
         SmartDashboard.putBoolean("bottom limit", getBottomLimit());
         SmartDashboard.putNumber("shooterspeed", getShooterMPS());
         SmartDashboard.putNumber("des shoot speed", getDesiredShooterSpeed());
+        SmartDashboard.putNumber("volts to hood", aimMotor.getBusVoltage());
         // SmartDashboard.putNumber("Target angle", (m_aim.getShooterTargetAngle()));
         // SmartDashboard.putNumber("vert angle speaker",
         // Math.toDegrees(m_aim.getVerticalAngleToSpeaker()));

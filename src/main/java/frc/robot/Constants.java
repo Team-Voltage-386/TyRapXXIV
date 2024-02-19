@@ -62,7 +62,7 @@ public class Constants {
 
     public static class Shooter {
         public static final double kShooterSpeed = 16;
-        public static final double kMaxAngle = 29;
+        public static final double kMaxAngle = 22;
         public static final double kMinAngle = 4;
         public static final double kRollerRPM = 500;
     }
@@ -108,7 +108,8 @@ public class Constants {
         public static final double kMaxNecessarySpeed = Drivetrain.kMaxPossibleSpeed * 0.8;
 
         public static final CommandXboxController kDriveController = new CommandXboxController(kDriveControllerID);
-        public static final CommandXboxController kManipulatorController = new CommandXboxController(kManipControllerID);
+        public static final CommandXboxController kManipulatorController = new CommandXboxController(
+                kManipControllerID);
     }
 
     public static class Offsets {

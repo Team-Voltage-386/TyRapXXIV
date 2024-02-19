@@ -95,7 +95,7 @@ public class RobotContainer {
 
     Controller.kDriveController.leftBumper().onTrue(new lockTarget(m_swerve));
     // drive cont bindings
-    Controller.kDriveController.a().onTrue(Commands.runOnce(() -> m_shooter.zeroShooterEncoder(), m_shooter));
+    Controller.kDriveController.a().onTrue(Commands.runOnce(() -> m_shooter.zeroRelativeShooterEncoder(), m_shooter));
     Controller.kDriveController.b().onTrue(Commands.runOnce(() -> m_shooter.hasPieceToggle(), m_shooter));
     Controller.kDriveController.x().onTrue(Commands.runOnce(() -> Aimlock.setPipeline(PipeLineID.kSpeakerID)));
     Controller.kDriveController.y().onTrue(Commands.runOnce(() -> m_shooter.shootToggle(), m_shooter));
@@ -108,10 +108,12 @@ public class RobotContainer {
     Controller.kManipulatorController.b().onTrue(m_pickup.disableIntakeCommand());
     Controller.kManipulatorController.x().onTrue(m_pickup.loadPieceCommand());
     Controller.kManipulatorController.y().onTrue(m_pickup.lowerLoaderCommand());
-    Controller.kManipulatorController.rightBumper()
-        .whileTrue(Commands.runOnce(() -> m_shooter.driveShooterManually(-0.8), m_shooter));
-    Controller.kManipulatorController.rightBumper()
-        .whileTrue(Commands.runOnce(() -> m_shooter.driveShooterManually(0.8), m_shooter));
+    Controller.kManipulatorController.leftBumper().and(() -> !m_shooter.getBottomLimit())
+        .whileTrue(Commands.runOnce(() -> m_shooter.driveShooterManually(-2.5)))
+        .onFalse(Commands.runOnce(() -> m_shooter.stopDrivingShooter()));
+    Controller.kManipulatorController.rightBumper().and(() -> !m_shooter.getTopLimit())
+        .whileTrue(Commands.runOnce(() -> m_shooter.driveShooterManually(2.5)))
+        .onFalse(Commands.runOnce(() -> m_shooter.stopDrivingShooter()));
   }
 
   public Drivetrain getDrivetrain() {
