@@ -65,12 +65,13 @@ public class ShooterSubsystem extends SubsystemBase {
         aimMotor = new CANSparkMax(ID.kShooterAimMotorID, MotorType.kBrushless);
         aimMotor.setIdleMode(IdleMode.kBrake); // todo change to brake after testing
         relativeEncoder = aimMotor.getEncoder();
+        relativeEncoder.setPositionConversionFactor(20.0 / 23.142);
 
         topLimit = new DigitalInput(8);
         bottomLimit = new DigitalInput(9);
 
-        m_aimPID = new ProfiledPIDController(0.19, 0.0, 0.02, new Constraints(15, 90)); // 0.19
-        m_aimFF = new ArmFeedforward(0.09, 0.1, 0.225); // 0.225
+        m_aimPID = new ProfiledPIDController(0.5, 0.0, 0.04, new Constraints(15, 90)); // 0.19
+        m_aimFF = new ArmFeedforward(0.09, 0.1, 0.5); // 0.225
 
         // m_aimPID = new ProfiledPIDController(0.0, 0.0, 0.0, new Constraints(15, 90));
         // m_aimFF = new ArmFeedforward(0.0, 0.0, 0.0);
@@ -81,9 +82,10 @@ public class ShooterSubsystem extends SubsystemBase {
         topShooterMotor.setInverted(true);
         bottomShooterMotor = new CANSparkMax(ID.kBottomShooterMotorID, MotorType.kBrushless);
         bottomShooterMotor.setIdleMode(IdleMode.kCoast);
-        bottomShooterMotor.follow(topShooterMotor, false);
-        m_shootPID = new ProfiledPIDController(0.25, 0, 0, new Constraints(10, 10));
-        m_shootFF = new SimpleMotorFeedforward(0.0, 0.45);
+        bottomShooterMotor.setInverted(true);
+        // bottomShooterMotor.follow(topShooterMotor, false);
+        m_shootPID = new ProfiledPIDController(0.2, 0, 0.0, new Constraints(10, 10));
+        m_shootFF = new SimpleMotorFeedforward(0.0, 0.415);
 
         // m_shootPID = new ProfiledPIDController(0.0, 0, 0, new Constraints(10, 10));
         // m_shootFF = new SimpleMotorFeedforward(0.0, 0.0);
@@ -95,7 +97,6 @@ public class ShooterSubsystem extends SubsystemBase {
         shootSpeed = Shooter.kShooterSpeed;// SmartDashboard.getNumber("ShootSpeed", Shooter.kShooterSpeed);
         // hoodAngle = SmartDashboard.getNumber("hood angle", 5);
         shoot = false;
-        new Trigger(() -> getBottomLimit()).onTrue(runOnce(() -> zeroRelativeShooterEncoder()));
     }
 
     /**
@@ -105,12 +106,12 @@ public class ShooterSubsystem extends SubsystemBase {
         return relativeEncoder.getPosition();
     }
 
-    public void zeroRelativeShooterEncoder() {
-        relativeEncoder.setPosition(0);
+    public void setRelativeShooterEncoder(double set) {
+        relativeEncoder.setPosition(set);
     }
 
     public double getShooterAngleRelative() {
-        return getRelativeShooterEncoder() * (20.0 / 23.0);
+        return getRelativeShooterEncoder();
     }
 
     public void hasPieceToggle() {
@@ -134,22 +135,43 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * @return Shoot motor RPM
      */
-    public double getShootMotorRPM() {
+    public double getTopShootMotorRPM() {
         return topShooterMotor.getEncoder().getVelocity();
     }
 
     /**
      * @return Shoot motor RPM
      */
-    public double getShootMotorRPS() {
+    public double getTopShootMotorRPS() {
         return topShooterMotor.getEncoder().getVelocity() / 60;
     }
 
     /**
      * @return how fast a note would come out of the shooter in meters per second
      */
-    public double getShooterMPS() {
-        return getShootMotorRPS() * Math.PI * Units.inchesToMeters(4);
+    public double getTopShooterMPS() {
+        return getTopShootMotorRPS() * Math.PI * Units.inchesToMeters(4);
+    }
+
+    /**
+     * @return Shoot motor RPM
+     */
+    public double getBottomShootMotorRPM() {
+        return bottomShooterMotor.getEncoder().getVelocity();
+    }
+
+    /**
+     * @return Shoot motor RPM
+     */
+    public double getBottomShootMotorRPS() {
+        return bottomShooterMotor.getEncoder().getVelocity() / 60;
+    }
+
+    /**
+     * @return how fast a note would come out of the shooter in meters per second
+     */
+    public double getBottomShooterMPS() {
+        return getBottomShootMotorRPS() * Math.PI * Units.inchesToMeters(4);
     }
 
     public void driveShooterManually(double power) {
@@ -200,19 +222,56 @@ public class ShooterSubsystem extends SubsystemBase {
      * set motors spinning at their desired rpms
      */
     public void spoolMotors() {
-        if (hasPiece) {
-            if (shoot) {
-                topShooterMotor.setVoltage(m_shootFF.calculate(shootSpeed));// + m_shootPID.calculate(getShooterMPS(),
-                                                                            // shootSpeed));
-                rollerMotor.set(TalonSRXControlMode.PercentOutput, -0.80);
-            } else {
-                topShooterMotor.setVoltage(
-                        m_shootFF.calculate(shootSpeed) + m_shootPID.calculate(getShooterMPS(), shootSpeed));
-            }
-        } else {
-            topShooterMotor.setVoltage(0);
-            rollerMotor.set(TalonSRXControlMode.PercentOutput, -0.0);
+        switch (Aimlock.getDoState()) {
+            case SPEAKER:
+                if (hasPiece) {
+                    if (shoot) {
+                        topShooterMotor.setVoltage(
+                                m_shootFF.calculate(shootSpeed) + m_shootPID.calculate(getTopShooterMPS(), shootSpeed));
+                        bottomShooterMotor.setVoltage(
+                                m_shootFF.calculate(shootSpeed)
+                                        + m_shootPID.calculate(getBottomShooterMPS(), shootSpeed));
+                        rollerMotor.set(TalonSRXControlMode.PercentOutput, -0.5);
+                    } else {
+                        topShooterMotor.setVoltage(
+                                m_shootFF.calculate(shootSpeed) + m_shootPID.calculate(getTopShooterMPS(), shootSpeed));
+                        bottomShooterMotor.setVoltage(
+                                m_shootFF.calculate(shootSpeed)
+                                        + m_shootPID.calculate(getBottomShooterMPS(), shootSpeed));
+                    }
+                } else {
+                    topShooterMotor.setVoltage(0);
+                    bottomShooterMotor.setVoltage(0);
+                    rollerMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
+                }
+                break;
+            case AMP:
+                if (hasPiece) {
+                    if (shoot) {
+                        topShooterMotor.setVoltage(
+                                m_shootFF.calculate(Shooter.kTopAmpShooterSpeed)
+                                        + m_shootPID.calculate(getTopShooterMPS(), Shooter.kTopAmpShooterSpeed));
+                        bottomShooterMotor.setVoltage(
+                                m_shootFF.calculate(Shooter.kBottomAmpShooterSpeed)
+                                        + m_shootPID.calculate(getBottomShooterMPS(), Shooter.kBottomAmpShooterSpeed));
+                        rollerMotor.set(TalonSRXControlMode.PercentOutput, -0.5);
+                    } else {
+                        topShooterMotor.setVoltage(
+                                m_shootFF.calculate(Shooter.kTopAmpShooterSpeed)
+                                        + m_shootPID.calculate(getTopShooterMPS(), Shooter.kTopAmpShooterSpeed));
+                        bottomShooterMotor.setVoltage(
+                                m_shootFF.calculate(Shooter.kBottomAmpShooterSpeed)
+                                        + m_shootPID.calculate(getBottomShooterMPS(), Shooter.kBottomAmpShooterSpeed));
+                    }
+                } else {
+                    topShooterMotor.setVoltage(0);
+                    bottomShooterMotor.setVoltage(0);
+                    rollerMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
+                }
+            default:
+                break;
         }
+
     }
 
     /**
@@ -236,13 +295,13 @@ public class ShooterSubsystem extends SubsystemBase {
         double volts = 0;
         if (Aimlock.hasTarget()) {
             // if we see the LL target, aim at it
-            volts = m_aimPID.calculate( // todo retune
+            volts = m_aimPID.calculate(
                     getShooterAngleRelative(),
                     targetAngle)
                     + m_aimFF.calculate(targetAngle, targetAngle - getShooterAngleRelative());
         } else {
             // if we dont see the with the limelight, go to the upper limit slowly
-            volts = 2;
+            volts = 2.5;
         }
 
         // cap the voltage at 2.5
@@ -288,7 +347,8 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Raw Shooter angle (rel)", getRelativeShooterEncoder());
         SmartDashboard.putBoolean("top limit", getTopLimit());
         SmartDashboard.putBoolean("bottom limit", getBottomLimit());
-        SmartDashboard.putNumber("shooterspeed", getShooterMPS());
+        SmartDashboard.putNumber("top shoot", getTopShooterMPS());
+        SmartDashboard.putNumber("bot shoot", getBottomShooterMPS());
         SmartDashboard.putNumber("des shoot speed", getDesiredShooterSpeed());
         SmartDashboard.putNumber("volts to hood", aimMotor.getBusVoltage());
         // SmartDashboard.putNumber("Target angle", (m_aim.getShooterTargetAngle()));

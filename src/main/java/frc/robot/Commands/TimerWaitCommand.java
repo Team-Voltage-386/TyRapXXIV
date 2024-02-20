@@ -6,30 +6,20 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class TimerWaitCommand extends Command {
     private Timer watchClockTimer;
     private final double waitSeconds;
-    private boolean hasTimeElapsed;
 
     public TimerWaitCommand(double seconds) {
         watchClockTimer = new Timer();
         watchClockTimer.start();
         waitSeconds = seconds;
-        hasTimeElapsed = false;
     }
 
     @Override
     public void initialize() {
         watchClockTimer.reset();
-        hasTimeElapsed = false;
-    }
-
-    @Override
-    public void execute() {
-        if (watchClockTimer.advanceIfElapsed(waitSeconds)) {
-            hasTimeElapsed = true;
-        }
     }
 
     @Override
     public boolean isFinished() {
-        return hasTimeElapsed;
+        return watchClockTimer.advanceIfElapsed(waitSeconds);
     }
 }

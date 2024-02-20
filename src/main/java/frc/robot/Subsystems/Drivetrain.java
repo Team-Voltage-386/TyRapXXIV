@@ -16,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ID;
@@ -333,6 +334,8 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("Chassis Angle", getRoboPose2d().getRotation().getDegrees());
+        SmartDashboard.putNumber("Desired Angle", Math.toDegrees(m_aim.getSpeakerAimTargetAngle()));
         resetOdo(m_camera.resetOdoLimelight());
         updateOdometry();
     }

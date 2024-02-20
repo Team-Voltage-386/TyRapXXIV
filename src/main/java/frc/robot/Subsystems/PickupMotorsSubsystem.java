@@ -56,6 +56,13 @@ public class PickupMotorsSubsystem extends SubsystemBase {
         backIntakeMotor.setVoltage(pickupPID.calculate(getBackRealIntakeRPM(), goalRPM) + pickupFF.calculate(goalRPM));
     }
 
+    public void runMotorsReverse() {
+        frontIntakeMotor
+                .setVoltage(pickupPID.calculate(getFrontRealIntakeRPM(), -goalRPM) + pickupFF.calculate(-goalRPM));
+        backIntakeMotor
+                .setVoltage(pickupPID.calculate(getBackRealIntakeRPM(), -goalRPM) + pickupFF.calculate(-goalRPM));
+    }
+
     public void stopMotors() {
         frontIntakeMotor.setVoltage(0);
         backIntakeMotor.setVoltage(0);

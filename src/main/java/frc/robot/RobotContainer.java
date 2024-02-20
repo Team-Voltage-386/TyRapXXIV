@@ -93,27 +93,48 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
-    Controller.kDriveController.leftBumper().onTrue(new lockTarget(m_swerve));
-    // drive cont bindings
-    Controller.kDriveController.a().onTrue(Commands.runOnce(() -> m_shooter.zeroRelativeShooterEncoder(), m_shooter));
-    Controller.kDriveController.b().onTrue(Commands.runOnce(() -> m_shooter.hasPieceToggle(), m_shooter));
-    Controller.kDriveController.x().onTrue(Commands.runOnce(() -> Aimlock.setPipeline(PipeLineID.kSpeakerID)));
-    Controller.kDriveController.y().onTrue(Commands.runOnce(() -> m_shooter.shootToggle(), m_shooter));
+    Controller.kManipulatorController.x().onTrue(Commands.runOnce(() -> m_shooter.hasPieceToggle(), m_shooter));
+    Controller.kManipulatorController.x().onTrue(m_pickup.loadPieceCommand());
+    Controller.kManipulatorController.y().onTrue(Commands.runOnce(() -> m_shooter.hasPieceToggle(), m_shooter));
+    Controller.kManipulatorController.y().onTrue(m_pickup.lowerLoaderCommand());
+    Controller.kManipulatorController.a().onTrue(Commands.runOnce(() -> m_shooter.shootToggle(), m_shooter))
+        .onFalse(Commands.runOnce(() -> m_shooter.shootToggle(), m_shooter));
+    Controller.kManipulatorController.povLeft()
+        .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.AMP)));
+    Controller.kManipulatorController.povRight()
+        .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.SPEAKER)));
+    Controller.kManipulatorController.povDown()
+        .whileTrue(Commands.run(() -> m_pickupMotors.runMotorsReverse(), m_pickupMotors))
+        .onFalse(m_pickupMotors.stopMotorsCommand());
+    // Controller.kManipulatorController.leftBumper().and(() ->
+    // !m_shooter.getBottomLimit())
+    // .whileTrue(Commands.runOnce(() -> m_shooter.driveShooterManually(-2.5)))
+    // .onFalse(Commands.runOnce(() -> m_shooter.stopDrivingShooter()));
+    // Controller.kManipulatorController.rightBumper().and(() ->
+    // !m_shooter.getTopLimit())
+    // .whileTrue(Commands.runOnce(() -> m_shooter.driveShooterManually(2.5)))
+    // .onFalse(Commands.runOnce(() -> m_shooter.stopDrivingShooter()));
+    // Controller.kDriveController.b().onTrue(m_pickup.disableIntakeCommand());
+
+    // Controller.kDriveController.x().onTrue(Commands.runOnce(() ->
+    // Aimlock.setPipeline(PipeLineID.kSpeakerID)));
+
     // drive cont bindings
     Controller.kDriveController.rightBumper().onTrue((new resetOdo(m_swerve)));
-    Controller.kDriveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());
-
+    Controller.kDriveController.leftBumper().onTrue(new lockTarget(m_swerve));
+    // drive cont bindings
+    Controller.kDriveController.a().onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(0), m_shooter));
+    Controller.kDriveController.rightTrigger(0.25).onTrue(m_pickup.runIntakeCommand())
+        .onFalse(m_pickup.disableIntakeCommand());
+    // Controller.kDriveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());
     // Temporary
-    Controller.kManipulatorController.a().onTrue(m_pickup.runIntakeCommand());
-    Controller.kManipulatorController.b().onTrue(m_pickup.disableIntakeCommand());
-    Controller.kManipulatorController.x().onTrue(m_pickup.loadPieceCommand());
-    Controller.kManipulatorController.y().onTrue(m_pickup.lowerLoaderCommand());
-    Controller.kManipulatorController.leftBumper().and(() -> !m_shooter.getBottomLimit())
-        .whileTrue(Commands.runOnce(() -> m_shooter.driveShooterManually(-2.5)))
-        .onFalse(Commands.runOnce(() -> m_shooter.stopDrivingShooter()));
-    Controller.kManipulatorController.rightBumper().and(() -> !m_shooter.getTopLimit())
-        .whileTrue(Commands.runOnce(() -> m_shooter.driveShooterManually(2.5)))
-        .onFalse(Commands.runOnce(() -> m_shooter.stopDrivingShooter()));
+
+    // Controller.kManipulatorController.x()
+
+    new Trigger(() -> m_shooter.getBottomLimit())
+        .onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(0)));
+    new Trigger(() -> m_shooter.getTopLimit()).onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(
+        20)));
   }
 
   public Drivetrain getDrivetrain() {
