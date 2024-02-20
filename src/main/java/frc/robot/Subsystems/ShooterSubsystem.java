@@ -95,6 +95,14 @@ public class ShooterSubsystem extends SubsystemBase {
         shoot = false;
     }
 
+    public void setAimToBreakMode() {
+        aimMotor.setIdleMode(IdleMode.kBrake);
+    }
+
+    public void setAimToCoastMode() {
+        aimMotor.setIdleMode(IdleMode.kCoast);
+    }
+
     /**
      * @return degrees
      */

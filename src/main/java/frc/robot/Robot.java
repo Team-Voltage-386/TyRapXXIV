@@ -7,26 +7,33 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-public class Robot extends TimedRobot { 
-    
+public class Robot extends TimedRobot {
+
     private final RobotContainer m_containter = new RobotContainer();
 
     @Override
     public void robotInit() {
+        m_containter.m_shooter.setAimToCoastMode();
     }
 
     @Override
     public void autonomousInit() {
+        m_containter.m_shooter.setAimToBreakMode();
+    }
+
+    @Override
+    public void disabledInit() {
+        m_containter.m_shooter.setAimToCoastMode();
     }
 
     @Override
     public void teleopInit() {
-        //m_containter.resetShooterPos();
+        m_containter.m_shooter.setAimToBreakMode();
     }
 
     @Override
     public void autonomousPeriodic() {
-    } 
+    }
 
     @Override
     public void teleopPeriodic() {
@@ -41,8 +48,7 @@ public class Robot extends TimedRobot {
     public void disabledPeriodic() {
         // Only needed when measuring and configuring the encoder offsets. Can comment
         // out when not used
-        m_containter.print();
+        // m_containter.print();
     }
 
-    
 }

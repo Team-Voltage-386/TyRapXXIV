@@ -40,7 +40,7 @@ import frc.robot.Commands.resetOdo;
 public class RobotContainer {
   private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
   private static final Pigeon2 m_gyro = new Pigeon2(ID.kGyro);
-  public final Drivetrain m_swerve = new Drivetrain(m_gyro, m_cameraSubsystem);
+  private final Drivetrain m_swerve = new Drivetrain(m_gyro, m_cameraSubsystem);
   public final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final Aimlock m_aim = new Aimlock(m_swerve, m_shooter);
   public final PickupMotorsSubsystem m_pickupMotors = new PickupMotorsSubsystem();
@@ -142,7 +142,7 @@ public class RobotContainer {
   }
 
   public Command getTeleOpCommand() {
-    return new ParallelCommandGroup(driveCommand);
+    return new ParallelCommandGroup(driveCommand, Commands.runOnce(m_shooter::setAimToBreakMode, m_shooter));
   }
 
   public void print() {
