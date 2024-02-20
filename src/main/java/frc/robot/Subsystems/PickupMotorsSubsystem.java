@@ -15,7 +15,7 @@ import frc.robot.Constants.ID;
 
 public class PickupMotorsSubsystem extends SubsystemBase {
 
-    double goalRPM = 500;
+    double goalRPM = 350;
 
     DigitalInput holdingPieceDetector;
 

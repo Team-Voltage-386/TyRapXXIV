@@ -18,6 +18,7 @@ public class TimerWaitCommand extends Command {
     @Override
     public void initialize() {
         watchClockTimer.reset();
+        hasTimeElapsed = false;
     }
 
     @Override
