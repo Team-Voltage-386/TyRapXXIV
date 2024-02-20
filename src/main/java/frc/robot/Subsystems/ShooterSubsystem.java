@@ -4,7 +4,6 @@ import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -15,10 +14,8 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ID;
 import frc.robot.Constants.Shooter;
 // import frc.robot.Utils.Aimlock;
@@ -38,7 +35,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private ArmFeedforward m_aimFF;
     private SimpleMotorFeedforward m_shootFF;
-    private SimpleMotorFeedforward m_rollFF;
 
     // if this is true it lets the handoff roller motor and the shooter rollers know
     // to start spinning
@@ -192,32 +188,6 @@ public class ShooterSubsystem extends SubsystemBase {
     double previous = 0;
     double hexRegion = 0;
 
-    public double getHex() {
-        double now = Units
-                .rotationsToDegrees(aimMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle).getPosition());
-
-        if (now < 50 && previous > 310 && aimMotor.getBusVoltage() > 0) {
-            hexRegion++;
-        }
-        if (getTopLimit())
-            hexRegion = 1;
-
-        if (now > 310 && previous < 50 && aimMotor.getBusVoltage() < 0) {
-            hexRegion--;
-        }
-        if (getBottomLimit())
-            hexRegion = 0;
-
-        SmartDashboard.putNumber("previous", previous);
-
-        previous = now;
-
-        SmartDashboard.putNumber("hexRegios", hexRegion);
-        SmartDashboard.putNumber("now", now);
-        double returnThing = now + 360 * hexRegion;
-        return hexRegion < 0 ? 0 : returnThing;
-    }
-
     /**
      * set motors spinning at their desired rpms
      */
@@ -272,18 +242,6 @@ public class ShooterSubsystem extends SubsystemBase {
                 break;
         }
 
-    }
-
-    /**
-     * @return The real angle at which the shooter is pointing.
-     */
-    public double getShooterAngle() {
-        return getHex() / 16; // for the sake of simulating a gear ratio
-    }
-
-    public void zeroShooterEncoder() {
-        aimMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle).setZeroOffset(
-                aimMotor.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle).getPosition());
     }
 
     /**
