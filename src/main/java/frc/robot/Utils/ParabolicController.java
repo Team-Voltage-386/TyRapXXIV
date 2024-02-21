@@ -8,17 +8,17 @@ public class ParabolicController {
     }
 
     public ParabolicController(double p) {
-        this.p = p;
+        this.p = 0.01 * p;
     }
 
     public void setP(double p) {
-        this.p = p;
+        this.p = 0.01 * p;
     }
 
-    public double calc(double x) {
-        double ans = p * Math.pow(x, 2);
+    public double calc(double error) {
+        double ans = p * Math.pow(error, 2);
 
-        if (x < 0) {
+        if (error < 0) {
             return -ans;
         } else
             return ans;

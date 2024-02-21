@@ -21,6 +21,8 @@ import frc.robot.Constants.Shooter;
 // import frc.robot.Utils.Aimlock;
 // import frc.robot.Utils.LimelightHelpers;
 import frc.robot.Utils.Aimlock;
+import frc.robot.Utils.BellController;
+import frc.robot.Utils.ParabolicController;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -48,6 +50,10 @@ public class ShooterSubsystem extends SubsystemBase {
     ProfiledPIDController m_aimPID;
     ProfiledPIDController m_shootPID;
 
+    ParabolicController m_aimPC;
+
+    BellController m_aimBC;
+
     /**
      * desired note speed in Meters Per Second. set kShooterSpeed to this after
      * testing
@@ -68,6 +74,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
         m_aimPID = new ProfiledPIDController(0.5, 0.0, 0.04, new Constraints(15, 90)); // 0.19
         m_aimFF = new ArmFeedforward(0.09, 0.1, 0.5); // 0.225
+
+        m_aimPC = new ParabolicController(0); // test these
+        m_aimBC = new BellController(0, 0);
 
         // m_aimPID = new ProfiledPIDController(0.0, 0.0, 0.0, new Constraints(15, 90));
         // m_aimFF = new ArmFeedforward(0.0, 0.0, 0.0);
@@ -265,6 +274,9 @@ public class ShooterSubsystem extends SubsystemBase {
                     getShooterAngleRelative(),
                     targetAngle)
                     + m_aimFF.calculate(targetAngle, targetAngle - getShooterAngleRelative());
+            // volts = m_aimPC.calc(targetAngle - getShooterAngleRelative()); //todo test
+
+            // volts = m_aimBC.calc(targetAngle - getShooterAngleRelative()); //todo test
         } else {
             // if we dont see the with the limelight, go to the upper limit slowly
             volts = 2.5;
