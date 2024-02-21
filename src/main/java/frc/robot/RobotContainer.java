@@ -7,9 +7,12 @@ package frc.robot;
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Controller;
@@ -26,6 +29,7 @@ import frc.robot.Commands.Drive;
 import frc.robot.Commands.StopDrive;
 import frc.robot.Commands.aimShooterCommand;
 import frc.robot.Commands.lockTarget;
+import frc.robot.Commands.TimerWaitCommand;
 import frc.robot.Commands.resetOdo;
 
 /**
@@ -135,6 +139,14 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(0)));
     new Trigger(() -> m_shooter.getTopLimit()).onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(
         20)));
+    Controller.kManipulatorController.a().and(m_pickup.noPieceTrigger).onTrue(m_pickup.runIntakeCommand());
+    Controller.kManipulatorController.b().onTrue(m_pickup.disableIntakeCommand());
+    // Controller.kManipulatorController.x().onTrue(m_pickup.loadPieceCommand());
+    Controller.kManipulatorController.y().onTrue(m_pickup.lowerLoaderCommand());
+
+    Controller.kManipulatorController.rightBumper()
+        .onTrue(new SequentialCommandGroup(Commands.runOnce(() -> System.out.println(Timer.getFPGATimestamp())),
+            new TimerWaitCommand(1), Commands.runOnce(() -> System.out.println(Timer.getFPGATimestamp()))));
   }
 
   public Drivetrain getDrivetrain() {

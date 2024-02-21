@@ -6,6 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Utils.Flags;
+import frc.robot.Utils.Flags.subsystemsStates;
 
 public class Robot extends TimedRobot {
 
@@ -14,6 +16,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         m_containter.m_shooter.setAimToCoastMode();
+        Flags.pieceState = subsystemsStates.noPiece;
     }
 
     @Override
@@ -24,11 +27,14 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         m_containter.m_shooter.setAimToCoastMode();
+        Flags.pieceState = subsystemsStates.noPiece;
     }
 
     @Override
     public void teleopInit() {
         m_containter.m_shooter.setAimToBreakMode();
+        // m_containter.resetShooterPos();
+        Flags.pieceState = subsystemsStates.noPiece;
     }
 
     @Override

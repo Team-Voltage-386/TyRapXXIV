@@ -5,5 +5,5 @@ public class Flags {
         noPiece, holdingPiece, loadedPiece
     }
 
-    public static subsystemsStates pieceState;
+    public static subsystemsStates pieceState = subsystemsStates.noPiece;
 }
