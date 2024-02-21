@@ -15,9 +15,7 @@ import frc.robot.Constants.ID;
 
 public class PickupMotorsSubsystem extends SubsystemBase {
 
-    double goalRPM = 350;
-
-    DigitalInput holdingPieceDetector;
+    double goalRPM = 425;
 
     CANSparkMax frontIntakeMotor;
     CANSparkMax backIntakeMotor;
@@ -66,10 +64,6 @@ public class PickupMotorsSubsystem extends SubsystemBase {
     public void stopMotors() {
         frontIntakeMotor.setVoltage(0);
         backIntakeMotor.setVoltage(0);
-    }
-
-    public boolean isHoldingPiece() {
-        return holdingPieceDetector.get();
     }
 
     @Override

@@ -22,6 +22,7 @@ import frc.robot.Constants.Shooter;
 // import frc.robot.Utils.LimelightHelpers;
 import frc.robot.Utils.Aimlock;
 import frc.robot.Utils.BellController;
+import frc.robot.Utils.Flags;
 import frc.robot.Utils.ParabolicController;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -40,7 +41,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // if this is true it lets the handoff roller motor and the shooter rollers know
     // to start spinning
-    private boolean hasPiece = false;
+    // private boolean hasPiece = false;
 
     Aimlock m_aim;
 
@@ -127,10 +128,10 @@ public class ShooterSubsystem extends SubsystemBase {
         return getRelativeShooterEncoder();
     }
 
-    public void hasPieceToggle() {
-        hasPiece = !hasPiece;
-        System.out.println(hasPiece);
-    }
+    // public void hasPieceToggle() {
+    // hasPiece = !hasPiece;
+    // System.out.println(hasPiece);
+    // }
 
     public void shootToggle() {
         shoot = !shoot;
@@ -205,26 +206,35 @@ public class ShooterSubsystem extends SubsystemBase {
     double previous = 0;
     double hexRegion = 0;
 
+    public void runShooterForward() {
+        topShooterMotor.setVoltage(
+                m_shootFF.calculate(shootSpeed) + m_shootPID.calculate(getTopShooterMPS(), shootSpeed));
+        bottomShooterMotor.setVoltage(
+                m_shootFF.calculate(shootSpeed)
+                        + m_shootPID.calculate(getBottomShooterMPS(), shootSpeed));
+    }
+
+    public void runShooterAmpMode() {
+        topShooterMotor.setVoltage(
+                m_shootFF.calculate(Shooter.kTopAmpShooterSpeed)
+                        + m_shootPID.calculate(getTopShooterMPS(), Shooter.kTopAmpShooterSpeed));
+        bottomShooterMotor.setVoltage(
+                m_shootFF.calculate(Shooter.kBottomAmpShooterSpeed)
+                        + m_shootPID.calculate(getBottomShooterMPS(), Shooter.kBottomAmpShooterSpeed));
+    }
+
     /**
      * set motors spinning at their desired rpms
      */
     public void spoolMotors() {
         switch (Aimlock.getDoState()) {
             case SPEAKER:
-                if (hasPiece) {
+                if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)) {
                     if (shoot) {
-                        topShooterMotor.setVoltage(
-                                m_shootFF.calculate(shootSpeed) + m_shootPID.calculate(getTopShooterMPS(), shootSpeed));
-                        bottomShooterMotor.setVoltage(
-                                m_shootFF.calculate(shootSpeed)
-                                        + m_shootPID.calculate(getBottomShooterMPS(), shootSpeed));
+                        runShooterForward();
                         rollerMotor.set(TalonSRXControlMode.PercentOutput, -0.5);
                     } else {
-                        topShooterMotor.setVoltage(
-                                m_shootFF.calculate(shootSpeed) + m_shootPID.calculate(getTopShooterMPS(), shootSpeed));
-                        bottomShooterMotor.setVoltage(
-                                m_shootFF.calculate(shootSpeed)
-                                        + m_shootPID.calculate(getBottomShooterMPS(), shootSpeed));
+                        runShooterForward();
                     }
                 } else {
                     topShooterMotor.setVoltage(0);
@@ -233,22 +243,12 @@ public class ShooterSubsystem extends SubsystemBase {
                 }
                 break;
             case AMP:
-                if (hasPiece) {
+                if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)) {
                     if (shoot) {
-                        topShooterMotor.setVoltage(
-                                m_shootFF.calculate(Shooter.kTopAmpShooterSpeed)
-                                        + m_shootPID.calculate(getTopShooterMPS(), Shooter.kTopAmpShooterSpeed));
-                        bottomShooterMotor.setVoltage(
-                                m_shootFF.calculate(Shooter.kBottomAmpShooterSpeed)
-                                        + m_shootPID.calculate(getBottomShooterMPS(), Shooter.kBottomAmpShooterSpeed));
+                        runShooterAmpMode();
                         rollerMotor.set(TalonSRXControlMode.PercentOutput, -0.5);
                     } else {
-                        topShooterMotor.setVoltage(
-                                m_shootFF.calculate(Shooter.kTopAmpShooterSpeed)
-                                        + m_shootPID.calculate(getTopShooterMPS(), Shooter.kTopAmpShooterSpeed));
-                        bottomShooterMotor.setVoltage(
-                                m_shootFF.calculate(Shooter.kBottomAmpShooterSpeed)
-                                        + m_shootPID.calculate(getBottomShooterMPS(), Shooter.kBottomAmpShooterSpeed));
+                        runShooterAmpMode();
                     }
                 } else {
                     topShooterMotor.setVoltage(0);

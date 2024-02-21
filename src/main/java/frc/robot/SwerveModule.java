@@ -165,20 +165,20 @@ public class SwerveModule {
         m_turnFeedforward = new SimpleMotorFeedforward(turnFeedForward[0], turnFeedForward[1]);
         m_driveFeedforward = new SimpleMotorFeedforward(driveFeedForward[0], driveFeedForward[1]);
 
-        // this.encoderOffset = Shuffleboard.getTab(m_swerveModuleName).add("Relative Encoder Offset (Radians)", 0.0)
-        //         .withPosition(0, 0).withSize(2, 1).getEntry();
-        // this.absEncoderOffset = Shuffleboard.getTab(m_swerveModuleName).add("Absolute Encoder Offset (Degrees)", 0.0)
-        //         .withPosition(0, 1).withSize(2, 1).getEntry();
+        this.encoderOffset = Shuffleboard.getTab(m_swerveModuleName).add("Relative Encoder Offset (Radians)", 0.0)
+                .withPosition(0, 0).withSize(2, 1).getEntry();
+        this.absEncoderOffset = Shuffleboard.getTab(m_swerveModuleName).add("Absolute Encoder Offset (Degrees)", 0.0)
+                .withPosition(0, 1).withSize(2, 1).getEntry();
 
-        // this.desiredTurningSpeed = Shuffleboard.getTab(m_swerveModuleName).add("Desired Turning Speed", 0.0)
-        //         .withPosition(3, 0).withSize(2, 1).getEntry();
-        // this.actualTurningSpeed = Shuffleboard.getTab(m_swerveModuleName).add("Actual Turning Speed", 0.0)
-        //         .withPosition(3, 1).withSize(2, 1).getEntry();
+        this.desiredTurningSpeed = Shuffleboard.getTab(m_swerveModuleName).add("Desired Turning Speed", 0.0)
+                .withPosition(3, 0).withSize(2, 1).getEntry();
+        this.actualTurningSpeed = Shuffleboard.getTab(m_swerveModuleName).add("Actual Turning Speed", 0.0)
+                .withPosition(3, 1).withSize(2, 1).getEntry();
 
-        // this.desiredDriveSpeed = Shuffleboard.getTab(m_swerveModuleName).add("Desired Drive Speed", 0.0)
-        //         .withPosition(3, 3).withSize(2, 1).getEntry();
-        // this.actualDriveSpeed = Shuffleboard.getTab(m_swerveModuleName).add("Actual Drive Speed", 0.0)
-        //         .withPosition(3, 4).withSize(2, 1).getEntry();
+        this.desiredDriveSpeed = Shuffleboard.getTab(m_swerveModuleName).add("Desired Drive Speed", 0.0)
+                .withPosition(3, 3).withSize(2, 1).getEntry();
+        this.actualDriveSpeed = Shuffleboard.getTab(m_swerveModuleName).add("Actual Drive Speed", 0.0)
+                .withPosition(3, 4).withSize(2, 1).getEntry();
     }
 
     /**

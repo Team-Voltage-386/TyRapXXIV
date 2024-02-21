@@ -96,13 +96,10 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-
-    Controller.kManipulatorController.x().onTrue(Commands.runOnce(() -> m_shooter.hasPieceToggle(), m_shooter));
-    Controller.kManipulatorController.x().onTrue(m_pickup.loadPieceCommand());
-    Controller.kManipulatorController.y().onTrue(Commands.runOnce(() -> m_shooter.hasPieceToggle(), m_shooter));
-    Controller.kManipulatorController.y().onTrue(m_pickup.lowerLoaderCommand());
-    Controller.kManipulatorController.a().onTrue(Commands.runOnce(() -> m_shooter.shootToggle(), m_shooter))
-        .onFalse(Commands.runOnce(() -> m_shooter.shootToggle(), m_shooter));
+    Controller.kManipulatorController.rightBumper()
+        .onTrue(Commands.runOnce(() -> m_shooter.shootToggle(), m_shooter))
+        .onFalse(new ParallelCommandGroup(Commands.runOnce(() -> m_shooter.shootToggle(), m_shooter),
+            m_pickup.lowerLoaderCommand()));
     Controller.kManipulatorController.povLeft()
         .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.AMP)));
     Controller.kManipulatorController.povRight()
@@ -128,9 +125,9 @@ public class RobotContainer {
     Controller.kDriveController.leftBumper().onTrue(new lockTarget(m_swerve));
     // drive cont bindings
     Controller.kDriveController.a().onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(0), m_shooter));
-    Controller.kDriveController.rightTrigger(0.25).onTrue(m_pickup.runIntakeCommand())
-        .onFalse(m_pickup.disableIntakeCommand());
-    // Controller.kDriveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());
+    // Controller.kDriveController.rightTrigger(0.25).onTrue(m_pickup.runIntakeCommand())
+    // .onFalse(m_pickup.disableIntakeCommand());
+    Controller.kDriveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());
     // Temporary
 
     // Controller.kManipulatorController.x()
@@ -143,10 +140,6 @@ public class RobotContainer {
     Controller.kManipulatorController.b().onTrue(m_pickup.disableIntakeCommand());
     // Controller.kManipulatorController.x().onTrue(m_pickup.loadPieceCommand());
     Controller.kManipulatorController.y().onTrue(m_pickup.lowerLoaderCommand());
-
-    Controller.kManipulatorController.rightBumper()
-        .onTrue(new SequentialCommandGroup(Commands.runOnce(() -> System.out.println(Timer.getFPGATimestamp())),
-            new TimerWaitCommand(1), Commands.runOnce(() -> System.out.println(Timer.getFPGATimestamp()))));
   }
 
   public Drivetrain getDrivetrain() {

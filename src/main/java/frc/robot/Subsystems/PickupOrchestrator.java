@@ -2,6 +2,7 @@ package frc.robot.Subsystems;
 
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
@@ -56,15 +57,23 @@ public class PickupOrchestrator extends SubsystemBase {
 
         // Automatically disables intake once piece is picked up
         (lowSensorTrigger.negate().and(highSensorTrigger.negate()).and(noPieceTrigger))
-                .onTrue(new SequentialCommandGroup(disableIntakeCommand(),
-                        runOnce(() -> Flags.pieceState = subsystemsStates.holdingPiece)));
+                .whileTrue(new SequentialCommandGroup(new TimerWaitCommand(0.25), disableIntakeCommand(),
+                        runOnce(() -> {
+                            if (DriverStation.isEnabled()) {
+                                Flags.pieceState = subsystemsStates.holdingPiece;
+                            }
+                        })));
         // Automatically puts piece into the loaded position
         (lowSensorTrigger.negate().and(highSensorTrigger.negate()).and(holdingPieceTrigger))
                 .onTrue(new SequentialCommandGroup(loadPieceCommand(),
-                        runOnce(() -> Flags.pieceState = subsystemsStates.loadedPiece)));
+                        runOnce(() -> {
+                            if (DriverStation.isEnabled()) {
+                                Flags.pieceState = subsystemsStates.loadedPiece;
+                            }
+                        })));
         // Detects no piece
-        (lowSensorTrigger.and(noPieceTrigger.negate()))
-                .onTrue(runOnce(() -> Flags.pieceState = subsystemsStates.noPiece));
+        // (lowSensorTrigger.and(highSensorTrigger).and(noPieceTrigger.negate()))
+        // .onTrue(runOnce(() -> Flags.pieceState = subsystemsStates.noPiece));
 
         sensorTab = Shuffleboard.getTab("Sensors");
         HoodDetected = sensorTab.add("Hood Detected", false);
@@ -89,10 +98,9 @@ public class PickupOrchestrator extends SubsystemBase {
                 m_pneumatics.disableLoaderSolenoidCommand());
     }
 
-    public Command lowerLoaderCommand() {
-        // Temporary
-        Flags.pieceState = subsystemsStates.noPiece;
-        return m_pneumatics.disableLatchSolenoidCommand();
+    public SequentialCommandGroup lowerLoaderCommand() {
+        return new SequentialCommandGroup(new TimerWaitCommand(0.5),
+                runOnce(() -> Flags.pieceState = subsystemsStates.noPiece), m_pneumatics.disableLatchSolenoidCommand());
     }
 
     @Override
