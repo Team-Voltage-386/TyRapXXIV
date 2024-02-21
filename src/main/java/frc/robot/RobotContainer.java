@@ -102,8 +102,9 @@ public class RobotContainer {
     // m_shooter.shootToggle(), m_shooter),
     // m_pickup.lowerLoaderCommand()));
     new Trigger(m_shooter::hasShotNote)
-        .onTrue(new ParallelCommandGroup(Commands.runOnce(() -> m_shooter.shootToggle(), m_shooter),
-            m_pickup.lowerLoaderCommand()));
+        .onTrue(new SequentialCommandGroup(new TimerWaitCommand(0.25),
+            new ParallelCommandGroup(Commands.runOnce(() -> m_shooter.shootToggle(), m_shooter),
+                m_pickup.lowerLoaderCommand())));
     Controller.kManipulatorController.povLeft()
         .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.AMP)));
     Controller.kManipulatorController.povRight()
