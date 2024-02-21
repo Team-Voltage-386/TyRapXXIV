@@ -64,7 +64,7 @@ public class PickupOrchestrator extends SubsystemBase {
                 .onTrue(new SequentialCommandGroup(loadPieceCommand(),
                         runOnce(() -> Flags.pieceState = subsystemsStates.loadedPiece)));
         // Detects no piece
-        (lowSensorTrigger.and(highSensorTrigger).and(noPieceTrigger.negate()))
+        (lowSensorTrigger.and(noPieceTrigger.negate()))
                 .onTrue(runOnce(() -> Flags.pieceState = subsystemsStates.noPiece));
 
         sensorTab = Shuffleboard.getTab("Sensors");

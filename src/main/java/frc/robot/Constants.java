@@ -105,7 +105,7 @@ public class Constants {
         public static final double kRateLimitXSpeed = 100.0;
         public static final double kRateLimitYSpeed = 100.0;
         public static final double kRateLimitRot = 100.0;
-        public static final double kMaxNecessarySpeed = Drivetrain.kMaxPossibleSpeed * 0.8;
+        public static final double kMaxNecessarySpeed = Drivetrain.kMaxPossibleSpeed * 0.2; // 0.8
 
         public static final CommandXboxController kDriveController = new CommandXboxController(kDriveControllerID);
         public static final CommandXboxController kManipulatorController = new CommandXboxController(

@@ -6,27 +6,32 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Utils.Flags;
+import frc.robot.Utils.Flags.subsystemsStates;
 
-public class Robot extends TimedRobot { 
-    
+public class Robot extends TimedRobot {
+
     private final RobotContainer m_containter = new RobotContainer();
 
     @Override
     public void robotInit() {
+        Flags.pieceState = subsystemsStates.noPiece;
     }
 
     @Override
     public void autonomousInit() {
+        Flags.pieceState = subsystemsStates.noPiece;
     }
 
     @Override
     public void teleopInit() {
-        //m_containter.resetShooterPos();
+        // m_containter.resetShooterPos();
+        Flags.pieceState = subsystemsStates.noPiece;
     }
 
     @Override
     public void autonomousPeriodic() {
-    } 
+    }
 
     @Override
     public void teleopPeriodic() {
@@ -44,5 +49,4 @@ public class Robot extends TimedRobot {
         m_containter.print();
     }
 
-    
 }
