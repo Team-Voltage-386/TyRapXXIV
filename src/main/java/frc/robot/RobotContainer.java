@@ -97,8 +97,12 @@ public class RobotContainer {
    */
   private void configureBindings() {
     Controller.kManipulatorController.rightBumper()
-        .onTrue(Commands.runOnce(() -> m_shooter.shootToggle(), m_shooter))
-        .onFalse(new ParallelCommandGroup(Commands.runOnce(() -> m_shooter.shootToggle(), m_shooter),
+        .onTrue(Commands.runOnce(() -> m_shooter.shootToggle(), m_shooter));
+    // .onFalse(new ParallelCommandGroup(Commands.runOnce(() ->
+    // m_shooter.shootToggle(), m_shooter),
+    // m_pickup.lowerLoaderCommand()));
+    new Trigger(m_shooter::hasShotNote)
+        .onTrue(new ParallelCommandGroup(Commands.runOnce(() -> m_shooter.shootToggle(), m_shooter),
             m_pickup.lowerLoaderCommand()));
     Controller.kManipulatorController.povLeft()
         .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.AMP)));
@@ -107,6 +111,10 @@ public class RobotContainer {
     Controller.kManipulatorController.povDown()
         .whileTrue(Commands.run(() -> m_pickupMotors.runMotorsReverse(), m_pickupMotors))
         .onFalse(m_pickupMotors.stopMotorsCommand());
+    Controller.kManipulatorController.a().and(m_pickup.noPieceTrigger).onTrue(m_pickup.runIntakeCommand());
+    Controller.kManipulatorController.b().onTrue(m_pickup.disableIntakeCommand());
+    // Controller.kManipulatorController.x().onTrue(m_pickup.loadPieceCommand());
+    Controller.kManipulatorController.y().onTrue(m_pickup.lowerLoaderCommand());
     // Controller.kManipulatorController.leftBumper().and(() ->
     // !m_shooter.getBottomLimit())
     // .whileTrue(Commands.runOnce(() -> m_shooter.driveShooterManually(-2.5)))
@@ -136,10 +144,6 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(0)));
     new Trigger(() -> m_shooter.getTopLimit()).onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(
         20)));
-    Controller.kManipulatorController.a().and(m_pickup.noPieceTrigger).onTrue(m_pickup.runIntakeCommand());
-    Controller.kManipulatorController.b().onTrue(m_pickup.disableIntakeCommand());
-    // Controller.kManipulatorController.x().onTrue(m_pickup.loadPieceCommand());
-    Controller.kManipulatorController.y().onTrue(m_pickup.lowerLoaderCommand());
   }
 
   public Drivetrain getDrivetrain() {

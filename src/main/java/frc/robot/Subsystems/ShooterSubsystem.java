@@ -14,6 +14,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ID;
@@ -259,6 +260,33 @@ public class ShooterSubsystem extends SubsystemBase {
                 break;
         }
 
+    }
+
+    double previousTopMotorMPS[] = { 0, 0 };
+
+    public double getTopShooterAcceleration() {
+        double[] now = { Timer.getFPGATimestamp(), getTopShooterMPS() };
+        double accel = (previousTopMotorMPS[1] - now[1]) / (previousTopMotorMPS[0] - now[0]);
+        previousTopMotorMPS = now;
+        return accel;
+    }
+
+    double previousBottomMotorMPS[] = { 0, 0 };
+
+    public double getBottomShooterAcceleration() {
+        double[] now = { Timer.getFPGATimestamp(), getTopShooterMPS() };
+        double accel = (previousBottomMotorMPS[1] - now[1]) / (previousBottomMotorMPS[0] - now[0]);
+        previousBottomMotorMPS = now;
+        return accel;
+    }
+
+    public boolean hasShotNote() {
+        if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)
+                && (getTopShooterAcceleration() < -1 && getTopShooterAcceleration() > -5) // todo tune this range
+                && (getBottomShooterAcceleration() < -1 && getBottomShooterAcceleration() > -5)) {
+            return true;
+        } else
+            return false;
     }
 
     /**
