@@ -15,25 +15,25 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
-        m_containter.m_shooter.setAimToCoastMode();
+        m_containter.getShooter().setAimToCoastMode();
         Flags.pieceState = subsystemsStates.noPiece;
     }
 
     @Override
     public void autonomousInit() {
-        m_containter.m_shooter.setAimToBreakMode();
+        m_containter.getShooter().setAimToBreakMode();
+        Flags.pieceState = subsystemsStates.loadedPiece;
     }
 
     @Override
     public void disabledInit() {
-        m_containter.m_shooter.setAimToCoastMode();
+        m_containter.getShooter().setAimToCoastMode();
         Flags.pieceState = subsystemsStates.noPiece;
     }
 
     @Override
     public void teleopInit() {
-        m_containter.m_shooter.setAimToBreakMode();
-        // m_containter.resetShooterPos();
+        m_containter.getShooter().setAimToBreakMode();
         Flags.pieceState = subsystemsStates.noPiece;
     }
 

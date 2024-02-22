@@ -207,7 +207,7 @@ public class ShooterSubsystem extends SubsystemBase {
     double previous = 0;
     double hexRegion = 0;
 
-    public void runShooterForward() {
+    public void runShooterSpeakMode() {
         topShooterMotor.setVoltage(
                 m_shootFF.calculate(shootSpeed) + m_shootPID.calculate(getTopShooterMPS(), shootSpeed));
         bottomShooterMotor.setVoltage(
@@ -232,10 +232,10 @@ public class ShooterSubsystem extends SubsystemBase {
             case SPEAKER:
                 if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)) {
                     if (shoot) {
-                        runShooterForward();
+                        runShooterSpeakMode();
                         rollerMotor.set(TalonSRXControlMode.PercentOutput, -0.5);
                     } else {
-                        runShooterForward();
+                        runShooterSpeakMode();
                     }
                 } else {
                     topShooterMotor.setVoltage(0);
