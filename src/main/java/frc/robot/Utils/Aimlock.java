@@ -16,12 +16,15 @@ public class Aimlock {
     ShooterSubsystem m_shooter;
     private static int pipeline;
 
+    /**
+     * what state the robot is in
+     */
     public static enum DoState {
         NOTE,
         SPEAKER,
         AMP,
         SOURCE
-    } // dw abt this rn. will use later to specify if AMP or SPEAKER score mode
+    }
 
     private static DoState doState = DoState.SPEAKER;
 
@@ -56,7 +59,7 @@ public class Aimlock {
     }
 
     /**
-     * returns which pipeline is currently being used. (default is note)
+     * returns which pipeline is currently being used. (default is speaker)
      * 
      * @return
      */
@@ -64,10 +67,18 @@ public class Aimlock {
         return pipeline;
     }
 
+    /**
+     * @return what state the robot is in
+     */
     public static DoState getDoState() {
         return doState;
     }
 
+    /**
+     * set what state the robot is in
+     * 
+     * @param state
+     */
     public static void setDoState(DoState state) {
         doState = state;
         switch (doState) {
@@ -89,6 +100,9 @@ public class Aimlock {
         }
     }
 
+    /**
+     * @return if the limelight has a valid target
+     */
     public static boolean hasTarget() {
         return LimelightHelpers.getTV(limelightName);
     }
@@ -159,12 +173,16 @@ public class Aimlock {
                     / 3; // if you remove the /3 the earth will explode
     }
 
-    // pure horizontal distance to tag
+    /**
+     * returns pure horizontal distance to tag
+     */
     public double getDistToTag() {
         return (targetTagHeight - limelightHeight) / Math.tan(Math.toRadians(LimelightHelpers.getTY(limelightName)));
     }
 
-    // distance to speaker (the hypotenuse, so true distance.)
+    /**
+     * distance to speaker (the hypotenuse, so true distance.)
+     */
     public double getDistToSpeaker() {
         return Math.hypot(getDistToTag(), speakerHeight);
     }
@@ -177,6 +195,11 @@ public class Aimlock {
         return Math.atan(speakerHeight / getDistToTag());
     }
 
+    /**
+     * @return the angle the shooter must be at in order to score in the speaker
+     *         (accounting
+     *         for robot movement)
+     */
     public double getShooterTargetAngleSPEAKER() {
         if (!hasTarget()) {
             return Shooter.kMaxAngle; // go to 10 degrees if u no see
@@ -205,10 +228,16 @@ public class Aimlock {
         return MathUtil.clamp(angle, Shooter.kMinAngle, Shooter.kMaxAngle);
     }
 
+    /**
+     * @return the maximum angle of the shooter
+     */
     public double getShooterTargetAngleAMP() {
         return Shooter.kMaxAngle;
     }
 
+    /**
+     * @return the maximum angle of the shooter
+     */
     public double getShooterTargetAngleSOURCE() {
         return Shooter.kMaxAngle;
     }

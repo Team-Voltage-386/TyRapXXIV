@@ -23,7 +23,7 @@ public class BellController {
     }
 
     public double calc(double error) {
-        double ans = max - max * Math.pow(1 + 0.01 * p, -Math.pow(error, 2));
+        double ans = max - max * Math.pow(1 + 0.01 * p, -Math.pow(Math.E*error, 2));
         if (error < 0) {
             return -ans;
         } else

@@ -62,7 +62,6 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     double shootSpeed;
     boolean shoot;
-    // double hoodAngle;
 
     public ShooterSubsystem() {
         // init aim motor
@@ -106,43 +105,59 @@ public class ShooterSubsystem extends SubsystemBase {
         shoot = false;
     }
 
+    /**
+     * sets the aim motor to break mode. call this whenever the robot is enabled
+     * (autoinit, teleopinit) so the hood stays where it is even while not being
+     * powered
+     */
     public void setAimToBreakMode() {
         aimMotor.setIdleMode(IdleMode.kBrake);
     }
 
+    /**
+     * sets the aim motor to coast mode. call this on disabledinit so the hood
+     * coasts down to the starting pose
+     */
     public void setAimToCoastMode() {
         aimMotor.setIdleMode(IdleMode.kCoast);
     }
 
     /**
-     * @return degrees
+     * tell the hood where it is
      */
-    public double getRelativeShooterEncoder() {
-        return relativeEncoder.getPosition();
-    }
-
     public void setRelativeShooterEncoder(double set) {
         relativeEncoder.setPosition(set);
     }
 
+    /**
+     * @return the angle the shooter is at in degrees
+     */
     public double getShooterAngleRelative() {
-        return getRelativeShooterEncoder();
+        return relativeEncoder.getPosition();
     }
 
-    // public void hasPieceToggle() {
-    // hasPiece = !hasPiece;
-    // System.out.println(hasPiece);
-    // }
-
+    /**
+     * toggle whether or not we are trying to shoot the piece
+     */
     public void shootToggle() {
         shoot = !shoot;
         System.out.println(shoot);
     }
 
+    /**
+     * used to set the aimlock of this class non-statically
+     * 
+     * @param m_aim
+     */
     public void setAim(Aimlock m_aim) {
         this.m_aim = m_aim;
     }
 
+    /**
+     * the aimlock this class is using
+     * 
+     * @return
+     */
     public Aimlock getAim() {
         return this.m_aim;
     }
@@ -189,7 +204,12 @@ public class ShooterSubsystem extends SubsystemBase {
         return getBottomShootMotorRPS() * Math.PI * Units.inchesToMeters(4);
     }
 
-    public void driveShooterManually(double power) {
+    /**
+     * drive the hood up and down manually
+     * 
+     * @param power
+     */
+    public void driveHoodManually(double power) {
         if (power > 0 && getTopLimit()) {
             aimMotor.setVoltage(0);
         } else {
@@ -200,13 +220,10 @@ public class ShooterSubsystem extends SubsystemBase {
         }
     }
 
-    public void stopDrivingShooter() {
-        aimMotor.setVoltage(0);
-    }
-
-    double previous = 0;
-    double hexRegion = 0;
-
+    /**
+     * run the shooter with the required velocities to consistently score in the
+     * speaker
+     */
     public void runShooterSpeakMode() {
         topShooterMotor.setVoltage(
                 m_shootFF.calculate(shootSpeed) + m_shootPID.calculate(getTopShooterMPS(), shootSpeed));
@@ -215,6 +232,9 @@ public class ShooterSubsystem extends SubsystemBase {
                         + m_shootPID.calculate(getBottomShooterMPS(), shootSpeed));
     }
 
+    /**
+     * run the shooter with the required velocities to consistently score in the amp
+     */
     public void runShooterAmpMode() {
         topShooterMotor.setVoltage(
                 m_shootFF.calculate(Shooter.kTopAmpShooterSpeed)
@@ -265,6 +285,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     double previousTopMotorMPS[] = { 0, 0 };
 
+    /**
+     * @return returns acceleration of top motor
+     */
     public double getTopShooterAcceleration() {
         double[] now = { Timer.getFPGATimestamp(), getTopShooterMPS() };
         double accel = (previousTopMotorMPS[1] - now[1]) / (previousTopMotorMPS[0] - now[0]);
@@ -274,6 +297,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     double previousBottomMotorMPS[] = { 0, 0 };
 
+    /**
+     * @return returns acceleration of bottom motor
+     */
     public double getBottomShooterAcceleration() {
         double[] now = { Timer.getFPGATimestamp(), getTopShooterMPS() };
         double accel = (previousBottomMotorMPS[1] - now[1]) / (previousBottomMotorMPS[0] - now[0]);
@@ -281,6 +307,9 @@ public class ShooterSubsystem extends SubsystemBase {
         return accel;
     }
 
+    /**
+     * @return returns if we have shot the note
+     */
     public boolean hasShotNote() {
         if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece) && shoot
                 && (getTopShooterAcceleration() < -1 && getTopShooterAcceleration() > -5) // todo tune this range
@@ -326,18 +355,16 @@ public class ShooterSubsystem extends SubsystemBase {
         aimMotor.setVoltage(volts);
     }
 
-    public void updateShootSpeed() {
-        shootSpeed = SmartDashboard.getNumber("ShootSpeed", shootSpeed);
-    }
-
-    // public void updateHoodAngle() {
-    // hoodAngle = SmartDashboard.getNumber("hood angle", hoodAngle);
-    // }
-
+    /**
+     * @return whether or not the top limit has been triggered or not
+     */
     public boolean getTopLimit() {
         return !topLimit.get();
     }
 
+    /**
+     * @return
+     */
     public boolean getBottomLimit() {
         return !bottomLimit.get();
     }
@@ -352,7 +379,6 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Shooter angle (rel)", getShooterAngleRelative());
-        SmartDashboard.putNumber("Raw Shooter angle (rel)", getRelativeShooterEncoder());
         SmartDashboard.putBoolean("top limit", getTopLimit());
         SmartDashboard.putBoolean("bottom limit", getBottomLimit());
         SmartDashboard.putNumber("top shoot", getTopShooterMPS());
@@ -367,7 +393,6 @@ public class ShooterSubsystem extends SubsystemBase {
         // Math.toDegrees(m_aim.getVerticalAngleToSpeaker()));
         // SmartDashboard.putNumber("TY", LimelightHelpers.getTY("limelight-a"));
         // SmartDashboard.putNumber("dist speaker", m_aim.getDistToSpeaker());
-        updateShootSpeed();
         aimShooter(m_aim.getShooterTargetAngle());
         spoolMotors();
     }
