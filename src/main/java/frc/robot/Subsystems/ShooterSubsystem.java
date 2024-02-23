@@ -149,6 +149,11 @@ public class ShooterSubsystem extends SubsystemBase {
         System.out.println(shoot);
     }
 
+    public void noShoot() {
+        shoot = false;
+        System.out.println(shoot);
+    }
+
     /**
      * used to set the aimlock of this class non-statically
      * 
@@ -288,38 +293,38 @@ public class ShooterSubsystem extends SubsystemBase {
 
     }
 
-    double previousTopMotorMPS[] = { 0, 0 };
+    double previousTopMotorData[] = { 0, 0, 0 };
 
     /**
      * @return returns acceleration of top motor
      */
-    public double getTopShooterAcceleration() {
+    public void updateTopShooterAcceleration() {
         double[] now = { Timer.getFPGATimestamp(), getTopShooterMPS() };
-        double accel = (previousTopMotorMPS[1] - now[1]) / (previousTopMotorMPS[0] - now[0]);
-        previousTopMotorMPS = now;
-        return accel;
+        double accel = (now[1] - previousTopMotorData[1]) / (now[0] - previousTopMotorData[0]);
+        previousTopMotorData = now;
+        previousTopMotorData[2] = accel;
     }
 
-    double previousBottomMotorMPS[] = { 0, 0 };
+    double previousBottomMotorData[] = { 0, 0, 0 };
 
     /**
      * @return returns acceleration of bottom motor
      */
-    public double getBottomShooterAcceleration() {
-        double[] now = { Timer.getFPGATimestamp(), getTopShooterMPS() };
-        double accel = (previousBottomMotorMPS[1] - now[1]) / (previousBottomMotorMPS[0] - now[0]);
-        previousBottomMotorMPS = now;
-        return accel;
+    public void updateBottomShooterAcceleration() {
+        double[] now = { Timer.getFPGATimestamp(), getBottomShooterMPS() };
+        double accel = (now[1] - previousBottomMotorData[1]) / (now[0] - previousBottomMotorData[0]);
+        previousBottomMotorData = now;
+        previousBottomMotorData[2] = accel;
     }
 
     /**
      * @return returns if we have shot the note
      */
     public boolean hasShotNote() {
-        if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece) && shoot
-                && (getTopShooterAcceleration() < -1 && getTopShooterAcceleration() > -5) // todo tune this range
-                && (getBottomShooterAcceleration() < -1 && getBottomShooterAcceleration() > -5)) {
-            shoot = false;
+        // if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece) && shoot
+        if (shoot
+                && (previousTopMotorData[2] < -3) // todo tune this range
+                && (previousBottomMotorData[2] < -3)) {
             return true;
         } else
             return false;
@@ -383,22 +388,29 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Shooter angle (rel)", getShooterAngleRelative());
-        SmartDashboard.putBoolean("top limit", getTopLimit());
-        SmartDashboard.putBoolean("bottom limit", getBottomLimit());
-        SmartDashboard.putNumber("top shoot", getTopShooterMPS());
-        SmartDashboard.putNumber("bot shoot", getBottomShooterMPS());
-        SmartDashboard.putNumber("des shoot speed", getDesiredShooterSpeed());
-        SmartDashboard.putNumber("volts to hood", aimMotor.getBusVoltage());
-        SmartDashboard.putNumber("target shooter angle", m_aim.getShooterTargetAngle());
-        SmartDashboard.putNumber("Top Shooter Accel", getTopShooterAcceleration());
-        SmartDashboard.putNumber("Bottom Shooter Accel", getBottomShooterAcceleration());
+        updateBottomShooterAcceleration();
+        updateTopShooterAcceleration();
+        aimShooter(m_aim.getShooterTargetAngle());
+        spoolMotors();
+        // SmartDashboard.putNumber("Shooter angle (rel)", getShooterAngleRelative());
+        // SmartDashboard.putBoolean("top limit", getTopLimit());
+        // SmartDashboard.putBoolean("bottom limit", getBottomLimit());
+        // SmartDashboard.putNumber("top shoot", getTopShooterMPS());
+        // SmartDashboard.putNumber("bot shoot", getBottomShooterMPS());
+        // SmartDashboard.putNumber("des shoot speed", getDesiredShooterSpeed());
+        // SmartDashboard.putNumber("volts to hood", aimMotor.getAppliedOutput());
+        // SmartDashboard.putNumber("target shooter angle",
+        // m_aim.getShooterTargetAngle());
+        SmartDashboard.putNumber("Top Shooter Accel", previousTopMotorData[2]);
+        SmartDashboard.putNumber("Bottom Shooter Accel", previousBottomMotorData[2]);
+        SmartDashboard.putBoolean("has shot", hasShotNote());
+        SmartDashboard.putBoolean("shooting", shoot);
+        SmartDashboard.putBoolean("top decel bool", previousTopMotorData[2] < -3);
+        SmartDashboard.putBoolean("down decel bool", previousBottomMotorData[2] < -3);
         // SmartDashboard.putNumber("Target angle", (m_aim.getShooterTargetAngle()));
         // SmartDashboard.putNumber("vert angle speaker",
         // Math.toDegrees(m_aim.getVerticalAngleToSpeaker()));
         // SmartDashboard.putNumber("TY", LimelightHelpers.getTY("limelight-a"));
         // SmartDashboard.putNumber("dist speaker", m_aim.getDistToSpeaker());
-        aimShooter(m_aim.getShooterTargetAngle());
-        spoolMotors();
     }
 }

@@ -5,6 +5,11 @@
 package frc.robot.Subsystems;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -13,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
@@ -131,6 +137,35 @@ public class Drivetrain extends SubsystemBase {
                 });
 
         robotFieldPosition = getRoboPose2d();
+
+        // Configure AutoBuilder last
+        AutoBuilder.configureHolonomic(
+                this::getRoboPose2d, // Robot pose supplier
+                this::resetOdo, // Method to reset odometry (will be called if your auto has a starting pose)
+                this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+                this::driveInAuto, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+                new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your
+                                                 // Constants class
+                        new PIDConstants(7.4, 0.0, 0.0), // Translation PID constants p used to be 7
+                        new PIDConstants(5.4, 0.0, 0.0), // Rotation PID constants
+                        kMaxPossibleSpeed, // Max module speed, in m/s
+                        DriveTrain.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to
+                                                     // furthest module.
+                        new ReplanningConfig() // Default path replanning config. See the API for the options here
+                ),
+                () -> {
+                    // Boolean supplier that controls when the path will be mirrored for the red
+                    // alliance
+                    // This will flip the path being followed to the red side of the field.
+                    // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+                    var alliance = DriverStation.getAlliance();
+                    if (alliance.isPresent()) {
+                        return alliance.get() == DriverStation.Alliance.Red;
+                    }
+                    return false;
+                },
+                this // Reference to this subsystem to set requirements
+        );
     }
 
     public void setAim(Aimlock m_aim) {
@@ -293,6 +328,33 @@ public class Drivetrain extends SubsystemBase {
         this.layout.setDesiredRotSpeed(Math.toDegrees(rotSpeed));
     }
 
+    public void driveInAuto(ChassisSpeeds chassisSpeeds) {
+        // SwerveModuleState[] swerveModuleStates =
+        // m_kinematics.toSwerveModuleStates(chassisSpeeds);
+        // comment: if speakermode, use speakeraim, if not speakermode, use piece aim.
+        // if using piece aim and dont see a piece, follow normal path.
+        SwerveModuleState[] swerveModuleStates = m_kinematics.toSwerveModuleStates(
+                lockTargetInAuto
+                        ? ChassisSpeeds.fromRobotRelativeSpeeds(chassisSpeeds.vxMetersPerSecond,
+                                chassisSpeeds.vyMetersPerSecond,
+                                Aimlock.hasTarget() ? m_aim.getRotationSpeedForTarget()
+                                        : chassisSpeeds.omegaRadiansPerSecond, // comment
+                                getGyroYawRotation2d())
+                        : chassisSpeeds);
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxPossibleSpeed);
+
+        this.layout.setDesiredXSpeed(chassisSpeeds.vxMetersPerSecond);
+        this.layout.setDesiredYSpeed(chassisSpeeds.vyMetersPerSecond);
+        this.layout.setDesiredRotSpeed(Math.toDegrees(chassisSpeeds.omegaRadiansPerSecond));
+
+        // passing back the math from kinematics to the swerves themselves.
+        m_frontLeft.setDesiredState(swerveModuleStates[0]);
+        m_frontRight.setDesiredState(swerveModuleStates[1]);
+        m_backLeft.setDesiredState(swerveModuleStates[2]);
+        m_backRight.setDesiredState(swerveModuleStates[3]);
+    }
+
     public Pose2d getRoboPose2d() {
         return m_odometry.getPoseMeters();
     }
@@ -334,8 +396,10 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Chassis Angle", getRoboPose2d().getRotation().getDegrees());
-        SmartDashboard.putNumber("Desired Angle", Math.toDegrees(m_aim.getSpeakerAimTargetAngle()));
+        // SmartDashboard.putNumber("Chassis Angle", getRoboPose2d().getRotation().getDegrees());
+        // SmartDashboard.putNumber("Desired Angle", Math.toDegrees(m_aim.getSpeakerAimTargetAngle()));
+        // SmartDashboard.putNumber("X speed", getChassisSpeeds().vxMetersPerSecond);
+        // SmartDashboard.putNumber("Y speed", getChassisSpeeds().vyMetersPerSecond);
         resetOdo(m_camera.resetOdoLimelight());
         updateOdometry();
     }

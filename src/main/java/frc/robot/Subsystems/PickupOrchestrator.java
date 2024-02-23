@@ -89,18 +89,18 @@ public class PickupOrchestrator extends SubsystemBase {
 
     public ParallelCommandGroup disableIntakeCommand() {
         return new ParallelCommandGroup(m_pneumatics.disableIntakeSolenoidCommand(),
-                m_pickupMotors.stopMotorsCommand());
+                m_pickupMotors.runMotorsSlowCommand());
     }
 
     public SequentialCommandGroup loadPieceCommand() {
-        return new SequentialCommandGroup(m_pneumatics.enableLoaderSolenoidCommand(), new TimerWaitCommand(0.25),
+        return new SequentialCommandGroup(m_pneumatics.enableLoaderSolenoidCommand(), new TimerWaitCommand(1),
                 m_pneumatics.enableLatchSolenoidCommand(), new TimerWaitCommand(0.25),
                 m_pneumatics.disableLoaderSolenoidCommand());
     }
 
     public SequentialCommandGroup lowerLoaderCommand() {
-        return new SequentialCommandGroup(new TimerWaitCommand(0.5),
-                runOnce(() -> Flags.pieceState = subsystemsStates.noPiece), m_pneumatics.disableLatchSolenoidCommand());
+        return new SequentialCommandGroup(m_pneumatics.disableLatchSolenoidCommand(), new TimerWaitCommand(10),
+                runOnce(() -> Flags.pieceState = subsystemsStates.noPiece));
     }
 
     @Override

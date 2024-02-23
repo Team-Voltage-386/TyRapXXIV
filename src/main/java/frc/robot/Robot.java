@@ -23,6 +23,7 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         m_containter.getShooter().setAimToBreakMode();
         Flags.pieceState = subsystemsStates.loadedPiece;
+        m_containter.getAutonomousCommand().schedule();
     }
 
     @Override

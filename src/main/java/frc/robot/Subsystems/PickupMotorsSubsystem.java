@@ -9,6 +9,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ID;
@@ -54,6 +55,12 @@ public class PickupMotorsSubsystem extends SubsystemBase {
         backIntakeMotor.setVoltage(pickupPID.calculate(getBackRealIntakeRPM(), goalRPM) + pickupFF.calculate(goalRPM));
     }
 
+    public void runMotorsSlow() {
+        frontIntakeMotor
+                .setVoltage(pickupPID.calculate(getFrontRealIntakeRPM(), 50) + pickupFF.calculate(50));
+        backIntakeMotor.setVoltage(pickupPID.calculate(getBackRealIntakeRPM(), 50) + pickupFF.calculate(50));
+    }
+
     public void runMotorsReverse() {
         frontIntakeMotor
                 .setVoltage(pickupPID.calculate(getFrontRealIntakeRPM(), -goalRPM) + pickupFF.calculate(-goalRPM));
@@ -68,12 +75,16 @@ public class PickupMotorsSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("intake RPM", getBackRealIntakeRPM());
-        SmartDashboard.putNumber("Target RPM", goalRPM);
+        // SmartDashboard.putNumber("intake RPM", getBackRealIntakeRPM());
+        // SmartDashboard.putNumber("Target RPM", goalRPM);
     }
 
     public Command runMotorsCommand() {
         return runOnce(this::runMotors);
+    }
+
+    public Command runMotorsSlowCommand() {
+        return runOnce(this::runMotorsSlow);
     }
 
     public Command stopMotorsCommand() {

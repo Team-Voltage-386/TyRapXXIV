@@ -6,9 +6,15 @@ package frc.robot;
 
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -42,6 +48,7 @@ import frc.robot.Commands.resetOdo;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  private final SendableChooser<Command> autoChooser;
   private final Pigeon2 m_gyro = new Pigeon2(ID.kGyro);
   private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
   private final Drivetrain m_swerve = new Drivetrain(m_gyro, m_cameraSubsystem);
@@ -79,6 +86,13 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     // Configure the button bindings
+
+    autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()'
+    // Create choices for autonomous functions in the Smart Dashboard
+    configPathPlannerStuff();
+    configureBindings();
+    autoChooser.setDefaultOption("Autonomous Command", auto1);
+    SmartDashboard.putData("Auto Mode", autoChooser);
   }
 
   /**
@@ -97,14 +111,16 @@ public class RobotContainer {
    */
   private void configureBindings() {
     Controller.kManipulatorController.rightBumper()
-        .onTrue(Commands.runOnce(() -> m_shooter.shootToggle(), m_shooter));
+        .onTrue(Commands.runOnce(() -> m_shooter.shoot()));
     // .onFalse(new ParallelCommandGroup(Commands.runOnce(() ->
     // m_shooter.shootToggle(), m_shooter),
     // m_pickup.lowerLoaderCommand()));
-    new Trigger(m_shooter::hasShotNote)
+    new Trigger(() -> m_shooter.hasShotNote())
         .onTrue(new SequentialCommandGroup(new TimerWaitCommand(0.25),
-            new ParallelCommandGroup(Commands.runOnce(() -> m_shooter.shootToggle(), m_shooter),
-                m_pickup.lowerLoaderCommand())));
+            new ParallelCommandGroup(Commands.runOnce(() -> m_shooter.noShoot(),
+                m_shooter)),
+            m_pickup.lowerLoaderCommand()));
+
     Controller.kManipulatorController.povLeft()
         .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.AMP)));
     Controller.kManipulatorController.povRight()
@@ -116,6 +132,8 @@ public class RobotContainer {
     Controller.kManipulatorController.b().onTrue(m_pickup.disableIntakeCommand());
     // Controller.kManipulatorController.x().onTrue(m_pickup.loadPieceCommand());
     Controller.kManipulatorController.y().onTrue(m_pickup.lowerLoaderCommand());
+    // Controller.kManipulatorController.x().whileTrue(pathfindAmp);
+
     // Controller.kManipulatorController.leftBumper().and(() ->
     // !m_shooter.getBottomLimit())
     // .whileTrue(Commands.runOnce(() -> m_shooter.driveShooterManually(-2.5)))
@@ -147,6 +165,33 @@ public class RobotContainer {
         20)));
   }
 
+  Command auto1;
+  Command pathfindAmp;
+
+  private void configPathPlannerStuff() {
+    // Add a button to run the example auto to SmartDashboard, this will also be in
+    // the auto chooser built above
+    // SmartDashboard.putData("Example Auto", AutoBuilder.buildAuto("Example
+    // Auto"));
+    // Add a button to run a simple example path
+    auto1 = AutoBuilder.buildAuto("first real auto");
+    autoChooser.addOption("auto1", auto1);
+    // Load the path we want to pathfind to and follow
+    PathPlannerPath path = PathPlannerPath.fromPathFile("Score Amp");
+    // Create the constraints to use while pathfinding. The constraints defined in
+    // the path will only be used for the path.
+    PathConstraints constraints = new PathConstraints(
+        1, 3.0,
+        Units.degreesToRadians(540), Units.degreesToRadians(720));
+    // Since AutoBuilder is configured, we can use it to build pathfinding commands
+    pathfindAmp = AutoBuilder.pathfindThenFollowPath(
+        path,
+        constraints,
+        0.0 // Rotation delay distance in meters. This is how far the robot should travel
+            // before attempting to rotate.
+    );
+  }
+
   public Drivetrain getDrivetrain() {
     return m_swerve;
   }
@@ -161,5 +206,14 @@ public class RobotContainer {
 
   public void print() {
     this.m_swerve.print();
+  }
+
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+  public Command getAutonomousCommand() {
+    return new ParallelCommandGroup(auto1);
   }
 }
