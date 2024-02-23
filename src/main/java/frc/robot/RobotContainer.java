@@ -65,7 +65,6 @@ public class RobotContainer {
     m_shooter.setDefaultCommand(new aimShooterCommand(m_shooter));
 
     // Xbox controllers return negative values when we push forward.
-    // Xbox controllers return negative values when we push forward.
     driveCommand = new Drive(m_swerve);
     m_swerve.setDefaultCommand(driveCommand);
 
