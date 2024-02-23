@@ -228,6 +228,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * set motors spinning at their desired rpms
      */
     public void spoolMotors() {
+        // dece
         switch (Aimlock.getDoState()) {
             case SPEAKER:
                 if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)) {
@@ -281,9 +282,10 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public boolean hasShotNote() {
-        if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)
+        if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece) && shoot
                 && (getTopShooterAcceleration() < -1 && getTopShooterAcceleration() > -5) // todo tune this range
                 && (getBottomShooterAcceleration() < -1 && getBottomShooterAcceleration() > -5)) {
+            shoot = false;
             return true;
         } else
             return false;
@@ -357,13 +359,15 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("bot shoot", getBottomShooterMPS());
         SmartDashboard.putNumber("des shoot speed", getDesiredShooterSpeed());
         SmartDashboard.putNumber("volts to hood", aimMotor.getBusVoltage());
+        SmartDashboard.putNumber("target shooter angle", m_aim.getShooterTargetAngle());
+        SmartDashboard.putNumber("Top Shooter Accel", getTopShooterAcceleration());
+        SmartDashboard.putNumber("Bottom Shooter Accel", getBottomShooterAcceleration());
         // SmartDashboard.putNumber("Target angle", (m_aim.getShooterTargetAngle()));
         // SmartDashboard.putNumber("vert angle speaker",
         // Math.toDegrees(m_aim.getVerticalAngleToSpeaker()));
         // SmartDashboard.putNumber("TY", LimelightHelpers.getTY("limelight-a"));
         // SmartDashboard.putNumber("dist speaker", m_aim.getDistToSpeaker());
         updateShootSpeed();
-        SmartDashboard.putNumber("target shooter angle", m_aim.getShooterTargetAngle());
         aimShooter(m_aim.getShooterTargetAngle());
         spoolMotors();
     }
