@@ -12,21 +12,34 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "sequential",
           "data": {
-            "name": "Lock Target in Auto"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.75
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Dont Lock Target in Auto"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lock Target in Auto"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.2
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Dont Lock Target in Auto"
+                }
+              }
+            ]
           }
         },
         {
@@ -54,6 +67,12 @@
               {
                 "type": "named",
                 "data": {
+                  "name": "Shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
                   "name": "Dont Lock Target in Auto"
                 }
               }
@@ -64,6 +83,37 @@
           "type": "path",
           "data": {
             "pathName": "pick up second note"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Lock Target in Auto"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.45
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Dont Lock Target in Auto"
+                }
+              }
+            ]
           }
         }
       ]

@@ -75,6 +75,7 @@ public class RobotContainer {
         Commands.runOnce(() -> m_swerve.setLockTargetInAuto(true), m_swerve));
     NamedCommands.registerCommand("Dont Lock Target in Auto",
         Commands.runOnce(() -> m_swerve.setLockTargetInAuto(false), m_swerve));
+    NamedCommands.registerCommand("Shoot", Commands.runOnce(m_shooter::shoot));
 
     // Configure the trigger bindings
     configureBindings();

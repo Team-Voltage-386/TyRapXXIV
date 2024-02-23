@@ -144,6 +144,11 @@ public class ShooterSubsystem extends SubsystemBase {
         System.out.println(shoot);
     }
 
+    public void shoot() {
+        shoot = true;
+        System.out.println(shoot);
+    }
+
     /**
      * used to set the aimlock of this class non-statically
      * 
