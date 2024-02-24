@@ -180,7 +180,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * @return Shoot motor RPM
+     * @return Shoot motor RPS
      */
     public double getTopShootMotorRPS() {
         return topShooterMotor.getEncoder().getVelocity() / 60;
@@ -201,7 +201,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * @return Shoot motor RPM
+     * @return Shoot motor RPS
      */
     public double getBottomShootMotorRPS() {
         return bottomShooterMotor.getEncoder().getVelocity() / 60;
