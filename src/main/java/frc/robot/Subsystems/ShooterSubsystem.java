@@ -173,14 +173,14 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * @return Shoot motor RPM
+     * @return Shoot motor RPM (rotations per minute)
      */
     public double getTopShootMotorRPM() {
         return topShooterMotor.getEncoder().getVelocity();
     }
 
     /**
-     * @return Shoot motor RPS
+     * @return Shoot motor RPS (rotations per second)
      */
     public double getTopShootMotorRPS() {
         return topShooterMotor.getEncoder().getVelocity() / 60;
@@ -194,14 +194,14 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * @return Shoot motor RPM
+     * @return Shoot motor RPM (rotations per minute)
      */
     public double getBottomShootMotorRPM() {
         return bottomShooterMotor.getEncoder().getVelocity();
     }
 
     /**
-     * @return Shoot motor RPS
+     * @return Shoot motor RPS (rotations per second)
      */
     public double getBottomShootMotorRPS() {
         return bottomShooterMotor.getEncoder().getVelocity() / 60;
@@ -217,7 +217,7 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * drive the hood up and down manually
      * 
-     * @param power
+     * @param power voltage to supply to the aim motor
      */
     public void driveHoodManually(double power) {
         if (power > 0 && getTopLimit()) {
@@ -225,8 +225,9 @@ public class ShooterSubsystem extends SubsystemBase {
         } else {
             if (power < 0 && getBottomLimit()) {
                 aimMotor.setVoltage(0);
-            } else
+            } else {
                 aimMotor.setVoltage(power);
+            }
         }
     }
 
