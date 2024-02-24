@@ -11,6 +11,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -63,6 +64,8 @@ public class ShooterSubsystem extends SubsystemBase {
     double shootSpeed;
     boolean shoot;
 
+    private SlewRateLimiter m_slewRateLimiter;
+
     public ShooterSubsystem() {
         // init aim motor
         aimMotor = new CANSparkMax(ID.kShooterAimMotorID, MotorType.kBrushless);
@@ -103,6 +106,7 @@ public class ShooterSubsystem extends SubsystemBase {
         shootSpeed = Shooter.kShooterSpeed;// SmartDashboard.getNumber("ShootSpeed", Shooter.kShooterSpeed);
         // hoodAngle = SmartDashboard.getNumber("hood angle", 5);
         shoot = false;
+        m_slewRateLimiter = new SlewRateLimiter(20);
     }
 
     /**
@@ -298,13 +302,16 @@ public class ShooterSubsystem extends SubsystemBase {
     double previousTopMotorData[] = { Timer.getFPGATimestamp(), 0, 0 };
 
     /**
-     * @return returns acceleration of top motor
+     * @return returns acceleration of bottom motor
      */
     public void updateTopShooterAcceleration() {
         double[] now = { Timer.getFPGATimestamp(), getTopShooterMPS(), 0 };
-        double accel = (now[1] - previousTopMotorData[1]) / (now[0] - previousTopMotorData[0]);
-        previousTopMotorData[2] = accel;
-        previousTopMotorData = now;
+        if (now[1] != previousTopMotorData[1]) {
+            double accel = (now[1] - previousTopMotorData[1]) / (now[0] -
+                    previousTopMotorData[0]);
+            now[2] = m_slewRateLimiter.calculate(accel);
+            previousTopMotorData = now;
+        }
     }
 
     // time, velo, accel
@@ -315,9 +322,12 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public void updateBottomShooterAcceleration() {
         double[] now = { Timer.getFPGATimestamp(), getBottomShooterMPS(), 0 };
-        double accel = (now[1] - previousBottomMotorData[1]) / (now[0] - previousBottomMotorData[0]);
-        previousBottomMotorData[2] = accel;
-        previousBottomMotorData = now;
+        if (now[1] != previousBottomMotorData[1]) {
+            double accel = (now[1] - previousBottomMotorData[1]) / (now[0] -
+                    previousBottomMotorData[0]);
+            now[2] = m_slewRateLimiter.calculate(accel);
+            previousBottomMotorData = now;
+        }
     }
 
     /**
