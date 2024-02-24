@@ -293,6 +293,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     }
 
+    // time, velo, accel
     double previousTopMotorData[] = { 0, 0, 0 };
 
     /**
@@ -305,6 +306,7 @@ public class ShooterSubsystem extends SubsystemBase {
         previousTopMotorData[2] = accel;
     }
 
+    // time, velo, accel
     double previousBottomMotorData[] = { 0, 0, 0 };
 
     /**
@@ -403,8 +405,8 @@ public class ShooterSubsystem extends SubsystemBase {
         // m_aim.getShooterTargetAngle());
         SmartDashboard.putNumber("Top Shooter Accel", previousTopMotorData[2]);
         SmartDashboard.putNumber("Bottom Shooter Accel", previousBottomMotorData[2]);
-        SmartDashboard.putBoolean("has shot", hasShotNote());
-        SmartDashboard.putBoolean("shooting", shoot);
+        SmartDashboard.putBoolean("has shot?", hasShotNote());
+        SmartDashboard.putBoolean("shooting?", shoot);
         SmartDashboard.putBoolean("top decel bool", previousTopMotorData[2] < -3);
         SmartDashboard.putBoolean("down decel bool", previousBottomMotorData[2] < -3);
         // SmartDashboard.putNumber("Target angle", (m_aim.getShooterTargetAngle()));
