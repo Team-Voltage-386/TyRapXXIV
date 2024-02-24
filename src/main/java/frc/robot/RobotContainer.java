@@ -111,7 +111,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     Controller.kManipulatorController.rightBumper()
-        .onTrue(Commands.runOnce(() -> m_shooter.shoot()));
+        .onTrue(Commands.runOnce(() -> m_shooter.shoot())).onFalse(Commands.runOnce(() -> m_shooter.noShoot()));
     // .onFalse(new ParallelCommandGroup(Commands.runOnce(() ->
     // m_shooter.shootToggle(), m_shooter),
     // m_pickup.lowerLoaderCommand()));
