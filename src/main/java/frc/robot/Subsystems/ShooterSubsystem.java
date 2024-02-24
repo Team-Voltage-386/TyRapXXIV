@@ -294,29 +294,29 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     // time, velo, accel
-    double previousTopMotorData[] = { 0, 0, 0 };
+    double previousTopMotorData[] = { Timer.getFPGATimestamp(), 0, 0 };
 
     /**
      * @return returns acceleration of top motor
      */
     public void updateTopShooterAcceleration() {
-        double[] now = { Timer.getFPGATimestamp(), getTopShooterMPS() };
+        double[] now = { Timer.getFPGATimestamp(), getTopShooterMPS(), 0 };
         double accel = (now[1] - previousTopMotorData[1]) / (now[0] - previousTopMotorData[0]);
-        previousTopMotorData = now;
         previousTopMotorData[2] = accel;
+        previousTopMotorData = now;
     }
 
     // time, velo, accel
-    double previousBottomMotorData[] = { 0, 0, 0 };
+    double previousBottomMotorData[] = { Timer.getFPGATimestamp(), 0, 0 };
 
     /**
      * @return returns acceleration of bottom motor
      */
     public void updateBottomShooterAcceleration() {
-        double[] now = { Timer.getFPGATimestamp(), getBottomShooterMPS() };
+        double[] now = { Timer.getFPGATimestamp(), getBottomShooterMPS(), 0 };
         double accel = (now[1] - previousBottomMotorData[1]) / (now[0] - previousBottomMotorData[0]);
-        previousBottomMotorData = now;
         previousBottomMotorData[2] = accel;
+        previousBottomMotorData = now;
     }
 
     /**
