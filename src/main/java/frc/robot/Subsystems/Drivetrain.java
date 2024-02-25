@@ -4,6 +4,11 @@
 
 package frc.robot.Subsystems;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
@@ -29,7 +34,7 @@ import frc.robot.Constants.ID;
 import frc.robot.Constants.Offsets;
 import frc.robot.SwerveModule;
 import frc.robot.Constants.DriveTrain;
-import frc.robot.ShuffleboardLayouts.DrivetrainLayout;
+// import frc.robot.ShuffleboardLayouts.DrivetrainLayout;
 import frc.robot.Utils.Aimlock;
 
 /** Represents a swerve drive style drivetrain. */
@@ -102,7 +107,7 @@ public class Drivetrain extends SubsystemBase {
 
     private Aimlock m_aim;
 
-    private DrivetrainLayout layout = new DrivetrainLayout();
+    // private DrivetrainLayout layout = new DrivetrainLayout();
 
     /**
      * The order that you initialize these is important! Later uses of functions
@@ -118,6 +123,8 @@ public class Drivetrain extends SubsystemBase {
     private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds();
     private Pose2d robotFieldPosition;
     private boolean lockTargetInAuto = false;
+
+    private ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     public Drivetrain(Pigeon2 gyro, CameraSubsystem camera) {
         // Zero at beginning of match. Zero = whatever direction the robot (more
@@ -280,14 +287,37 @@ public class Drivetrain extends SubsystemBase {
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxPossibleSpeed);
 
         // passing back the math from kinematics to the swerves themselves.
-        m_frontLeft.setDesiredState(swerveModuleStates[0]);
-        m_frontRight.setDesiredState(swerveModuleStates[1]);
-        m_backLeft.setDesiredState(swerveModuleStates[2]);
-        m_backRight.setDesiredState(swerveModuleStates[3]);
+        CountDownLatch latch = new CountDownLatch(4);
+        executorService.execute(() -> {
+            m_frontLeft.setDesiredState(swerveModuleStates[0]);
+            latch.countDown();
+        });
+        executorService.execute(() -> {
+            m_frontRight.setDesiredState(swerveModuleStates[1]);
+            latch.countDown();
+        });
+        executorService.execute(() -> {
+            m_backLeft.setDesiredState(swerveModuleStates[2]);
+            latch.countDown();
+        });
+        executorService.execute(() -> {
+            m_backRight.setDesiredState(swerveModuleStates[3]);
+            latch.countDown();
+        });
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            // Pass
+        }
 
-        this.layout.setDesiredXSpeed(xSpeed);
-        this.layout.setDesiredYSpeed(ySpeed);
-        this.layout.setDesiredRotSpeed(Math.toDegrees(rotSpeed));
+        // m_frontLeft.setDesiredState(swerveModuleStates[0]);
+        // m_frontRight.setDesiredState(swerveModuleStates[1]);
+        // m_backLeft.setDesiredState(swerveModuleStates[2]);
+        // m_backRight.setDesiredState(swerveModuleStates[3]);
+
+        // this.layout.setDesiredXSpeed(xSpeed);
+        // this.layout.setDesiredYSpeed(ySpeed);
+        // this.layout.setDesiredRotSpeed(Math.toDegrees(rotSpeed));
     }
 
     public void lockPiece(double xSpeed, double ySpeed, double rotSpeed, boolean fieldRelative, boolean hardLocked) {
@@ -323,9 +353,9 @@ public class Drivetrain extends SubsystemBase {
         m_backLeft.setDesiredState(swerveModuleStates[2]);
         m_backRight.setDesiredState(swerveModuleStates[3]);
 
-        this.layout.setDesiredXSpeed(xSpeed);
-        this.layout.setDesiredYSpeed(ySpeed);
-        this.layout.setDesiredRotSpeed(Math.toDegrees(rotSpeed));
+        // this.layout.setDesiredXSpeed(xSpeed);
+        // this.layout.setDesiredYSpeed(ySpeed);
+        // this.layout.setDesiredRotSpeed(Math.toDegrees(rotSpeed));
     }
 
     public void driveInAuto(ChassisSpeeds chassisSpeeds) {
@@ -344,9 +374,9 @@ public class Drivetrain extends SubsystemBase {
 
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxPossibleSpeed);
 
-        this.layout.setDesiredXSpeed(chassisSpeeds.vxMetersPerSecond);
-        this.layout.setDesiredYSpeed(chassisSpeeds.vyMetersPerSecond);
-        this.layout.setDesiredRotSpeed(Math.toDegrees(chassisSpeeds.omegaRadiansPerSecond));
+        // this.layout.setDesiredXSpeed(chassisSpeeds.vxMetersPerSecond);
+        // this.layout.setDesiredYSpeed(chassisSpeeds.vyMetersPerSecond);
+        // this.layout.setDesiredRotSpeed(Math.toDegrees(chassisSpeeds.omegaRadiansPerSecond));
 
         // passing back the math from kinematics to the swerves themselves.
         m_frontLeft.setDesiredState(swerveModuleStates[0]);
@@ -396,10 +426,15 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // SmartDashboard.putNumber("Chassis Angle", getRoboPose2d().getRotation().getDegrees());
-        // SmartDashboard.putNumber("Desired Angle", Math.toDegrees(m_aim.getSpeakerAimTargetAngle()));
+        // SmartDashboard.putNumber("Chassis Angle",
+        // getRoboPose2d().getRotation().getDegrees());
+        // SmartDashboard.putNumber("Desired Angle",
+        // Math.toDegrees(m_aim.getSpeakerAimTargetAngle()));
         // SmartDashboard.putNumber("X speed", getChassisSpeeds().vxMetersPerSecond);
         // SmartDashboard.putNumber("Y speed", getChassisSpeeds().vyMetersPerSecond);
+        // SmartDashboard.putNumber("X pos", getRoboPose2d().getX());
+        // SmartDashboard.putNumber("Y pos", getRoboPose2d().getY());
+
         resetOdo(m_camera.resetOdoLimelight());
         updateOdometry();
     }

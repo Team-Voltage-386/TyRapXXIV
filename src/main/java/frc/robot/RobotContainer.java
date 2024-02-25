@@ -50,14 +50,14 @@ import frc.robot.Commands.resetOdo;
 public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
   private final Pigeon2 m_gyro = new Pigeon2(ID.kGyro);
-  private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
-  private final Drivetrain m_swerve = new Drivetrain(m_gyro, m_cameraSubsystem);
-  private final ShooterSubsystem m_shooter = new ShooterSubsystem();
-  private final Aimlock m_aim = new Aimlock(m_swerve, m_shooter);
-  private final PickupMotorsSubsystem m_pickupMotors = new PickupMotorsSubsystem();
-  private final PneumaticsSubsystem m_pneumatics = new PneumaticsSubsystem();
+  private final CameraSubsystem m_cameraSubsystem;
+  private final Drivetrain m_swerve;
+  private final ShooterSubsystem m_shooter;
+  private final Aimlock m_aim;
+  private final PickupMotorsSubsystem m_pickupMotors;
+  private final PneumaticsSubsystem m_pneumatics;
 
-  private final PickupOrchestrator m_pickup = new PickupOrchestrator(m_pneumatics, m_pickupMotors);
+  private final PickupOrchestrator m_pickup;
 
   Command driveCommand;
 
@@ -66,6 +66,13 @@ public class RobotContainer {
    */
   public RobotContainer() {
     m_gyro.getConfigurator().apply(new MountPoseConfigs().withMountPoseYaw(-90));
+    this.m_cameraSubsystem = new CameraSubsystem();
+    this.m_swerve = new Drivetrain(m_gyro, m_cameraSubsystem);
+    this.m_shooter = new ShooterSubsystem();
+    this.m_aim = new Aimlock(m_swerve, m_shooter);
+    this.m_pickupMotors = new PickupMotorsSubsystem();
+    this.m_pneumatics = new PneumaticsSubsystem();
+    this.m_pickup = new PickupOrchestrator(m_pneumatics, m_pickupMotors);
 
     m_swerve.setAim(m_aim);
     m_shooter.setAim(m_aim);
@@ -126,7 +133,8 @@ public class RobotContainer {
     Controller.kManipulatorController.povRight()
         .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.SPEAKER)));
     Controller.kManipulatorController.povDown()
-        .whileTrue(Commands.run(() -> m_pickupMotors.runMotorsReverse(), m_pickupMotors))
+        .whileTrue(Commands.run(() -> m_pickupMotors.runMotorsReverse(),
+            m_pickupMotors))
         .onFalse(m_pickupMotors.stopMotorsCommand());
     Controller.kManipulatorController.a().and(m_pickup.noPieceTrigger).onTrue(m_pickup.runIntakeCommand());
     Controller.kManipulatorController.b().onTrue(m_pickup.disableIntakeCommand());
@@ -201,7 +209,8 @@ public class RobotContainer {
   }
 
   public Command getTeleOpCommand() {
-    return new ParallelCommandGroup(driveCommand, Commands.runOnce(m_shooter::setAimToBreakMode, m_shooter));
+    return new ParallelCommandGroup(driveCommand,
+        Commands.runOnce(m_shooter::setAimToBreakMode, m_shooter));
   }
 
   public void print() {
