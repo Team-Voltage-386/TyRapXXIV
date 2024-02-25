@@ -35,8 +35,8 @@ public class Aimlock {
     }
 
     // PID/FF for chassis rotation speed
-    private SimpleMotorFeedforward aimFF = new SimpleMotorFeedforward(0.0, 18.25);
-    private ProfiledPIDController aimPID = new ProfiledPIDController(4, 0.0, 0.0,
+    private SimpleMotorFeedforward aimFF = new SimpleMotorFeedforward(0.0, 4);
+    private ProfiledPIDController aimPID = new ProfiledPIDController(5, 0.0, 0.0,
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
     private SimpleMotorFeedforward RRaimFF = new SimpleMotorFeedforward(0.0, 0);
@@ -151,11 +151,15 @@ public class Aimlock {
      * @return degrees to the target, right is -, left is +
      */
     public double getLLFRAngleToTarget() {
-        double angle = m_swerve.getRoboPose2d().getRotation().getDegrees() - LimelightHelpers.getTX(limelightName);
+        double angle = getGyroYaw() - LimelightHelpers.getTX(limelightName);
         if (hasTarget())
             return angle;
         else
-            return m_swerve.getRoboPose2d().getRotation().getDegrees();
+            return getGyroYaw();
+    }
+
+    public double getGyroYaw() {
+        return m_swerve.getRoboPose2d().getRotation().getDegrees();
     }
 
     /**
@@ -168,8 +172,8 @@ public class Aimlock {
             return -RRaimFF.calculate(Math.toRadians(getLLAngleToTarget()))
                     + RRaimPID.calculate(Math.toRadians(getLLAngleToTarget()));
         } else
-            return (aimFF.calculate(getSpeakerAimTargetAngle() - m_swerve.getRoboPose2d().getRotation().getRadians())
-                    + aimPID.calculate(m_swerve.getRoboPose2d().getRotation().getRadians(), getSpeakerAimTargetAngle()))
+            return (aimFF.calculate(getSpeakerAimTargetAngle() - Math.toRadians(getGyroYaw()))
+                    + aimPID.calculate(Math.toRadians(getGyroYaw()), getSpeakerAimTargetAngle()))
                     / 3; // if you remove the /3 the earth will explode
     }
 
@@ -211,7 +215,8 @@ public class Aimlock {
 
         // vertical vector
         double Vy = getShooterSpeedwDrag() * Math.sin(getVerticalAngleToSpeaker()) // vertical vector of note
-                - (9.80665 * Shooter.kFallingDragCoefficient * (getDistToSpeaker() / getShooterSpeedwDrag()));
+                - (9.80665 * Shooter.kFallingDragCoefficient
+                        * Math.pow((getDistToSpeaker() / getShooterSpeedwDrag()), 2)) / 2;
         // accounting for drop
         // (9.80665t is the velocity of a falling object after time t has passed)
         // try (9.8t^2)/2 if this proves inconsistent
@@ -221,7 +226,7 @@ public class Aimlock {
         double realAngle = Math.atan(Vy / Vx);
         // the angle we NEED to shoot at to hit the target. (just the amount of degrees
         // of error in the other direction)
-        double angle = Math.toDegrees(2 * getVerticalAngleToSpeaker() - realAngle) - 32;
+        double angle = Math.toDegrees(2 * getVerticalAngleToSpeaker() - realAngle) - 37;
 
         SmartDashboard.putNumber("Angle before constraints", angle);
 

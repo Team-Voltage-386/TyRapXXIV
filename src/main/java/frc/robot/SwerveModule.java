@@ -24,6 +24,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Modules;
 
 public class SwerveModule {
@@ -259,6 +260,11 @@ public class SwerveModule {
         this.m_turningLastSpeed = actualVelocity;
         this.m_turningLastTime = Timer.getFPGATimestamp();
         this.m_turningLastPosition = this.getActualTurningPosition();
+
+        // SmartDashboard.putNumber(this.m_swerveModuleName + " T Target Velocity",
+        // targetVelocity);
+        // SmartDashboard.putNumber(this.m_swerveModuleName + " T Actual Velocity",
+        // actualVelocity);
     }
 
     /**
@@ -290,6 +296,11 @@ public class SwerveModule {
         }
 
         this.goToPosition(state.angle.getRadians());
+
+        // SmartDashboard.putNumber(m_swerveModuleName + " Drive Actual Velocity",
+        // currentMPS);
+        // SmartDashboard.putNumber(m_swerveModuleName + " Drive Target Velocity",
+        // state.speedMetersPerSecond);
     }
 
     /**
@@ -305,14 +316,7 @@ public class SwerveModule {
 
         // SmartDashboard.putNumber(m_swerveModuleName + " Drive Output", driveOutput);
         // SmartDashboard.putNumber(m_swerveModuleName + " Turning Output", turnOutput);
-        // SmartDashboard.putNumber(m_swerveModuleName + " Drive Actual Velocity",
-        // currentMPS);
-        // SmartDashboard.putNumber(m_swerveModuleName + " Drive Target Velocity",
-        // state.speedMetersPerSecond);
-        // SmartDashboard.putNumber(this.m_swerveModuleName + " T Target Velocity",
-        // targetVelocity);
-        // SmartDashboard.putNumber(this.m_swerveModuleName + " T Actual Velocity",
-        // actualVelocity);
+
         // SmartDashboard.putNumber(this.m_swerveModuleName + " T Output Voltage",
         // pidVal + FFVal);
         // SmartDashboard.putNumber(this.m_swerveModuleName + " T Target Position",

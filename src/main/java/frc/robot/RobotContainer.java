@@ -89,6 +89,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("Dont Lock Target in Auto",
         Commands.runOnce(() -> m_swerve.setLockTargetInAuto(false), m_swerve));
     NamedCommands.registerCommand("Shoot", Commands.runOnce(m_shooter::shoot));
+    NamedCommands.registerCommand("Dont Shoot", Commands.runOnce(m_shooter::noShoot));
+    NamedCommands.registerCommand("Intake Down", m_pickup.runIntakeCommand());
+    NamedCommands.registerCommand("Intake Up", m_pickup.disableIntakeCommand());
 
     // Configure the trigger bindings
     configureBindings();
@@ -157,13 +160,16 @@ public class RobotContainer {
 
     // drive cont bindings
     Controller.kDriveController.rightBumper().onTrue((new resetOdo(m_swerve)));
+
     Controller.kDriveController.leftBumper().onTrue(new lockTarget(m_swerve));
     // drive cont bindings
     Controller.kDriveController.a().onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(0), m_shooter));
+
+    Controller.kDriveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());
+
+    // Temporary
     // Controller.kDriveController.rightTrigger(0.25).onTrue(m_pickup.runIntakeCommand())
     // .onFalse(m_pickup.disableIntakeCommand());
-    Controller.kDriveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());
-    // Temporary
 
     // Controller.kManipulatorController.x()
 
@@ -182,7 +188,7 @@ public class RobotContainer {
     // SmartDashboard.putData("Example Auto", AutoBuilder.buildAuto("Example
     // Auto"));
     // Add a button to run a simple example path
-    auto1 = AutoBuilder.buildAuto("first real auto");
+    auto1 = AutoBuilder.buildAuto("tyrap test");
     autoChooser.addOption("auto1", auto1);
     // Load the path we want to pathfind to and follow
     PathPlannerPath path = PathPlannerPath.fromPathFile("Score Amp");

@@ -153,8 +153,8 @@ public class Drivetrain extends SubsystemBase {
                 this::driveInAuto, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
                 new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your
                                                  // Constants class
-                        new PIDConstants(7.4, 0.0, 0.0), // Translation PID constants p used to be 7
-                        new PIDConstants(5.4, 0.0, 0.0), // Rotation PID constants
+                        new PIDConstants(7.55, 0.0, 0.0), // Translation PID constants p used to be 7
+                        new PIDConstants(5.45, 0.0, 0.0), // Rotation PID constants
                         kMaxPossibleSpeed, // Max module speed, in m/s
                         DriveTrain.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to
                                                      // furthest module.
@@ -182,6 +182,10 @@ public class Drivetrain extends SubsystemBase {
     public void setLockTargetInAuto(boolean lock) {
         System.out.println("toggled auto lock to" + lockTargetInAuto);
         lockTargetInAuto = lock;
+    }
+
+    public Pigeon2 getGyro() {
+        return m_gyro;
     }
 
     /**
@@ -315,8 +319,8 @@ public class Drivetrain extends SubsystemBase {
         // m_backLeft.setDesiredState(swerveModuleStates[2]);
         // m_backRight.setDesiredState(swerveModuleStates[3]);
 
-        // this.layout.setDesiredXSpeed(xSpeed);
-        // this.layout.setDesiredYSpeed(ySpeed);
+        SmartDashboard.putNumber("desired X speed", xSpeed);
+        SmartDashboard.putNumber("desired Y speed", ySpeed);
         // this.layout.setDesiredRotSpeed(Math.toDegrees(rotSpeed));
     }
 
@@ -426,16 +430,16 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // SmartDashboard.putNumber("Chassis Angle",
-        // getRoboPose2d().getRotation().getDegrees());
-        // SmartDashboard.putNumber("Desired Angle",
-        // Math.toDegrees(m_aim.getSpeakerAimTargetAngle()));
+        SmartDashboard.putNumber("Chassis Angle",
+                getRoboPose2d().getRotation().getDegrees());
+        SmartDashboard.putNumber("Desired Angle",
+                Math.toDegrees(m_aim.getSpeakerAimTargetAngle()));
         // SmartDashboard.putNumber("X speed", getChassisSpeeds().vxMetersPerSecond);
         // SmartDashboard.putNumber("Y speed", getChassisSpeeds().vyMetersPerSecond);
         // SmartDashboard.putNumber("X pos", getRoboPose2d().getX());
         // SmartDashboard.putNumber("Y pos", getRoboPose2d().getY());
 
-        resetOdo(m_camera.resetOdoLimelight());
+        // resetOdo(m_camera.resetOdoLimelight());
         updateOdometry();
     }
 }

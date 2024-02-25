@@ -31,7 +31,7 @@ public class lockTarget extends Command {
     private void readControllers() {
         // Get the x speed. We are inverting this because Xbox controllers return
         // negative values when we push forward.
-        xSpeed = m_xspeedLimiter
+        xSpeed = -m_xspeedLimiter
                 .calculate(
                         MathUtil.applyDeadband(Controller.kDriveController.getLeftY(), Deadbands.kLeftJoystickDeadband))
                 * Constants.Controller.kMaxNecessarySpeed;
@@ -39,7 +39,7 @@ public class lockTarget extends Command {
         // Get the y speed or sideways/strafe speed. We are inverting this because
         // we want a positive value when we pull to the left. Xbox controllers
         // return positive values when you pull to the right by default.
-        ySpeed = m_yspeedLimiter
+        ySpeed = -m_yspeedLimiter
                 .calculate(
                         MathUtil.applyDeadband(Controller.kDriveController.getLeftX(), Deadbands.kLeftJoystickDeadband))
                 * Constants.Controller.kMaxNecessarySpeed;
