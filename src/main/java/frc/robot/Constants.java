@@ -16,23 +16,23 @@ public class Constants {
 
     public static class ID {
         // Swerve motor controller IDs
-        public static final int kFrontLeftTurn = 1;
-        public static final int kFrontLeftDrive = 2;
+        public static final int kFrontLeftTurn = 5; // 1
+        public static final int kFrontLeftDrive = 6; // 2
 
-        public static final int kFrontRightTurn = 3;
-        public static final int kFrontRightDrive = 4;
+        public static final int kFrontRightTurn = 7; // 3
+        public static final int kFrontRightDrive = 8; // 4
 
-        public static final int kBackRightTurn = 5;
-        public static final int kBackRightDrive = 6;
+        public static final int kBackRightTurn = 1; // 5
+        public static final int kBackRightDrive = 2; // 6
 
-        public static final int kBackLeftTurn = 7;
-        public static final int kBackLeftDrive = 8;
+        public static final int kBackLeftTurn = 3; // 7
+        public static final int kBackLeftDrive = 4; // 8
 
         // Swerve CanCoder IDs
-        public static final int kFrontLeftCANCoder = 9;
-        public static final int kFrontRightCANCoder = 10;
-        public static final int kBackRightCANCoder = 11;
-        public static final int kBackLeftCANCoder = 12;
+        public static final int kFrontLeftCANCoder = 11; // 9
+        public static final int kFrontRightCANCoder = 12; // 10
+        public static final int kBackRightCANCoder = 9; // 11
+        public static final int kBackLeftCANCoder = 10; // 12
 
         // Pigeon
         public static final int kGyro = 13;
@@ -121,9 +121,9 @@ public class Constants {
         /**
          * Encoder offsets
          */
-        public static final double kFrontLeftOffset = -0.43;
-        public static final double kFrontRightOffset = -1.61;
-        public static final double kBackLeftOffset = -1.53;
-        public static final double kBackRightOffset = 0.86;
+        public static final double kFrontLeftOffset = 0.86; // -0.43
+        public static final double kFrontRightOffset = -1.53; // -1.61
+        public static final double kBackLeftOffset = -1.61; // -1.53
+        public static final double kBackRightOffset = -0.43; // 0.86
     }
 }

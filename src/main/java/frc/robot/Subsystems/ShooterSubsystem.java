@@ -413,12 +413,12 @@ public class ShooterSubsystem extends SubsystemBase {
         // SmartDashboard.putNumber("volts to hood", aimMotor.getAppliedOutput());
         // SmartDashboard.putNumber("target shooter angle",
         // m_aim.getShooterTargetAngle());
-        SmartDashboard.putNumber("Top Shooter Accel", previousTopMotorData[2]);
-        SmartDashboard.putNumber("Bottom Shooter Accel", previousBottomMotorData[2]);
-        SmartDashboard.putBoolean("has shot?", hasShotNote());
-        SmartDashboard.putBoolean("shooting?", shoot);
-        SmartDashboard.putBoolean("top decel bool", previousTopMotorData[2] < -3);
-        SmartDashboard.putBoolean("down decel bool", previousBottomMotorData[2] < -3);
+        // SmartDashboard.putNumber("Top Shooter Accel", previousTopMotorData[2]);
+        // SmartDashboard.putNumber("Bottom Shooter Accel", previousBottomMotorData[2]);
+        // SmartDashboard.putBoolean("has shot?", hasShotNote());
+        // SmartDashboard.putBoolean("shooting?", shoot);
+        // SmartDashboard.putBoolean("top decel bool", previousTopMotorData[2] < -3);
+        // SmartDashboard.putBoolean("down decel bool", previousBottomMotorData[2] < -3);
         // SmartDashboard.putNumber("Target angle", (m_aim.getShooterTargetAngle()));
         // SmartDashboard.putNumber("vert angle speaker",
         // Math.toDegrees(m_aim.getVerticalAngleToSpeaker()));

@@ -21,7 +21,7 @@ public class PneumaticsSubsystem extends SubsystemBase {
     // shooter
     private DoubleSolenoid m_latchPneumatics;
 
-    private ShuffleboardTab pneumaticsTab;
+    // private ShuffleboardTab pneumaticsTab;
 
     public PneumaticsSubsystem() {
         super("Pneumatics Subsystem");
@@ -30,7 +30,7 @@ public class PneumaticsSubsystem extends SubsystemBase {
         this.m_intakePneumatics = new DoubleSolenoid(Pneumatics.kPneumaticsModule, PneumaticsModuleType.CTREPCM, 3, 2);
         this.m_latchPneumatics = new DoubleSolenoid(Pneumatics.kPneumaticsModule, PneumaticsModuleType.CTREPCM, 1, 0);
 
-        pneumaticsTab = Shuffleboard.getTab(getName());
+        // pneumaticsTab = Shuffleboard.getTab(getName());
 
         // pneumaticsTab.add("Disabled intake");
     }

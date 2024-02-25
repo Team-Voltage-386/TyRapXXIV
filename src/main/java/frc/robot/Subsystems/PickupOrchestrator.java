@@ -30,8 +30,8 @@ public class PickupOrchestrator extends SubsystemBase {
     private DigitalInput highHoodSensor;
     private DigitalInput lowHoodSensor;
 
-    private SimpleWidget HoodDetected;
-    private SimpleWidget LowDetected;
+    // private SimpleWidget HoodDetected;
+    // private SimpleWidget LowDetected;
     // private SimpleWidget StateSensor;
 
     private ShuffleboardTab sensorTab;
@@ -76,8 +76,8 @@ public class PickupOrchestrator extends SubsystemBase {
         // .onTrue(runOnce(() -> Flags.pieceState = subsystemsStates.noPiece));
 
         sensorTab = Shuffleboard.getTab("Sensors");
-        HoodDetected = sensorTab.add("Hood Detected", false);
-        LowDetected = sensorTab.add("Low Detected", false);
+        // HoodDetected = sensorTab.add("Hood Detected", false);
+        // LowDetected = sensorTab.add("Low Detected", false);
 
         // StateSensor = sensorTab.add("Piece State", false);
     }
@@ -105,8 +105,8 @@ public class PickupOrchestrator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        HoodDetected.getEntry().setBoolean(highHoodSensor.get());
-        LowDetected.getEntry().setBoolean(lowHoodSensor.get());
+        // HoodDetected.getEntry().setBoolean(highHoodSensor.get());
+        // LowDetected.getEntry().setBoolean(lowHoodSensor.get());
         // StateSensor.getEntry().setBoolean(Flags.pieceState.equals(Flags.subsystemsStates.noPiece));
     }
 }
