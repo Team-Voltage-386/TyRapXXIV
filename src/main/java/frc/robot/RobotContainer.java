@@ -25,6 +25,7 @@ import frc.robot.Constants.Controller;
 import frc.robot.Constants.ID;
 import frc.robot.Constants.PipeLineID;
 import frc.robot.Subsystems.CameraSubsystem;
+import frc.robot.Subsystems.Climber;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Utils.Aimlock;
@@ -65,6 +66,7 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    Climber m_Climber = new Climber();
     m_gyro.getConfigurator().apply(new MountPoseConfigs().withMountPoseYaw(-90));
     this.m_cameraSubsystem = new CameraSubsystem();
     this.m_swerve = new Drivetrain(m_gyro, m_cameraSubsystem);

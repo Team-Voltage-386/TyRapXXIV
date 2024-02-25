@@ -15,24 +15,24 @@ public class RetractClimber extends Command {
     public RetractClimber(CANSparkMax m1, CANSparkMax m2, DigitalInput lLimit) {
         motor1 = m1;
         motor2 = m2;
-        motor2.follow(motor1);
         lowLimit = lLimit;
     }
 
     @Override
     public void initialize() {
         if (lowLimit.get()) {
-            motor1.setVoltage(-0.5);
+            motor1.setVoltage(-1);
         }
     }
 
     @Override
     public boolean isFinished() {
-        if (!lowLimit.get()) {
-            motor1.setVoltage(0);
-            return true;
-        }
-        return false;
+        return !lowLimit.get();
     }
-
+    
+    @Override
+    public void end(boolean interrupted)
+    {
+        motor1.setVoltage(0);
+    }
 }
