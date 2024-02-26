@@ -26,12 +26,12 @@ public class CameraSubsystem extends SubsystemBase {
   NetworkTableEntry cameraSelection;
   VideoSink server;
 
-    ShuffleboardTab m_cameraTab = Shuffleboard.getTab("camera tab");
-    private final SimpleWidget m_llTimeSinceUpdateOdo = m_cameraTab.add("Time Since LL Odo Update", 0);
-    private Timer m_llTimeSinceUpdate = new Timer();
-    private final SimpleWidget m_limelightPose2DBlue = m_cameraTab.add("getBotPose2DwpiBlue", "");
-    private ComplexWidget m_cameraView;
-    private static String limelightName = "limelight-b";
+  ShuffleboardTab m_cameraTab = Shuffleboard.getTab("camera tab");
+  private final SimpleWidget m_llTimeSinceUpdateOdo = m_cameraTab.add("Time Since LL Odo Update", 0);
+  private Timer m_llTimeSinceUpdate = new Timer();
+  private final SimpleWidget m_limelightPose2DBlue = m_cameraTab.add("getBotPose2DwpiBlue", "");
+  private ComplexWidget m_cameraView;
+  private static String limelightName = "limelight-b";
 
   public CameraSubsystem() {
     // Creates UsbCamera and MjpegServer [1] and connects them
@@ -46,13 +46,14 @@ public class CameraSubsystem extends SubsystemBase {
 
     this.usbCamera.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
 
-    m_cameraView = m_cameraTab.add(this.usbCamera).withWidget(BuiltInWidgets.kCameraStream).withPosition(3, 0).withSize(6, 4);
-    
+    m_cameraView = m_cameraTab.add(this.usbCamera).withWidget(BuiltInWidgets.kCameraStream).withPosition(3, 0)
+        .withSize(6, 4);
+
     m_llTimeSinceUpdate.start();
   }
 
   public static String getLimelightName() {
-      return limelightName;
+    return limelightName;
   }
 
   public static enum CameraSourceOption {
@@ -60,7 +61,7 @@ public class CameraSubsystem extends SubsystemBase {
   }
 
   public void setCameraSource(CameraSourceOption option) {
-    switch(option) {
+    switch (option) {
       case USB_CAMERA: {
         this.server.setSource(this.usbCamera);
         break;
@@ -72,20 +73,19 @@ public class CameraSubsystem extends SubsystemBase {
   }
 
   public Pose2d resetOdoLimelight() {
-        m_limelightPose2DBlue.getEntry().setString(LimelightHelpers.getBotPose2d_wpiBlue(limelightName).toString());
-        LimelightHelpers.LimelightResults  llResults = LimelightHelpers.getLatestResults(limelightName);
-        int numTargets = llResults.targetingResults.targets_Fiducials.length;
-        m_llTimeSinceUpdateOdo.getEntry().setDouble(m_llTimeSinceUpdate.get());
-        if (numTargets > 1) {
-          m_llTimeSinceUpdate.reset();
-          return LimelightHelpers.getBotPose2d_wpiBlue(limelightName);
-        }
-        else{
-          return null;
-        } 
+    m_limelightPose2DBlue.getEntry().setString(LimelightHelpers.getBotPose2d_wpiBlue(limelightName).toString());
+    LimelightHelpers.LimelightResults llResults = LimelightHelpers.getLatestResults(limelightName);
+    int numTargets = llResults.targetingResults.targets_Fiducials.length;
+    m_llTimeSinceUpdateOdo.getEntry().setDouble(m_llTimeSinceUpdate.get());
+    if (numTargets > 1) {
+      m_llTimeSinceUpdate.reset();
+      return LimelightHelpers.getBotPose2d_wpiBlue(limelightName);
+    } else {
+      return null;
     }
+  }
 
   public boolean isLLOdoGood(double timeThreshold) {
-      return !m_llTimeSinceUpdate.hasElapsed(timeThreshold);
+    return !m_llTimeSinceUpdate.hasElapsed(timeThreshold);
   }
 }

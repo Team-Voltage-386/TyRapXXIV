@@ -62,6 +62,18 @@
         {
           "type": "wait",
           "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "tyrap test 4"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
             "waitTime": 1.0
           }
         },

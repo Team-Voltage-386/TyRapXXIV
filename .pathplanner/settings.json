@@ -4,8 +4,9 @@
   "holonomicMode": true,
   "pathFolders": [
     "Auto1",
-    "test path file",
-    "first real auto"
+    "simple autos",
+    "first real auto",
+    "test path file"
   ],
   "autoFolders": [],
   "defaultMaxVel": 3.375,

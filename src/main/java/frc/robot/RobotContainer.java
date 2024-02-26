@@ -125,11 +125,12 @@ public class RobotContainer {
     // .onFalse(new ParallelCommandGroup(Commands.runOnce(() ->
     // m_shooter.shootToggle(), m_shooter),
     // m_pickup.lowerLoaderCommand()));
-    new Trigger(() -> m_shooter.hasShotNote())
-        .onTrue(new SequentialCommandGroup(new TimerWaitCommand(0.25),
-            new ParallelCommandGroup(Commands.runOnce(() -> m_shooter.noShoot(),
-                m_shooter)),
-            m_pickup.lowerLoaderCommand()));
+
+    // new Trigger(() -> m_shooter.hasShotNote())
+    // .onTrue(new SequentialCommandGroup(new TimerWaitCommand(0.25),
+    // new ParallelCommandGroup(Commands.runOnce(() -> m_shooter.noShoot(),
+    // m_shooter)),
+    // m_pickup.lowerLoaderCommand()));
 
     Controller.kManipulatorController.povLeft()
         .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.AMP)));
@@ -188,7 +189,7 @@ public class RobotContainer {
     // SmartDashboard.putData("Example Auto", AutoBuilder.buildAuto("Example
     // Auto"));
     // Add a button to run a simple example path
-    auto1 = AutoBuilder.buildAuto("tyrap test");
+    auto1 = AutoBuilder.buildAuto("simple auto 1");
     autoChooser.addOption("auto1", auto1);
     // Load the path we want to pathfind to and follow
     PathPlannerPath path = PathPlannerPath.fromPathFile("Score Amp");

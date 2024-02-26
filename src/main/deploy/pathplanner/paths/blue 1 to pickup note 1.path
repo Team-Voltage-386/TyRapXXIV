@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.284461030460524,
-        "y": 5.545221859674489
+        "x": 0.6529766905687672,
+        "y": 6.6207186260526365
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.9112722961537205,
-        "y": 6.885971888919526
+        "x": 1.5547111045939432,
+        "y": 6.761248664602014
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.613922488900611,
-        "y": 6.979658581285779
+        "x": 2.33,
+        "y": 6.59
       },
       "prevControl": {
-        "x": 1.5833688728718385,
-        "y": 6.99136941783156
+        "x": 1.9747900588108869,
+        "y": 6.787338856216174
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,50 +32,32 @@
   "constraintZones": [
     {
       "name": "New Constraints Zone",
-      "minWaypointRelativePos": 0.6,
-      "maxWaypointRelativePos": 0.75,
+      "minWaypointRelativePos": 0.55,
+      "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 1.0,
+        "maxVelocity": 0.5,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 900.0
       }
     }
   ],
-  "eventMarkers": [
-    {
-      "name": "intake down",
-      "waypointRelativePos": 0.5,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Intake Down"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.5,
+    "maxVelocity": 1.0,
     "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 900.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.6902771978650999,
+    "rotation": 33.57093194772292,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "test path file",
+  "folder": "simple autos",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": 59.30027744918558,
     "velocity": 0
   },
   "useDefaultConstraints": false

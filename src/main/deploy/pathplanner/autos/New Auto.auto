@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3374413054104268,
-      "y": 5.550936522700434
+      "x": 1.284461030460524,
+      "y": 5.545221859674489
     },
     "rotation": 0
   },
@@ -12,21 +12,21 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Lock Target in Auto"
+            "pathName": "tyrap path 1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Tuning square"
+            "pathName": "tyrap path 2"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Dont Lock Target in Auto"
+            "pathName": "tyrap path 3"
           }
         }
       ]

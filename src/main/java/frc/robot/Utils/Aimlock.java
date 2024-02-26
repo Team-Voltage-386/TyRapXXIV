@@ -35,8 +35,8 @@ public class Aimlock {
     }
 
     // PID/FF for chassis rotation speed
-    private SimpleMotorFeedforward aimFF = new SimpleMotorFeedforward(0.0, 4);
-    private ProfiledPIDController aimPID = new ProfiledPIDController(5, 0.0, 0.0,
+    private SimpleMotorFeedforward aimFF = new SimpleMotorFeedforward(0.0, 11);
+    private ProfiledPIDController aimPID = new ProfiledPIDController(8, 0.2, 0.2,
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
     private SimpleMotorFeedforward RRaimFF = new SimpleMotorFeedforward(0.0, 0);
@@ -125,11 +125,12 @@ public class Aimlock {
                 + getShooterSpeedwDrag() * Math.sin(Math.toRadians(getAngleToSpeaker()));
         double Vx = m_swerve.getChassisSpeeds().vxMetersPerSecond
                 + getShooterSpeedwDrag() * Math.cos(Math.toRadians(getAngleToSpeaker()));
-        return 2 * Math.toRadians(getAngleToSpeaker()) - Math.atan(Vy / Vx);
+        // return 2 * Math.toRadians(getAngleToSpeaker()) - Math.atan(Vy / Vx);
+        return Math.atan(Vy / Vx);
     }
 
     public double getShooterSpeedwDrag() {
-        return Shooter.kShooterSpeed * Shooter.kDragCoefficient;
+        return Shooter.kShooterSpeed - Shooter.kDragCoefficient * Math.sqrt(getDistToSpeaker());
     }
 
     /**
@@ -209,26 +210,27 @@ public class Aimlock {
             return Shooter.kMaxAngle; // go to 10 degrees if u no see
         }
         // motion towards target
-        double M = Math.hypot(
+        double M = Math.hypot( // get magnitude of robot motion vector towards speaker
                 m_swerve.getChassisSpeeds().vyMetersPerSecond * Math.sin(Math.toRadians(getAngleToSpeaker())),
                 m_swerve.getChassisSpeeds().vxMetersPerSecond * Math.cos(Math.toRadians(getAngleToSpeaker())));
 
         // vertical vector
-        double Vy = getShooterSpeedwDrag() * Math.sin(getVerticalAngleToSpeaker()) // vertical vector of note
-                - (9.80665 * Shooter.kFallingDragCoefficient
-                        * Math.pow((getDistToSpeaker() / getShooterSpeedwDrag()), 2)) / 2;
+        double Vy = getShooterSpeedwDrag() * Math.sin(getVerticalAngleToSpeaker()); // vertical vector of note
         // accounting for drop
         // (9.80665t is the velocity of a falling object after time t has passed)
         // try (9.8t^2)/2 if this proves inconsistent
         // horizontal vector
         double Vx = getShooterSpeedwDrag() * Math.cos(getVerticalAngleToSpeaker()) + M; // horizontal vector of note
         // the angle that the shooter WILL shoot at if we aim directly at the target.
-        double realAngle = Math.atan(Vy / Vx);
+        double noteDropMeters = (9.80665 * Shooter.kFallingDragCoefficient
+                * Math.pow((getDistToSpeaker() / getShooterSpeedwDrag()), 2)) / 2;
+        double realAngle = Math.atan(((Vy / Vx) * getDistToTag() - noteDropMeters) / getDistToTag());
         // the angle we NEED to shoot at to hit the target. (just the amount of degrees
         // of error in the other direction)
-        double angle = Math.toDegrees(2 * getVerticalAngleToSpeaker() - realAngle) - 37;
+        double angle = Math.toDegrees(2 * getVerticalAngleToSpeaker() - realAngle) - 32 - 3;
 
-        SmartDashboard.putNumber("Angle before constraints", angle);
+        // when backing away turret should move down more
+        // when coming forward turret should move up more
 
         return MathUtil.clamp(angle, Shooter.kMinAngle, Shooter.kMaxAngle);
     }
