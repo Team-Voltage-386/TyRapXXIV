@@ -126,7 +126,8 @@ public class Aimlock {
         double Vx = m_swerve.getChassisSpeeds().vxMetersPerSecond
                 + getShooterSpeedwDrag() * Math.cos(Math.toRadians(getAngleToSpeaker()));
         // return 2 * Math.toRadians(getAngleToSpeaker()) - Math.atan(Vy / Vx);
-        return Math.atan(Vy / Vx);
+        return Math.atan(Vy / Vx); // dont know why this suddenly isnt inverted also consider using gyro and not
+                                   // swerve odo
     }
 
     public double getShooterSpeedwDrag() {
