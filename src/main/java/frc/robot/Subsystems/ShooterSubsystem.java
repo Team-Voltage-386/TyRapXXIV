@@ -141,18 +141,16 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
-     * toggle whether or not we are trying to shoot the piece
+     * shoot the piece
      */
-    public void shootToggle() {
-        shoot = !shoot;
-        System.out.println("shoot = " + shoot);
-    }
-
     public void shoot() {
         shoot = true;
         System.out.println("shoot = " + shoot);
     }
 
+    /**
+     * stop trying to shoot the piece
+     */
     public void noShoot() {
         shoot = false;
         System.out.println("shoot = " + shoot);
@@ -272,6 +270,7 @@ public class ShooterSubsystem extends SubsystemBase {
                         rollerMotor.set(TalonSRXControlMode.PercentOutput, -0.5);
                     } else {
                         runShooterSpeakMode();
+                        rollerMotor.set(TalonSRXControlMode.PercentOutput, 0);
                     }
                 } else {
                     topShooterMotor.setVoltage(0);
@@ -286,6 +285,7 @@ public class ShooterSubsystem extends SubsystemBase {
                         rollerMotor.set(TalonSRXControlMode.PercentOutput, -0.5);
                     } else {
                         runShooterAmpMode();
+                        rollerMotor.set(TalonSRXControlMode.PercentOutput, 0);
                     }
                 } else {
                     topShooterMotor.setVoltage(0);
@@ -293,6 +293,9 @@ public class ShooterSubsystem extends SubsystemBase {
                     rollerMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
                 }
             default:
+                topShooterMotor.setVoltage(0);
+                bottomShooterMotor.setVoltage(0);
+                rollerMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
                 break;
         }
 
