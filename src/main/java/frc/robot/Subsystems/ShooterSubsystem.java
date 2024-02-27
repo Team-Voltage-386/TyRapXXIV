@@ -28,11 +28,11 @@ import frc.robot.Utils.Flags;
 import frc.robot.Utils.ParabolicController;
 
 public class ShooterSubsystem extends SubsystemBase {
+    private FeederMotorSubsystem m_FeederMotor;
 
     private CANSparkMax aimMotor;
     private CANSparkMax topShooterMotor;
     private CANSparkMax bottomShooterMotor;
-    private TalonSRX rollerMotor;
     private RelativeEncoder relativeEncoder;
 
     DigitalInput topLimit;
@@ -66,7 +66,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private SlewRateLimiter m_slewRateLimiter;
 
-    public ShooterSubsystem() {
+    public ShooterSubsystem(FeederMotorSubsystem feederMotor) {
+        m_FeederMotor = feederMotor;
         // init aim motor
         aimMotor = new CANSparkMax(ID.kShooterAimMotorID, MotorType.kBrushless);
         aimMotor.setIdleMode(IdleMode.kBrake); // todo change to brake after testing
@@ -98,9 +99,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // m_shootPID = new ProfiledPIDController(0.0, 0, 0, new Constraints(10, 10));
         // m_shootFF = new SimpleMotorFeedforward(0.0, 0.0);
-
-        // init roller handoff motor
-        rollerMotor = new TalonSRX(ID.kRollerMotorID);
 
         // get shooter speed
         shootSpeed = Shooter.kShooterSpeed;// SmartDashboard.getNumber("ShootSpeed", Shooter.kShooterSpeed);
@@ -267,35 +265,35 @@ public class ShooterSubsystem extends SubsystemBase {
                 if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)) {
                     if (shoot) {
                         runShooterSpeakMode();
-                        rollerMotor.set(TalonSRXControlMode.PercentOutput, -0.5);
+                        m_FeederMotor.runShootFeederMotorToShootCommand().schedule();
                     } else {
                         runShooterSpeakMode();
-                        rollerMotor.set(TalonSRXControlMode.PercentOutput, 0);
+                        m_FeederMotor.stopFeederMotorCommand().schedule();
                     }
                 } else {
                     topShooterMotor.setVoltage(0);
                     bottomShooterMotor.setVoltage(0);
-                    rollerMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
+                    m_FeederMotor.stopFeederMotorCommand().schedule();
                 }
                 break;
             case AMP:
                 if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)) {
                     if (shoot) {
                         runShooterAmpMode();
-                        rollerMotor.set(TalonSRXControlMode.PercentOutput, -0.5);
+                        m_FeederMotor.runShootFeederMotorToShootCommand().schedule();
                     } else {
                         runShooterAmpMode();
-                        rollerMotor.set(TalonSRXControlMode.PercentOutput, 0);
+                        m_FeederMotor.stopFeederMotorCommand().schedule();
                     }
                 } else {
                     topShooterMotor.setVoltage(0);
                     bottomShooterMotor.setVoltage(0);
-                    rollerMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
+                    m_FeederMotor.stopFeederMotorCommand().schedule();
                 }
             default:
                 topShooterMotor.setVoltage(0);
                 bottomShooterMotor.setVoltage(0);
-                rollerMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
+                m_FeederMotor.stopFeederMotorCommand().schedule();
                 break;
         }
 

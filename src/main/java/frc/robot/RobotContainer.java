@@ -26,6 +26,7 @@ import frc.robot.Constants.ID;
 import frc.robot.Constants.PipeLineID;
 import frc.robot.Subsystems.CameraSubsystem;
 import frc.robot.Subsystems.Drivetrain;
+import frc.robot.Subsystems.FeederMotorSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Utils.Aimlock;
 import frc.robot.Subsystems.PickupMotorsSubsystem;
@@ -56,6 +57,7 @@ public class RobotContainer {
   private final Aimlock m_aim;
   private final PickupMotorsSubsystem m_pickupMotors;
   private final PneumaticsSubsystem m_pneumatics;
+  private final FeederMotorSubsystem m_feederMotor;
 
   private final PickupOrchestrator m_pickup;
 
@@ -68,11 +70,12 @@ public class RobotContainer {
     m_gyro.getConfigurator().apply(new MountPoseConfigs().withMountPoseYaw(-90));
     this.m_cameraSubsystem = new CameraSubsystem();
     this.m_swerve = new Drivetrain(m_gyro, m_cameraSubsystem);
-    this.m_shooter = new ShooterSubsystem();
-    this.m_aim = new Aimlock(m_swerve, m_shooter);
     this.m_pickupMotors = new PickupMotorsSubsystem();
     this.m_pneumatics = new PneumaticsSubsystem();
-    this.m_pickup = new PickupOrchestrator(m_pneumatics, m_pickupMotors);
+    this.m_feederMotor = new FeederMotorSubsystem();
+    this.m_pickup = new PickupOrchestrator(m_pneumatics, m_pickupMotors, m_feederMotor);
+    this.m_shooter = new ShooterSubsystem(m_feederMotor);
+    this.m_aim = new Aimlock(m_swerve, m_shooter);
 
     m_swerve.setAim(m_aim);
     m_shooter.setAim(m_aim);
@@ -142,8 +145,6 @@ public class RobotContainer {
         .onFalse(m_pickupMotors.stopMotorsCommand());
     Controller.kManipulatorController.a().and(m_pickup.noPieceTrigger).onTrue(m_pickup.runIntakeCommand());
     Controller.kManipulatorController.b().onTrue(m_pickup.disableIntakeCommand());
-    // Controller.kManipulatorController.x().onTrue(m_pickup.loadPieceCommand());
-    Controller.kManipulatorController.y().onTrue(m_pickup.lowerLoaderCommand());
     // Controller.kManipulatorController.x().whileTrue(pathfindAmp);
 
     // Controller.kManipulatorController.leftBumper().and(() ->

@@ -6,19 +6,15 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.ID;
 
 public class PickupMotorsSubsystem extends SubsystemBase {
 
     double goalRPM = 425;
 
-    CANSparkMax frontIntakeMotor;
+    //CANSparkMax frontIntakeMotor;
     CANSparkMax backIntakeMotor;
 
     ProfiledPIDController pickupPID = new ProfiledPIDController(0.0, 0, 0.00, new Constraints(goalRPM, 1000));
@@ -26,18 +22,7 @@ public class PickupMotorsSubsystem extends SubsystemBase {
 
     public PickupMotorsSubsystem() {
         // holdingPieceDetector = new DigitalInput(ID.kPieceDetector);
-        frontIntakeMotor = new CANSparkMax(ID.kFrontPickup, MotorType.kBrushless);
-        frontIntakeMotor.setInverted(true);
         backIntakeMotor = new CANSparkMax(ID.kBackPickup, MotorType.kBrushless);
-    }
-
-    /**
-     * returns real intake velocity, accounting for the gear ratio
-     * 
-     * @return
-     */
-    public double getFrontRealIntakeRPM() {
-        return frontIntakeMotor.getEncoder().getVelocity() / 4;
     }
 
     /**
@@ -50,26 +35,19 @@ public class PickupMotorsSubsystem extends SubsystemBase {
     }
 
     public void runMotors() {
-        frontIntakeMotor
-                .setVoltage(pickupPID.calculate(getFrontRealIntakeRPM(), goalRPM) + pickupFF.calculate(goalRPM));
         backIntakeMotor.setVoltage(pickupPID.calculate(getBackRealIntakeRPM(), goalRPM) + pickupFF.calculate(goalRPM));
     }
 
     public void runMotorsSlow() {
-        frontIntakeMotor
-                .setVoltage(pickupPID.calculate(getFrontRealIntakeRPM(), 50) + pickupFF.calculate(50));
         backIntakeMotor.setVoltage(pickupPID.calculate(getBackRealIntakeRPM(), 50) + pickupFF.calculate(50));
     }
 
     public void runMotorsReverse() {
-        frontIntakeMotor
-                .setVoltage(pickupPID.calculate(getFrontRealIntakeRPM(), -goalRPM) + pickupFF.calculate(-goalRPM));
         backIntakeMotor
                 .setVoltage(pickupPID.calculate(getBackRealIntakeRPM(), -goalRPM) + pickupFF.calculate(-goalRPM));
     }
 
     public void stopMotors() {
-        frontIntakeMotor.setVoltage(0);
         backIntakeMotor.setVoltage(0);
     }
 
