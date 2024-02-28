@@ -265,10 +265,10 @@ public class ShooterSubsystem extends SubsystemBase {
                 if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)) {
                     if (shoot) {
                         runShooterSpeakMode();
-                        m_FeederMotor.runShootFeederMotorToShootCommand().schedule();
+                        m_FeederMotor.runShootFeederMotorToShoot();// Command().schedule(); why
                     } else {
                         runShooterSpeakMode();
-                        m_FeederMotor.stopFeederMotorCommand().schedule();
+                        m_FeederMotor.stopFeederMotor(); // Command().schedule(); bad architecture.
                     }
                 } else {
                     topShooterMotor.setVoltage(0);
@@ -280,20 +280,20 @@ public class ShooterSubsystem extends SubsystemBase {
                 if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)) {
                     if (shoot) {
                         runShooterAmpMode();
-                        m_FeederMotor.runShootFeederMotorToShootCommand().schedule();
+                        m_FeederMotor.runShootFeederMotorToShoot();// Command().schedule();
                     } else {
                         runShooterAmpMode();
-                        m_FeederMotor.stopFeederMotorCommand().schedule();
+                        m_FeederMotor.stopFeederMotor();// Command().schedule();
                     }
                 } else {
                     topShooterMotor.setVoltage(0);
                     bottomShooterMotor.setVoltage(0);
-                    m_FeederMotor.stopFeederMotorCommand().schedule();
+                    m_FeederMotor.stopFeederMotor();//Command().schedule();
                 }
             default:
                 topShooterMotor.setVoltage(0);
                 bottomShooterMotor.setVoltage(0);
-                m_FeederMotor.stopFeederMotorCommand().schedule();
+                m_FeederMotor.stopFeederMotor();//Command().schedule();
                 break;
         }
 
