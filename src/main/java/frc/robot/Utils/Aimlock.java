@@ -204,7 +204,7 @@ public class Aimlock {
     /**
      * @return the angle the shooter must be at in order to score in the speaker
      *         (accounting
-     *         for robot movement)
+     *         for robot movement and projectile drop)
      */
     public double getShooterTargetAngleSPEAKER() {
         if (!hasTarget()) {
@@ -212,28 +212,33 @@ public class Aimlock {
         }
         // motion towards target
         double M = Math.hypot( // get magnitude of robot motion vector towards speaker
-                m_swerve.getChassisSpeeds().vyMetersPerSecond * Math.sin(Math.toRadians(getAngleToSpeaker())),
-                m_swerve.getChassisSpeeds().vxMetersPerSecond * Math.cos(Math.toRadians(getAngleToSpeaker())));
+                m_swerve.getChassisSpeeds().vyMetersPerSecond * Math.sin(Math.toRadians(getSpeakerAimTargetAngle())),
+                m_swerve.getChassisSpeeds().vxMetersPerSecond * Math.cos(Math.toRadians(getSpeakerAimTargetAngle())));
 
-        // vertical vector
         double Vy = getShooterSpeedwDrag() * Math.sin(getVerticalAngleToSpeaker()); // vertical vector of note
+        double Vx = getShooterSpeedwDrag() * Math.cos(getVerticalAngleToSpeaker()) + M; // horizontal vector of note
+        // the angle that the shooter WILL shoot the note at if we aim directly at the
+        // target.
+        double perfectAngle = Math.atan(Vy / Vx);
         // accounting for drop
         // (9.80665t is the velocity of a falling object after time t has passed)
-        // try (9.8t^2)/2 if this proves inconsistent
+        // try (9.8t^2)/2 if this proves inconsistent. t = ground distance/ground speed
         // horizontal vector
-        double Vx = getShooterSpeedwDrag() * Math.cos(getVerticalAngleToSpeaker()) + M; // horizontal vector of note
-        // the angle that the shooter WILL shoot at if we aim directly at the target.
-        double noteDropMeters = (9.80665 * Shooter.kFallingDragCoefficient
-                * Math.pow((getDistToSpeaker() / getShooterSpeedwDrag()), 2)) / 2;
-        double realAngle = Math.atan(((Vy / Vx) * getDistToTag() - noteDropMeters) / getDistToTag());
-        // the angle we NEED to shoot at to hit the target. (just the amount of degrees
+        double noteDropMeters = ((9.80665 * Shooter.kFallingDragCoefficient
+                * Math.pow((getDistToTag() / (getShooterSpeedwDrag() * Math.cos(perfectAngle))), 2))) / 2;
+        double tuningFactor = 0.99; // tweak how much it adjusts
+        // the angle we NEED to shoot at to hit the target, including drop. (just the
+        // amount of degrees
         // of error in the other direction)
-        double angle = Math.toDegrees(2 * getVerticalAngleToSpeaker() - realAngle) - 32 - 3;
-
+        double angle = Math.toDegrees(2 * getVerticalAngleToSpeaker() - tuningFactor * perfectAngle);
+        double angleWithDrop = angle + Math.toDegrees(
+                Math.atan(((Vy / Vx) * getDistToTag() + noteDropMeters) / getDistToTag()) - angle);
         // when backing away turret should move down more
         // when coming forward turret should move up more
-
-        return MathUtil.clamp(angle, Shooter.kMinAngle, Shooter.kMaxAngle);
+        // 32 is the bottom of the shooter angle IRL
+        // 3 is just a guestimate of from where we measure to where the note actually
+        // comes out
+        return MathUtil.clamp(angleWithDrop - 32 - 3, Shooter.kMinAngle, Shooter.kMaxAngle);
     }
 
     /**
