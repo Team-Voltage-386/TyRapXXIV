@@ -73,13 +73,12 @@ public class CameraSubsystem extends SubsystemBase {
   }
 
   public Pose2d resetOdoLimelight() {
-    m_limelightPose2DBlue.getEntry().setString(LimelightHelpers.getBotPose2d_wpiBlue(limelightName).toString());
-    LimelightHelpers.LimelightResults llResults = LimelightHelpers.getLatestResults(limelightName);
-    int numTargets = llResults.targetingResults.targets_Fiducials.length;
+    LimelightHelpers.PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
+    m_limelightPose2DBlue.getEntry().setString(poseEstimate.toString());
     m_llTimeSinceUpdateOdo.getEntry().setDouble(m_llTimeSinceUpdate.get());
-    if (numTargets > 1) {
+    if (poseEstimate.tagCount > 1) {
       m_llTimeSinceUpdate.reset();
-      return LimelightHelpers.getBotPose2d_wpiBlue(limelightName);
+      return poseEstimate.pose;
     } else {
       return null;
     }

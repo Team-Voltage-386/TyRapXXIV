@@ -440,7 +440,7 @@ public class Drivetrain extends SubsystemBase {
         // SmartDashboard.putNumber("X pos", getRoboPose2d().getX());
         // SmartDashboard.putNumber("Y pos", getRoboPose2d().getY());
 
-        // resetOdo(m_camera.resetOdoLimelight());
+        resetOdo(m_camera.resetOdoLimelight());
         updateOdometry();
     }
 }
