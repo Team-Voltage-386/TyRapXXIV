@@ -17,7 +17,8 @@ public class ElevatorUpCommand extends Command {
 
     @Override
     public void initialize() {
-        m_subsystem.setElevatorMotorsVoltage(m_motorVoltage);
+        if (!m_subsystem.isUpperLimitTriggered())
+            m_subsystem.setElevatorMotorsVoltage(m_motorVoltage);
     }
 
     @Override

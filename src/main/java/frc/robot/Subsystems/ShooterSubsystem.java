@@ -403,8 +403,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public void periodic() {
         updateBottomShooterAcceleration();
         updateTopShooterAcceleration();
-        aimShooter(m_aim.getShooterTargetAngle());
-        spoolMotors();
+        // aimShooter(m_aim.getShooterTargetAngle());
+        // spoolMotors();
         // SmartDashboard.putNumber("Shooter angle (rel)", getShooterAngleRelative());
         // SmartDashboard.putBoolean("top limit", getTopLimit());
         // SmartDashboard.putBoolean("bottom limit", getBottomLimit());
