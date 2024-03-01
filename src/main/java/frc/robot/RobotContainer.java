@@ -26,6 +26,7 @@ import frc.robot.Constants.ID;
 import frc.robot.Constants.PipeLineID;
 import frc.robot.Subsystems.CameraSubsystem;
 import frc.robot.Subsystems.Drivetrain;
+import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.Subsystems.FeederMotorSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Utils.Aimlock;
@@ -33,6 +34,8 @@ import frc.robot.Subsystems.PickupMotorsSubsystem;
 import frc.robot.Subsystems.PickupOrchestrator;
 import frc.robot.Subsystems.PneumaticsSubsystem;
 import frc.robot.Commands.Drive;
+import frc.robot.Commands.ElevatorDownCommand;
+import frc.robot.Commands.ElevatorUpCommand;
 import frc.robot.Commands.StopDrive;
 import frc.robot.Commands.aimShooterCommand;
 import frc.robot.Commands.lockTarget;
@@ -58,6 +61,7 @@ public class RobotContainer {
   private final PickupMotorsSubsystem m_pickupMotors;
   private final PneumaticsSubsystem m_pneumatics;
   private final FeederMotorSubsystem m_feederMotor;
+  private final ElevatorSubsystem m_elevatorSubsystem;
 
   private final PickupOrchestrator m_pickup;
 
@@ -76,6 +80,7 @@ public class RobotContainer {
     this.m_pickup = new PickupOrchestrator(m_pneumatics, m_pickupMotors, m_feederMotor);
     this.m_shooter = new ShooterSubsystem(m_feederMotor);
     this.m_aim = new Aimlock(m_swerve, m_shooter);
+    this.m_elevatorSubsystem = new ElevatorSubsystem();
 
     m_swerve.setAim(m_aim);
     m_shooter.setAim(m_aim);
@@ -145,6 +150,7 @@ public class RobotContainer {
         .onFalse(m_pickupMotors.stopMotorsCommand());
     Controller.kManipulatorController.a().and(m_pickup.noPieceTrigger).onTrue(m_pickup.runIntakeCommand());
     Controller.kManipulatorController.b().onTrue(m_pickup.disableIntakeCommand());
+
     // Controller.kManipulatorController.x().whileTrue(pathfindAmp);
 
     // Controller.kManipulatorController.leftBumper().and(() ->
@@ -165,9 +171,10 @@ public class RobotContainer {
 
     Controller.kDriveController.leftBumper().onTrue(new lockTarget(m_swerve));
     // drive cont bindings
-    Controller.kDriveController.a().onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(0), m_shooter));
-
     Controller.kDriveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());
+
+    Controller.kDriveController.y().whileTrue(new ElevatorUpCommand(m_elevatorSubsystem));
+    Controller.kDriveController.a().whileTrue(new ElevatorDownCommand(m_elevatorSubsystem));
 
     // Temporary
     // Controller.kDriveController.rightTrigger(0.25).onTrue(m_pickup.runIntakeCommand())
