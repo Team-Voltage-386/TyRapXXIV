@@ -30,6 +30,7 @@ import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.Subsystems.FeederMotorSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Utils.Aimlock;
+import frc.robot.Utils.Aimlock.DoState;
 import frc.robot.Subsystems.PickupMotorsSubsystem;
 import frc.robot.Subsystems.PickupOrchestrator;
 import frc.robot.Subsystems.PneumaticsSubsystem;
@@ -175,6 +176,7 @@ public class RobotContainer {
 
     Controller.kDriveController.y().whileTrue(new ElevatorUpCommand(m_elevatorSubsystem));
     Controller.kDriveController.a().whileTrue(new ElevatorDownCommand(m_elevatorSubsystem));
+    Controller.kDriveController.start().onTrue(Commands.runOnce(() -> Aimlock.setDoState(DoState.ENDGAME)));
 
     // Temporary
     // Controller.kDriveController.rightTrigger(0.25).onTrue(m_pickup.runIntakeCommand())

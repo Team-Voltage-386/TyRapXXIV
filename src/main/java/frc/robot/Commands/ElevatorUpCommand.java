@@ -27,7 +27,7 @@ public class ElevatorUpCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        m_subsystem.setElevatorMotorsVoltage(0.25);
+        m_subsystem.setElevatorMotorsVoltage(0.0); // 0.25
     }
 
     @Override

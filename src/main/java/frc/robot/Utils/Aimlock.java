@@ -23,7 +23,8 @@ public class Aimlock {
         NOTE,
         SPEAKER,
         AMP,
-        SOURCE
+        SOURCE,
+        ENDGAME
     }
 
     private static DoState doState = DoState.SPEAKER;
@@ -93,6 +94,8 @@ public class Aimlock {
                 break;
             case SOURCE:
                 setPipeline(PipeLineID.kSourceID);
+                break;
+            case ENDGAME:
                 break;
             default:
                 setPipeline(PipeLineID.kNoteID);
@@ -276,6 +279,9 @@ public class Aimlock {
                 break;
             case SOURCE:
                 angle = getShooterTargetAngleSOURCE();
+                break;
+            case ENDGAME:
+                angle = Shooter.kMinAngle;
                 break;
             default:
                 break;
