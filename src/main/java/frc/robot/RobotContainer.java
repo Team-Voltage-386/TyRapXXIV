@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Controller;
@@ -87,18 +88,16 @@ public class RobotContainer {
 
     m_swerve.setAim(m_aim);
     m_shooter.setAim(m_aim);
-    m_shooter.setDefaultCommand(new aimShooterCommand(m_shooter));
 
     // Xbox controllers return negative values when we push forward.
     driveCommand = new Drive(m_swerve);
-    m_swerve.setDefaultCommand(driveCommand);
 
     // Register named commands
     NamedCommands.registerCommand("StopDrive", new StopDrive(m_swerve)); // dont need anymore (?)
     NamedCommands.registerCommand("Lock Target in Auto",
-        Commands.runOnce(() -> m_swerve.setLockTargetInAuto(true), m_swerve));
+        Commands.runOnce(() -> m_swerve.setLockTargetInAuto(true)));
     NamedCommands.registerCommand("Dont Lock Target in Auto",
-        Commands.runOnce(() -> m_swerve.setLockTargetInAuto(false), m_swerve));
+        Commands.runOnce(() -> m_swerve.setLockTargetInAuto(false)));
     NamedCommands.registerCommand("Shoot", Commands.runOnce(m_shooter::shoot));
     NamedCommands.registerCommand("Dont Shoot", Commands.runOnce(m_shooter::noShoot));
     NamedCommands.registerCommand("Intake Down", m_pickup.runIntakeCommand());
@@ -189,6 +188,11 @@ public class RobotContainer {
     // drive cont bindings
     Controller.kDriveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());
 
+    Controller.kDriveController.povUp().whileTrue(Commands.run(() -> m_shooter.driveHoodManually(2.5)))
+        .onFalse(Commands.run(() -> m_shooter.driveHoodManually(0)));
+    Controller.kDriveController.povDown().whileTrue(Commands.run(() -> m_shooter.driveHoodManually(-2.5)))
+        .onFalse(Commands.run(() -> m_shooter.driveHoodManually(0)));
+
     // Controller.kDriveController.y().whileTrue(new
     // ElevatorUpCommand(m_elevatorSubsystem));
     // Controller.kDriveController.a().whileTrue(new
@@ -217,7 +221,10 @@ public class RobotContainer {
     // Auto"));
     // Add a button to run a simple example path
     auto1 = AutoBuilder.buildAuto("middle auto");
+    auto1.setName("AUTO1");
     autoChooser.addOption("auto1", auto1);
+    // auto1 = auto1.withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+
     // Load the path we want to pathfind to and follow
     PathPlannerPath path = PathPlannerPath.fromPathFile("Score Amp");
     // Create the constraints to use while pathfinding. The constraints defined in
@@ -257,6 +264,20 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new ParallelCommandGroup(auto1);
+    return auto1;
+  }
+
+  public void setDefaultCommand() {
+    if (this.m_swerve.getDefaultCommand() == null) {
+      this.m_swerve.setDefaultCommand(driveCommand);
+    }
+    if (this.m_shooter.getDefaultCommand() == null) {
+      this.m_shooter.setDefaultCommand(new aimShooterCommand(m_shooter));
+    }
+  }
+
+  public void clearDefaultCommand() {
+    this.m_swerve.removeDefaultCommand();
+    this.m_shooter.removeDefaultCommand();
   }
 }

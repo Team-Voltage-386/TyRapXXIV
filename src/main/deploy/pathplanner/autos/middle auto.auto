@@ -3,7 +3,7 @@
   "startingPose": {
     "position": {
       "x": 1.477971343959805,
-      "y": 7.37782702384235
+      "y": 7.366116187296568
     },
     "rotation": 0
   },
@@ -20,7 +20,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "go get 4"
+            "pathName": "go in a line"
           }
         },
         {
@@ -30,21 +30,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Lock Target in Auto"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "go shoot from 4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
+            "pathName": "go back"
           }
         }
       ]

@@ -405,6 +405,7 @@ public class ShooterSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("has shot?", hasShotNote());
         SmartDashboard.putBoolean("shooting?", shoot);
         SmartDashboard.putBoolean("is loaded?", Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece));
+        SmartDashboard.putBoolean("speaker mode?", Aimlock.getDoState().equals(Aimlock.DoState.SPEAKER));
         // SmartDashboard.putBoolean("top decel bool", previousTopMotorData[2] < -3);
         // SmartDashboard.putBoolean("down decel bool", previousBottomMotorData[2] <
         // -3);

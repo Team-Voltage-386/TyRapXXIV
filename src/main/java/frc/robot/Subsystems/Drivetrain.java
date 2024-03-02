@@ -326,7 +326,7 @@ public class Drivetrain extends SubsystemBase {
 
     public void lockPiece(double xSpeed, double ySpeed, double rotSpeed, boolean fieldRelative, boolean hardLocked) {
         SwerveModuleState[] swerveModuleStates; // MAKE SURE swervestates can be init like this with this kinda array
-        if (Aimlock.hasTarget()) {
+        if (Aimlock.hasTarget() || (Aimlock.hasNoteTarget() && Aimlock.getNoteVision())) {
             rotSpeed = m_aim.getRotationSpeedForTarget();
             if (hardLocked) {
                 swerveModuleStates = m_kinematics.toSwerveModuleStates(

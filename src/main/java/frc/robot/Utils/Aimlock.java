@@ -42,8 +42,8 @@ public class Aimlock {
     private ProfiledPIDController aimPID = new ProfiledPIDController(8, 0.2, 0.2,
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
-    private SimpleMotorFeedforward RRaimFF = new SimpleMotorFeedforward(0.0, 0.25);
-    private ProfiledPIDController RRaimPID = new ProfiledPIDController(4.2, 0.01, 0.1,
+    private SimpleMotorFeedforward RRaimFF = new SimpleMotorFeedforward(0.0, 0.0);
+    private ProfiledPIDController RRaimPID = new ProfiledPIDController(4, 0.01, 0.1,
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
     private static final String limelightName = "limelight-b";
@@ -63,6 +63,10 @@ public class Aimlock {
 
     public static void setNoteVision(boolean noteVision) {
         Aimlock.noteVision = noteVision;
+    }
+
+    public static boolean getNoteVision() {
+        return noteVision;
     }
 
     /**
@@ -113,7 +117,11 @@ public class Aimlock {
      * @return if the limelight has a valid target
      */
     public static boolean hasTarget() {
-        return LimelightHelpers.getTV(limelightName) || LimelightHelpers.getTV("limelight-c");
+        return LimelightHelpers.getTV(limelightName);
+    }
+
+    public static boolean hasNoteTarget() {
+        return LimelightHelpers.getTV("limelight-c");
     }
 
     /**
@@ -158,7 +166,7 @@ public class Aimlock {
     }
 
     public double getNoteLLAngleToTarget() {
-        if (hasTarget()) {
+        if (hasNoteTarget()) {
             return LimelightHelpers.getTX("limelight-c");
         } else
             return 0;

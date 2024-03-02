@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,6 +27,7 @@ public class PickupOrchestrator extends SubsystemBase {
     public Trigger noPieceTrigger;
     public Trigger holdingPieceTrigger;
     public Trigger loadedPieceTrigger;
+    public Trigger enabledTrigger;
 
     ShuffleboardTab IntakeSensors;
 
@@ -42,6 +44,7 @@ public class PickupOrchestrator extends SubsystemBase {
         // Trigger highSensorTrigger = new Trigger(highHoodSensor::get);
         noPieceTrigger = new Trigger(() -> Flags.pieceState.equals(subsystemsStates.noPiece));
         holdingPieceTrigger = new Trigger(() -> Flags.pieceState.equals(subsystemsStates.holdingPiece));
+        enabledTrigger = new Trigger(() -> DriverStation.isEnabled());
 
         // Automatically puts piece into the loaded position
         (lowSensorTrigger.negate().and(holdingPieceTrigger)).onTrue(loadPieceCommand())
@@ -51,43 +54,50 @@ public class PickupOrchestrator extends SubsystemBase {
                     }
                 }), stopLoadingPieceCommand()));
 
+        (lowSensorTrigger.negate()).and(noPieceTrigger).and(enabledTrigger)
+                .onTrue(new SequentialCommandGroup(runOnce(() -> {
+                    if (DriverStation.isEnabled()) {
+                        Flags.pieceState = subsystemsStates.holdingPiece;
+                    }
+                }), disableIntakeCommand()));
+
         IntakeSensors = Shuffleboard.getTab("Intake");
 
         lowHoodSensorWidget = IntakeSensors.add("Low Hood Sensors", false);
     }
 
-    public SequentialCommandGroup runIntakeCommand() {
-        return new SequentialCommandGroup(m_pneumatics.enableIntakeSolenoidCommand(),
+    public ParallelCommandGroup runIntakeCommand() {
+        return new ParallelCommandGroup(m_pneumatics.enableIntakeSolenoidCommand(),
                 m_pickupMotors.runMotorsCommand(), m_FeederMotor.runFeederMotorToLoadCommand());
     }
 
     public SequentialCommandGroup disableIntakeCommand() {
-        return new SequentialCommandGroup(new TimerWaitCommand(0.25), m_pneumatics.disableIntakeSolenoidCommand(),
+        return new SequentialCommandGroup(m_pneumatics.disableIntakeSolenoidCommand(),
                 m_pickupMotors.runMotorsSlowCommand());
     }
 
-    public Command loadPieceCommand() {
-        return (m_FeederMotor.runFeederMotorToLoadCommand());
+    public InstantCommand loadPieceCommand() {
+        return new InstantCommand(() -> m_FeederMotor.runFeederMotorToLoad());
     }
 
-    public Command stopLoadingPieceCommand() {
-        return (m_FeederMotor.stopFeederMotorCommand());
+    public InstantCommand stopLoadingPieceCommand() {
+        return new InstantCommand(() -> m_FeederMotor.stopFeederMotor());
     }
 
     @Override
     public void periodic() {
         lowHoodSensorWidget.getEntry().setBoolean(lowHoodSensor.get());
 
-        if (DriverStation.isEnabled()) {
-            if (Flags.pieceState.equals(subsystemsStates.noPiece)) {
-                if (!lowHoodSensor.get()) {
-                    (new SequentialCommandGroup(runOnce(() -> {
-                        if (DriverStation.isEnabled()) {
-                            Flags.pieceState = subsystemsStates.holdingPiece;
-                        }
-                    }), disableIntakeCommand())).schedule();
-                }
-            }
-        }
+        // if (DriverStation.isEnabled()) {
+        // if (Flags.pieceState.equals(subsystemsStates.noPiece)) {
+        // if (!lowHoodSensor.get()) {
+        // (new SequentialCommandGroup(runOnce(() -> {
+        // if (DriverStation.isEnabled()) {
+        // Flags.pieceState = subsystemsStates.holdingPiece;
+        // }
+        // }), disableIntakeCommand())).schedule();
+        // }
+        // }
+        // }
     }
 }
