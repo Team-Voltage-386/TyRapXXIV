@@ -14,7 +14,7 @@ public class PickupMotorsSubsystem extends SubsystemBase {
 
     double goalRPM = 425;
 
-    //CANSparkMax frontIntakeMotor;
+    // CANSparkMax frontIntakeMotor;
     CANSparkMax backIntakeMotor;
 
     ProfiledPIDController pickupPID = new ProfiledPIDController(0.0, 0, 0.00, new Constraints(goalRPM, 1000));
@@ -39,7 +39,7 @@ public class PickupMotorsSubsystem extends SubsystemBase {
     }
 
     public void runMotorsSlow() {
-        backIntakeMotor.setVoltage(pickupPID.calculate(getBackRealIntakeRPM(), 50) + pickupFF.calculate(50));
+        backIntakeMotor.setVoltage(pickupPID.calculate(getBackRealIntakeRPM(), 80) + pickupFF.calculate(80));
     }
 
     public void runMotorsReverse() {

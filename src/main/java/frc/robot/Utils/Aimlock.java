@@ -33,6 +33,7 @@ public class Aimlock {
         this.m_swerve = m_swerve;
         this.m_shooter = m_shooter;
         setPipeline(PipeLineID.kSpeakerID);
+        LimelightHelpers.setPipelineIndex("limelight-c", 0);
     }
 
     // PID/FF for chassis rotation speed
@@ -41,7 +42,7 @@ public class Aimlock {
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
     private SimpleMotorFeedforward RRaimFF = new SimpleMotorFeedforward(0.0, 0);
-    private ProfiledPIDController RRaimPID = new ProfiledPIDController(5.2, 0.01, 0.1,
+    private ProfiledPIDController RRaimPID = new ProfiledPIDController(4.8, 0.01, 0.1,
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
     private static final String limelightName = "limelight-b";
@@ -107,7 +108,10 @@ public class Aimlock {
      * @return if the limelight has a valid target
      */
     public static boolean hasTarget() {
-        return LimelightHelpers.getTV(limelightName);
+        if (doState.equals(DoState.NOTE))
+            return LimelightHelpers.getTV("limelight-c");
+        else
+            return LimelightHelpers.getTV(limelightName);
     }
 
     /**
@@ -134,6 +138,8 @@ public class Aimlock {
     }
 
     public double getShooterSpeedwDrag() {
+        SmartDashboard.putNumber("drag shoot spd",
+                Shooter.kShooterSpeed - Shooter.kDragCoefficient * Math.sqrt(getDistToSpeaker()));
         return Shooter.kShooterSpeed - Shooter.kDragCoefficient * Math.sqrt(getDistToSpeaker());
     }
 
@@ -145,6 +151,13 @@ public class Aimlock {
     public double getLLAngleToTarget() {
         if (hasTarget()) {
             return LimelightHelpers.getTX(limelightName);
+        } else
+            return 0;
+    }
+
+    public double getNoteLLAngleToTarget() {
+        if (hasTarget()) {
+            return LimelightHelpers.getTX("limelight-c");
         } else
             return 0;
     }
@@ -173,9 +186,13 @@ public class Aimlock {
      * @return rot speed
      */
     public double getRotationSpeedForTarget() {
-        if (doState != DoState.SPEAKER) {
-            return -RRaimFF.calculate(Math.toRadians(getLLAngleToTarget()))
-                    + RRaimPID.calculate(Math.toRadians(getLLAngleToTarget()));
+        if (!doState.equals(DoState.SPEAKER)) {
+            if (doState.equals(DoState.NOTE)) {
+                return -RRaimFF.calculate(Math.toRadians(getNoteLLAngleToTarget()))
+                        + RRaimPID.calculate(Math.toRadians(getNoteLLAngleToTarget()));
+            } else
+                return -RRaimFF.calculate(Math.toRadians(getLLAngleToTarget()))
+                        + RRaimPID.calculate(Math.toRadians(getLLAngleToTarget()));
         } else
             return (aimFF.calculate(getSpeakerAimTargetAngle() - Math.toRadians(getGyroYaw()))
                     + aimPID.calculate(Math.toRadians(getGyroYaw()), getSpeakerAimTargetAngle()))
@@ -186,7 +203,8 @@ public class Aimlock {
      * returns pure horizontal distance to tag
      */
     public double getDistToTag() {
-        return (targetTagHeight - limelightHeight) / Math.tan(Math.toRadians(LimelightHelpers.getTY(limelightName)));
+        return (targetTagHeight - limelightHeight)
+                / Math.tan(Math.toRadians(LimelightHelpers.getTY(limelightName)));
     }
 
     /**
@@ -229,19 +247,21 @@ public class Aimlock {
         // horizontal vector
         double noteDropMeters = ((9.80665 * Shooter.kFallingDragCoefficient
                 * Math.pow((getDistToTag() / (getShooterSpeedwDrag() * Math.cos(perfectAngle))), 2))) / 2;
-        double tuningFactor = 0.99; // tweak how much it adjusts
+        double tuningFactor = 1; // tweak how much it adjusts
         // the angle we NEED to shoot at to hit the target, including drop. (just the
         // amount of degrees
         // of error in the other direction)
         double angle = Math.toDegrees(2 * getVerticalAngleToSpeaker() - tuningFactor * perfectAngle);
-        double angleWithDrop = angle + Math.toDegrees(
-                Math.atan(((Vy / Vx) * getDistToTag() + noteDropMeters) / getDistToTag()) - angle);
+        double angleWithDrop = angle - Math.toDegrees(
+                Math.atan(((Vy / Vx) * getDistToTag() + noteDropMeters) / getDistToTag()) - perfectAngle);
+        SmartDashboard.putNumber("angle w drop", angleWithDrop);
+        SmartDashboard.putNumber("note drop", noteDropMeters);
         // when backing away turret should move down more
         // when coming forward turret should move up more
         // 32 is the bottom of the shooter angle IRL
         // 3 is just a guestimate of from where we measure to where the note actually
         // comes out
-        return MathUtil.clamp(angleWithDrop - 32 - 3, Shooter.kMinAngle, Shooter.kMaxAngle);
+        return MathUtil.clamp(angleWithDrop - 32 + 4, Shooter.kMinAngle, Shooter.kMaxAngle);
     }
 
     /**

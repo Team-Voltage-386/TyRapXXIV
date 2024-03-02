@@ -265,35 +265,28 @@ public class ShooterSubsystem extends SubsystemBase {
                 if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)) {
                     if (shoot) {
                         runShooterSpeakMode();
-                        m_FeederMotor.runShootFeederMotorToShoot();// Command().schedule(); why
                     } else {
                         runShooterSpeakMode();
-                        m_FeederMotor.stopFeederMotor(); // Command().schedule(); bad architecture.
                     }
                 } else {
                     topShooterMotor.setVoltage(0);
                     bottomShooterMotor.setVoltage(0);
-                    m_FeederMotor.stopFeederMotorCommand().schedule();
                 }
                 break;
             case AMP:
                 if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)) {
                     if (shoot) {
                         runShooterAmpMode();
-                        m_FeederMotor.runShootFeederMotorToShoot();// Command().schedule();
                     } else {
                         runShooterAmpMode();
-                        m_FeederMotor.stopFeederMotor();// Command().schedule();
                     }
                 } else {
                     topShooterMotor.setVoltage(0);
                     bottomShooterMotor.setVoltage(0);
-                    m_FeederMotor.stopFeederMotor();//Command().schedule();
                 }
             default:
                 topShooterMotor.setVoltage(0);
                 bottomShooterMotor.setVoltage(0);
-                m_FeederMotor.stopFeederMotor();//Command().schedule();
                 break;
         }
 
@@ -404,7 +397,7 @@ public class ShooterSubsystem extends SubsystemBase {
         updateBottomShooterAcceleration();
         updateTopShooterAcceleration();
         // aimShooter(m_aim.getShooterTargetAngle());
-        // spoolMotors();
+        spoolMotors();
         // SmartDashboard.putNumber("Shooter angle (rel)", getShooterAngleRelative());
         // SmartDashboard.putBoolean("top limit", getTopLimit());
         // SmartDashboard.putBoolean("bottom limit", getBottomLimit());
@@ -412,12 +405,13 @@ public class ShooterSubsystem extends SubsystemBase {
         // SmartDashboard.putNumber("bot shoot", getBottomShooterMPS());
         // SmartDashboard.putNumber("des shoot speed", getDesiredShooterSpeed());
         // SmartDashboard.putNumber("volts to hood", aimMotor.getAppliedOutput());
-        // SmartDashboard.putNumber("target shooter angle",
-        // m_aim.getShooterTargetAngle());
-        // SmartDashboard.putNumber("Top Shooter Accel", previousTopMotorData[2]);
-        // SmartDashboard.putNumber("Bottom Shooter Accel", previousBottomMotorData[2]);
+        SmartDashboard.putNumber("target shooter angle",
+                m_aim.getShooterTargetAngle());
+        SmartDashboard.putNumber("Top Shooter Accel", previousTopMotorData[2]);
+        SmartDashboard.putNumber("Bottom Shooter Accel", previousBottomMotorData[2]);
         SmartDashboard.putBoolean("has shot?", hasShotNote());
-        // SmartDashboard.putBoolean("shooting?", shoot);
+        SmartDashboard.putBoolean("shooting?", shoot);
+        SmartDashboard.putBoolean("is loaded?", Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece));
         // SmartDashboard.putBoolean("top decel bool", previousTopMotorData[2] < -3);
         // SmartDashboard.putBoolean("down decel bool", previousBottomMotorData[2] <
         // -3);

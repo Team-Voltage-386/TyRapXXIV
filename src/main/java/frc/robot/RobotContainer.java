@@ -30,6 +30,7 @@ import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.Subsystems.FeederMotorSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Utils.Aimlock;
+import frc.robot.Utils.Flags;
 import frc.robot.Utils.Aimlock.DoState;
 import frc.robot.Subsystems.PickupMotorsSubsystem;
 import frc.robot.Subsystems.PickupOrchestrator;
@@ -39,6 +40,7 @@ import frc.robot.Commands.ElevatorDownCommand;
 import frc.robot.Commands.ElevatorUpCommand;
 import frc.robot.Commands.StopDrive;
 import frc.robot.Commands.aimShooterCommand;
+import frc.robot.Commands.autoPickupNote;
 import frc.robot.Commands.lockTarget;
 import frc.robot.Commands.TimerWaitCommand;
 import frc.robot.Commands.resetOdo;
@@ -85,7 +87,7 @@ public class RobotContainer {
 
     m_swerve.setAim(m_aim);
     m_shooter.setAim(m_aim);
-    // m_shooter.setDefaultCommand(new aimShooterCommand(m_shooter));
+    m_shooter.setDefaultCommand(new aimShooterCommand(m_shooter));
 
     // Xbox controllers return negative values when we push forward.
     driveCommand = new Drive(m_swerve);
@@ -130,16 +132,27 @@ public class RobotContainer {
    */
   private void configureBindings() {
     Controller.kManipulatorController.rightBumper()
-        .onTrue(Commands.runOnce(() -> m_shooter.shoot())).onFalse(Commands.runOnce(() -> m_shooter.noShoot()));
+        .and(() -> Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece))
+        .onTrue(Commands.runOnce(() -> {
+          m_shooter.shoot();
+          m_feederMotor.runShootFeederMotorToShoot();
+        }));
+    // .onFalse(Commands.runOnce(() -> {
+    // m_shooter.noShoot();
+    // m_feederMotor.stopFeederMotor();
+    // }));
     // .onFalse(new ParallelCommandGroup(Commands.runOnce(() ->
     // m_shooter.shootToggle(), m_shooter),
     // m_pickup.lowerLoaderCommand()));
 
-    // new Trigger(() -> m_shooter.hasShotNote())
-    // .onTrue(new SequentialCommandGroup(new TimerWaitCommand(0.25),
-    // new ParallelCommandGroup(Commands.runOnce(() -> m_shooter.noShoot(),
-    // m_shooter)),
-    // m_pickup.lowerLoaderCommand()));
+    new Trigger(() -> m_shooter.hasShotNote())
+        .onTrue(new SequentialCommandGroup(new TimerWaitCommand(0.25),
+            new ParallelCommandGroup(Commands.runOnce(() -> {
+              m_shooter.noShoot();
+              m_feederMotor.stopFeederMotor();
+              Flags.pieceState = Flags.subsystemsStates.noPiece;
+            },
+                m_shooter))));
 
     Controller.kManipulatorController.povLeft()
         .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.AMP)));
@@ -152,7 +165,9 @@ public class RobotContainer {
     Controller.kManipulatorController.a().and(m_pickup.noPieceTrigger).onTrue(m_pickup.runIntakeCommand());
     Controller.kManipulatorController.b().onTrue(m_pickup.disableIntakeCommand());
 
-    // Controller.kManipulatorController.x().whileTrue(pathfindAmp);
+    Controller.kManipulatorController.x().whileTrue(new autoPickupNote(m_swerve))
+        .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.NOTE)))
+        .onFalse(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.SPEAKER)));
 
     // Controller.kManipulatorController.leftBumper().and(() ->
     // !m_shooter.getBottomLimit())

@@ -17,7 +17,6 @@ public class autoPickupNote extends Command {
     public autoPickupNote(Drivetrain dt) {
         this.dt = dt;
         addRequirements(dt);
-
     }
 
     @Override
@@ -33,20 +32,26 @@ public class autoPickupNote extends Command {
     private void readControllers() {
         // Get the x speed. We are inverting this because Xbox controllers return
         // negative values when we push forward.
-        xSpeed = Aimlock.hasTarget() ? 1 : 0;
-        ySpeed = Aimlock.hasTarget() ? MathUtil.clamp(LimelightHelpers.getTY("limelight-c") / 20, 0, 1) : 0;
+        xSpeed = Aimlock.hasTarget() ? 2 : 0;
+        // ySpeed = Aimlock.hasTarget() ?
+        // MathUtil.clamp(LimelightHelpers.getTY("limelight-c") / 20, 0, 1) : 0;
     }
 
     @Override
     public void execute() {
         readControllers();
-        dt.lockPiece(xSpeed, ySpeed, 0, false, false);
+        dt.lockPiece(xSpeed, ySpeed, 0, true, true);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        System.out.println("cancelled auto pickup");
     }
 
     @Override
     public boolean isFinished() {
-        return Timer.getFPGATimestamp() > (start + 1.25)
-                || (LimelightHelpers.getTY("limelight-a") > -8 && Aimlock.hasTarget())
+        return Timer.getFPGATimestamp() > (start + 4)
+                // || (LimelightHelpers.getTY("limelight-c") > -5 && Aimlock.hasTarget())
                 || Flags.pieceState.equals(subsystemsStates.holdingPiece);
     }
 }
