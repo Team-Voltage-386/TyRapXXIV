@@ -174,8 +174,10 @@ public class RobotContainer {
     // drive cont bindings
     Controller.kDriveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());
 
-    Controller.kDriveController.y().whileTrue(new ElevatorUpCommand(m_elevatorSubsystem));
-    Controller.kDriveController.a().whileTrue(new ElevatorDownCommand(m_elevatorSubsystem));
+    // Controller.kDriveController.y().whileTrue(new
+    // ElevatorUpCommand(m_elevatorSubsystem));
+    // Controller.kDriveController.a().whileTrue(new
+    // ElevatorDownCommand(m_elevatorSubsystem));
     Controller.kDriveController.start().onTrue(Commands.runOnce(() -> Aimlock.setDoState(DoState.ENDGAME)));
 
     // Temporary

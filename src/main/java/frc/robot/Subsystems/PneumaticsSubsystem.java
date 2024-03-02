@@ -21,12 +21,12 @@ public class PneumaticsSubsystem extends SubsystemBase {
 
     // Drops the intake down in to pickup mode
     public void enableIntakeSolenoid() {
-        this.m_intakePneumatics.set(Value.kForward);
+        this.m_intakePneumatics.set(Value.kReverse);
     }
 
     // Picks up the intake back in to the frame so we can't intake a piece
     public void disableIntakeSolenoid() {
-        this.m_intakePneumatics.set(Value.kReverse);
+        this.m_intakePneumatics.set(Value.kForward);
     }
 
     public Command enableIntakeSolenoidCommand() {

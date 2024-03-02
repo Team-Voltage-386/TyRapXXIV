@@ -2,6 +2,9 @@ package frc.robot.Subsystems;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -24,6 +27,10 @@ public class PickupOrchestrator extends SubsystemBase {
     public Trigger holdingPieceTrigger;
     public Trigger loadedPieceTrigger;
 
+    ShuffleboardTab IntakeSensors;
+
+    SimpleWidget lowHoodSensorWidget;
+
     public PickupOrchestrator(PneumaticsSubsystem pneumatics, PickupMotorsSubsystem pickupMotors,
             FeederMotorSubsystem feederMotor) {
         m_pickupMotors = pickupMotors;
@@ -42,12 +49,16 @@ public class PickupOrchestrator extends SubsystemBase {
                     if (DriverStation.isEnabled()) {
                         Flags.pieceState = subsystemsStates.loadedPiece;
                     }
-                })));
+                }), stopLoadingPieceCommand()));
+
+        IntakeSensors = Shuffleboard.getTab("Intake");
+
+        lowHoodSensorWidget = IntakeSensors.add("Low Hood Sensors", false);
     }
 
     public SequentialCommandGroup runIntakeCommand() {
         return new SequentialCommandGroup(m_pneumatics.enableIntakeSolenoidCommand(),
-                m_pickupMotors.runMotorsCommand());
+                m_pickupMotors.runMotorsCommand(), m_FeederMotor.runFeederMotorToLoadCommand());
     }
 
     public ParallelCommandGroup disableIntakeCommand() {
@@ -65,15 +76,16 @@ public class PickupOrchestrator extends SubsystemBase {
 
     @Override
     public void periodic() {
+        lowHoodSensorWidget.getEntry().setBoolean(lowHoodSensor.get());
+
         if (DriverStation.isEnabled()) {
             if (Flags.pieceState.equals(subsystemsStates.noPiece)) {
                 if (!lowHoodSensor.get()) {
-                    (new SequentialCommandGroup(new TimerWaitCommand(0.25), disableIntakeCommand(),
-                            runOnce(() -> {
-                                if (DriverStation.isEnabled()) {
-                                    Flags.pieceState = subsystemsStates.holdingPiece;
-                                }
-                            }))).schedule();
+                    (new SequentialCommandGroup(runOnce(() -> {
+                        if (DriverStation.isEnabled()) {
+                            Flags.pieceState = subsystemsStates.holdingPiece;
+                        }
+                    }), new TimerWaitCommand(0.1), disableIntakeCommand())).schedule();
                 }
             }
         }
