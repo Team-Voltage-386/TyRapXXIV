@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.Utils.Flags;
@@ -15,6 +16,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
+        DataLogManager.start();
         m_containter.getShooter().setAimToCoastMode();
         Flags.pieceState = subsystemsStates.noPiece;
     }
@@ -22,20 +24,18 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         m_containter.getShooter().setAimToBreakMode();
-        Flags.pieceState = subsystemsStates.loadedPiece; // todo
+        Flags.pieceState = subsystemsStates.noPiece; // todo
         m_containter.getAutonomousCommand().schedule();
     }
 
     @Override
     public void disabledInit() {
         m_containter.getShooter().setAimToCoastMode();
-        Flags.pieceState = subsystemsStates.noPiece;
     }
 
     @Override
     public void teleopInit() {
         m_containter.getShooter().setAimToBreakMode();
-        Flags.pieceState = subsystemsStates.noPiece;
     }
 
     @Override

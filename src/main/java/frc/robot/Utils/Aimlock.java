@@ -15,6 +15,7 @@ public class Aimlock {
     Drivetrain m_swerve;
     ShooterSubsystem m_shooter;
     private static int pipeline;
+    static boolean noteVision = false;
 
     /**
      * what state the robot is in
@@ -41,14 +42,14 @@ public class Aimlock {
     private ProfiledPIDController aimPID = new ProfiledPIDController(8, 0.2, 0.2,
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
-    private SimpleMotorFeedforward RRaimFF = new SimpleMotorFeedforward(0.0, 0);
-    private ProfiledPIDController RRaimPID = new ProfiledPIDController(4.8, 0.01, 0.1,
+    private SimpleMotorFeedforward RRaimFF = new SimpleMotorFeedforward(0.0, 0.25);
+    private ProfiledPIDController RRaimPID = new ProfiledPIDController(4.2, 0.01, 0.1,
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
     private static final String limelightName = "limelight-b";
     private double limelightHeight = Units.inchesToMeters(25);
     private double targetTagHeight = Units.inchesToMeters(51.88);
-    private double speakerHeight = Units.inchesToMeters(79); // was 69 on 36 hour monday
+    private double speakerHeight = Units.inchesToMeters(81); // was 69 on 36 hour monday
 
     /**
      * select the pipeline you want to use
@@ -58,6 +59,10 @@ public class Aimlock {
     public static void setPipeline(int pipeLineIndex) {
         LimelightHelpers.setPipelineIndex(limelightName, pipeLineIndex);
         pipeline = pipeLineIndex;
+    }
+
+    public static void setNoteVision(boolean noteVision) {
+        Aimlock.noteVision = noteVision;
     }
 
     /**
@@ -108,10 +113,7 @@ public class Aimlock {
      * @return if the limelight has a valid target
      */
     public static boolean hasTarget() {
-        if (doState.equals(DoState.NOTE))
-            return LimelightHelpers.getTV("limelight-c");
-        else
-            return LimelightHelpers.getTV(limelightName);
+        return LimelightHelpers.getTV(limelightName) || LimelightHelpers.getTV("limelight-c");
     }
 
     /**
@@ -186,17 +188,18 @@ public class Aimlock {
      * @return rot speed
      */
     public double getRotationSpeedForTarget() {
+        if (noteVision) {
+            return -RRaimFF.calculate(Math.toRadians(getNoteLLAngleToTarget()))
+                    + RRaimPID.calculate(Math.toRadians(getNoteLLAngleToTarget()));
+        }
         if (!doState.equals(DoState.SPEAKER)) {
-            if (doState.equals(DoState.NOTE)) {
-                return -RRaimFF.calculate(Math.toRadians(getNoteLLAngleToTarget()))
-                        + RRaimPID.calculate(Math.toRadians(getNoteLLAngleToTarget()));
-            } else
-                return -RRaimFF.calculate(Math.toRadians(getLLAngleToTarget()))
-                        + RRaimPID.calculate(Math.toRadians(getLLAngleToTarget()));
-        } else
+            return -RRaimFF.calculate(Math.toRadians(getLLAngleToTarget()))
+                    + RRaimPID.calculate(Math.toRadians(getLLAngleToTarget()));
+        } else {
             return (aimFF.calculate(getSpeakerAimTargetAngle() - Math.toRadians(getGyroYaw()))
                     + aimPID.calculate(Math.toRadians(getGyroYaw()), getSpeakerAimTargetAngle()))
                     / 3; // if you remove the /3 the earth will explode
+        }
     }
 
     /**
@@ -247,21 +250,21 @@ public class Aimlock {
         // horizontal vector
         double noteDropMeters = ((9.80665 * Shooter.kFallingDragCoefficient
                 * Math.pow((getDistToTag() / (getShooterSpeedwDrag() * Math.cos(perfectAngle))), 2))) / 2;
-        double tuningFactor = 1; // tweak how much it adjusts
+        double tuningFactor = 0.99; // tweak how much it adjusts
         // the angle we NEED to shoot at to hit the target, including drop. (just the
         // amount of degrees
         // of error in the other direction)
-        double angle = Math.toDegrees(2 * getVerticalAngleToSpeaker() - tuningFactor * perfectAngle);
+        double angle = Math.toDegrees(2 * getVerticalAngleToSpeaker() - (tuningFactor * perfectAngle));
         double angleWithDrop = angle - Math.toDegrees(
                 Math.atan(((Vy / Vx) * getDistToTag() + noteDropMeters) / getDistToTag()) - perfectAngle);
-        SmartDashboard.putNumber("angle w drop", angleWithDrop);
+        SmartDashboard.putNumber("angle w drop", angleWithDrop - 32);
         SmartDashboard.putNumber("note drop", noteDropMeters);
         // when backing away turret should move down more
         // when coming forward turret should move up more
         // 32 is the bottom of the shooter angle IRL
         // 3 is just a guestimate of from where we measure to where the note actually
         // comes out
-        return MathUtil.clamp(angleWithDrop - 32 + 4, Shooter.kMinAngle, Shooter.kMaxAngle);
+        return MathUtil.clamp(angleWithDrop - 32, Shooter.kMinAngle, Shooter.kMaxAngle);
     }
 
     /**

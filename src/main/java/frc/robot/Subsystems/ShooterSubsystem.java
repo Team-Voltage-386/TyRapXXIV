@@ -263,11 +263,7 @@ public class ShooterSubsystem extends SubsystemBase {
         switch (Aimlock.getDoState()) {
             case SPEAKER:
                 if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)) {
-                    if (shoot) {
-                        runShooterSpeakMode();
-                    } else {
-                        runShooterSpeakMode();
-                    }
+                    runShooterSpeakMode();
                 } else {
                     topShooterMotor.setVoltage(0);
                     bottomShooterMotor.setVoltage(0);
@@ -275,15 +271,12 @@ public class ShooterSubsystem extends SubsystemBase {
                 break;
             case AMP:
                 if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)) {
-                    if (shoot) {
-                        runShooterAmpMode();
-                    } else {
-                        runShooterAmpMode();
-                    }
+                    runShooterAmpMode();
                 } else {
                     topShooterMotor.setVoltage(0);
                     bottomShooterMotor.setVoltage(0);
                 }
+                break;
             default:
                 topShooterMotor.setVoltage(0);
                 bottomShooterMotor.setVoltage(0);
@@ -329,8 +322,8 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public boolean hasShotNote() {
         if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece) && shoot
-                && (previousTopMotorData[2] < -3) // todo tune this range
-                && (previousBottomMotorData[2] < -3)) {
+                && (previousTopMotorData[2] < -2) // todo tune this range
+                && (previousBottomMotorData[2] < -2)) {
             return true;
         } else
             return false;
@@ -357,9 +350,6 @@ public class ShooterSubsystem extends SubsystemBase {
             volts = 2.5;
         }
 
-        // cap the voltage at 2.5
-        volts = MathUtil.clamp(volts, -2.5, 2.5);
-
         // check if hitting limits, if hitting limit, let the motor still drive the
         // other direction.
         if (volts > 0 && getTopLimit()) {
@@ -367,6 +357,9 @@ public class ShooterSubsystem extends SubsystemBase {
         } else if (volts < 0 && getBottomLimit()) {
             volts = 0;
         }
+
+        // cap the voltage at 2.5
+        volts = MathUtil.clamp(volts, -2.5, 2.5);
 
         aimMotor.setVoltage(volts);
     }
@@ -399,12 +392,12 @@ public class ShooterSubsystem extends SubsystemBase {
         // aimShooter(m_aim.getShooterTargetAngle());
         spoolMotors();
         // SmartDashboard.putNumber("Shooter angle (rel)", getShooterAngleRelative());
-        // SmartDashboard.putBoolean("top limit", getTopLimit());
-        // SmartDashboard.putBoolean("bottom limit", getBottomLimit());
+        SmartDashboard.putBoolean("top limit", getTopLimit());
+        SmartDashboard.putBoolean("bottom limit", getBottomLimit());
         // SmartDashboard.putNumber("top shoot", getTopShooterMPS());
         // SmartDashboard.putNumber("bot shoot", getBottomShooterMPS());
         // SmartDashboard.putNumber("des shoot speed", getDesiredShooterSpeed());
-        // SmartDashboard.putNumber("volts to hood", aimMotor.getAppliedOutput());
+        SmartDashboard.putNumber("volts to hood", aimMotor.getAppliedOutput());
         SmartDashboard.putNumber("target shooter angle",
                 m_aim.getShooterTargetAngle());
         SmartDashboard.putNumber("Top Shooter Accel", previousTopMotorData[2]);

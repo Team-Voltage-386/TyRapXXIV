@@ -61,8 +61,8 @@ public class PickupOrchestrator extends SubsystemBase {
                 m_pickupMotors.runMotorsCommand(), m_FeederMotor.runFeederMotorToLoadCommand());
     }
 
-    public ParallelCommandGroup disableIntakeCommand() {
-        return new ParallelCommandGroup(m_pneumatics.disableIntakeSolenoidCommand(),
+    public SequentialCommandGroup disableIntakeCommand() {
+        return new SequentialCommandGroup(new TimerWaitCommand(0.25), m_pneumatics.disableIntakeSolenoidCommand(),
                 m_pickupMotors.runMotorsSlowCommand());
     }
 
@@ -85,7 +85,7 @@ public class PickupOrchestrator extends SubsystemBase {
                         if (DriverStation.isEnabled()) {
                             Flags.pieceState = subsystemsStates.holdingPiece;
                         }
-                    }), new TimerWaitCommand(0.1), disableIntakeCommand())).schedule();
+                    }), disableIntakeCommand())).schedule();
                 }
             }
         }

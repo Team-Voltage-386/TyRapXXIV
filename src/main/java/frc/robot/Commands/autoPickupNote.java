@@ -23,6 +23,7 @@ public class autoPickupNote extends Command {
     public void initialize() {
         System.out.println("Locking piece.");
         start = Timer.getFPGATimestamp();
+        Aimlock.setNoteVision(true);
     }
 
     double xSpeed;
@@ -45,6 +46,7 @@ public class autoPickupNote extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        Aimlock.setNoteVision(false);
         System.out.println("cancelled auto pickup");
     }
 

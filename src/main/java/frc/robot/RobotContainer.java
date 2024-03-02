@@ -103,6 +103,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Dont Shoot", Commands.runOnce(m_shooter::noShoot));
     NamedCommands.registerCommand("Intake Down", m_pickup.runIntakeCommand());
     NamedCommands.registerCommand("Intake Up", m_pickup.disableIntakeCommand());
+    NamedCommands.registerCommand("Pickup Note", new autoPickupNote(m_swerve));
 
     // Configure the trigger bindings
     configureBindings();
@@ -163,11 +164,10 @@ public class RobotContainer {
             m_pickupMotors))
         .onFalse(m_pickupMotors.stopMotorsCommand());
     Controller.kManipulatorController.a().and(m_pickup.noPieceTrigger).onTrue(m_pickup.runIntakeCommand());
-    Controller.kManipulatorController.b().onTrue(m_pickup.disableIntakeCommand());
+    Controller.kManipulatorController.b()
+        .onTrue(new ParallelCommandGroup(m_pickup.disableIntakeCommand(), m_feederMotor.stopFeederMotorCommand()));
 
-    Controller.kManipulatorController.x().whileTrue(new autoPickupNote(m_swerve))
-        .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.NOTE)))
-        .onFalse(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.SPEAKER)));
+    Controller.kManipulatorController.x().whileTrue(new autoPickupNote(m_swerve));
 
     // Controller.kManipulatorController.leftBumper().and(() ->
     // !m_shooter.getBottomLimit())
@@ -216,7 +216,7 @@ public class RobotContainer {
     // SmartDashboard.putData("Example Auto", AutoBuilder.buildAuto("Example
     // Auto"));
     // Add a button to run a simple example path
-    auto1 = AutoBuilder.buildAuto("simple auto 1");
+    auto1 = AutoBuilder.buildAuto("middle auto");
     autoChooser.addOption("auto1", auto1);
     // Load the path we want to pathfind to and follow
     PathPlannerPath path = PathPlannerPath.fromPathFile("Score Amp");
