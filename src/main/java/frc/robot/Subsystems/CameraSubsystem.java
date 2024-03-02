@@ -5,8 +5,10 @@
 package frc.robot.Subsystems;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.VideoSink;
+import edu.wpi.first.cscore.HttpCamera.HttpCameraKind;
 import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -22,8 +24,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils.LimelightHelpers;
 
 public class CameraSubsystem extends SubsystemBase {
-  UsbCamera usbCamera;
-  NetworkTableEntry cameraSelection;
+  HttpCamera limeLightCamera;
   VideoSink server;
 
   ShuffleboardTab m_cameraTab = Shuffleboard.getTab("camera tab");
@@ -31,49 +32,36 @@ public class CameraSubsystem extends SubsystemBase {
   private Timer m_llTimeSinceUpdate = new Timer();
   private final SimpleWidget m_limelightPose2DBlue = m_cameraTab.add("getBotPose2DwpiBlue", "");
   private ComplexWidget m_cameraView;
-  private static String limelightName = "limelight-b";
+  private static String shooterLimeLightName = "limelight-b";
+  private static String shooterLimeLightHttp = "http://10.3.86.12";
+
+  private static String pickupLimeLightName = "limelight-c";
+  private static String pickupLimeLightHttp = "http://10.3.86.13";
 
   public CameraSubsystem() {
-    // Creates UsbCamera and MjpegServer [1] and connects them
-    this.usbCamera = CameraServer.startAutomaticCapture("USB camera", 0);
+    // Creates UsbCamera and MjpegServer [1] and connects them\
+    this.limeLightCamera = new HttpCamera(pickupLimeLightName, pickupLimeLightHttp + ":5800/stream.mjpg",
+        HttpCameraKind.kMJPGStreamer);
+    CameraServer.startAutomaticCapture(this.limeLightCamera);
     this.server = CameraServer.getServer();
+    this.server.setSource(this.limeLightCamera);
 
-    this.cameraSelection = NetworkTableInstance.getDefault().getTable("").getEntry("CameraSelection");
-
-    this.usbCamera.setVideoMode(PixelFormat.kMJPEG, 640, 480, 30);
-
-    this.setCameraSource(CameraSourceOption.USB_CAMERA);
-
-    this.usbCamera.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
-
-    m_cameraView = m_cameraTab.add(this.usbCamera).withWidget(BuiltInWidgets.kCameraStream).withPosition(3, 0)
+    m_cameraView = m_cameraTab.add(this.limeLightCamera).withWidget(BuiltInWidgets.kCameraStream).withPosition(3, 0)
         .withSize(6, 4);
 
     m_llTimeSinceUpdate.start();
   }
 
-  public static String getLimelightName() {
-    return limelightName;
+  public static String getShooterLimelightName() {
+    return shooterLimeLightName;
   }
 
-  public static enum CameraSourceOption {
-    USB_CAMERA,
-  }
-
-  public void setCameraSource(CameraSourceOption option) {
-    switch (option) {
-      case USB_CAMERA: {
-        this.server.setSource(this.usbCamera);
-        break;
-      }
-      default: {
-        break;
-      }
-    }
+  public static String getPickupLimelightName() {
+    return pickupLimeLightName;
   }
 
   public Pose2d resetOdoLimelight() {
-    LimelightHelpers.PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
+    LimelightHelpers.PoseEstimate poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(shooterLimeLightName);
     m_limelightPose2DBlue.getEntry().setString(poseEstimate.toString());
     m_llTimeSinceUpdateOdo.getEntry().setDouble(m_llTimeSinceUpdate.get());
     if (poseEstimate.tagCount > 1) {
