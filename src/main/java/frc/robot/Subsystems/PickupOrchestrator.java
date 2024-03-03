@@ -22,9 +22,8 @@ public class PickupOrchestrator extends SubsystemBase {
     private PickupMotorsSubsystem m_pickupMotors;
     private FeederMotorSubsystem m_FeederMotor;
 
-    // High hood sensor is not to be trusted until it is moved
-    private DigitalInput highHoodSensor;
-    private DigitalInput lowHoodSensor;
+    private DigitalInput rightHoodSensor;
+    private DigitalInput leftHoodSensor;
 
     public Trigger noPieceTrigger;
     public Trigger holdingPieceTrigger;
@@ -34,32 +33,33 @@ public class PickupOrchestrator extends SubsystemBase {
 
     ShuffleboardTab IntakeSensors;
 
-    SimpleWidget lowHoodSensorWidget;
+    SimpleWidget leftHoodSensorWidget;
     SimpleWidget HoldingPieceWidget;
+    SimpleWidget rightHoodSensorWidget;
 
     public PickupOrchestrator(PneumaticsSubsystem pneumatics, PickupMotorsSubsystem pickupMotors,
             FeederMotorSubsystem feederMotor) {
         m_pickupMotors = pickupMotors;
         m_pneumatics = pneumatics;
         m_FeederMotor = feederMotor;
-        // highHoodSensor = new DigitalInput(6);
-        lowHoodSensor = new DigitalInput(7);
-        Trigger lowSensorTrigger = new Trigger(lowHoodSensor::get);
-        // Trigger highSensorTrigger = new Trigger(highHoodSensor::get);
+        rightHoodSensor = new DigitalInput(6);
+        leftHoodSensor = new DigitalInput(7);
+        Trigger leftSensorTrigger = new Trigger(leftHoodSensor::get);
+        Trigger rightSensorTrigger = new Trigger(rightHoodSensor::get);
         noPieceTrigger = new Trigger(() -> Flags.pieceState.equals(subsystemsStates.noPiece));
         holdingPieceTrigger = new Trigger(() -> Flags.pieceState.equals(subsystemsStates.holdingPiece));
         enabledTrigger = new Trigger(() -> DriverStation.isEnabled());
         AutoTrigger = new Trigger(() -> DriverStation.isAutonomousEnabled());
 
         // Automatically puts piece into the loaded position
-        (lowSensorTrigger.and(holdingPieceTrigger))
+        (holdingPieceTrigger.and(leftSensorTrigger.or(rightSensorTrigger)))
                 .onTrue(new SequentialCommandGroup(runOnce(() -> {
                     if (DriverStation.isEnabled()) {
                         Flags.pieceState = subsystemsStates.loadedPiece;
                     }
                 }), stopLoadingPieceCommand()).withName("CHANGE_TO_LOADED_PIECE_S_STOP_LOADING"));
 
-        (lowSensorTrigger.negate()).and(noPieceTrigger).and(enabledTrigger)
+        (leftSensorTrigger.negate().or(rightSensorTrigger.negate())).and(noPieceTrigger).and(enabledTrigger)
                 .onTrue(new SequentialCommandGroup(
                         disableIntakeCommand(),
                         loadPieceCommand().withName("LOAD PIECE"),
@@ -73,7 +73,8 @@ public class PickupOrchestrator extends SubsystemBase {
 
         IntakeSensors = Shuffleboard.getTab("Intake");
 
-        lowHoodSensorWidget = IntakeSensors.add("Low Hood Sensors", false);
+        leftHoodSensorWidget = IntakeSensors.add("Left Hood Sensors", false);
+        rightHoodSensorWidget = IntakeSensors.add("Right Hood Sensors", false);
         HoldingPieceWidget = IntakeSensors.add("Loaded Piece", false);
     }
 
@@ -99,7 +100,8 @@ public class PickupOrchestrator extends SubsystemBase {
 
     @Override
     public void periodic() {
-        lowHoodSensorWidget.getEntry().setBoolean(lowHoodSensor.get());
+        rightHoodSensorWidget.getEntry().setBoolean(rightHoodSensor.get());
+        leftHoodSensorWidget.getEntry().setBoolean(leftHoodSensor.get());
         HoldingPieceWidget.getEntry().setBoolean(Flags.pieceState.equals(subsystemsStates.loadedPiece));
     }
 }
