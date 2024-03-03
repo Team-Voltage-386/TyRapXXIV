@@ -322,8 +322,8 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public boolean hasShotNote() {
         if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece) && shoot
-                && (previousTopMotorData[2] < -2) // todo tune this range
-                && (previousBottomMotorData[2] < -2)) {
+                && (previousTopMotorData[2] < -1) // todo tune this range
+                && (previousBottomMotorData[2] < -1)) {
             return true;
         } else
             return false;

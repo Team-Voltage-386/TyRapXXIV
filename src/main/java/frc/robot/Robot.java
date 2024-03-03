@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -17,6 +19,8 @@ public class Robot extends TimedRobot {
 
     private final RobotContainer m_containter = new RobotContainer();
     private StringLogEntry commandInitializedEntry;
+    private StringLogEntry commandExecutedEntry;
+    private StringLogEntry commandInterruptedEntry;
 
     @Override
     public void robotInit() {
@@ -26,6 +30,16 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().onCommandInitialize((Command command) -> {
             commandInitializedEntry.append(command.getName());
         });
+        commandExecutedEntry = new StringLogEntry(log, "CommandsExecuted");
+        CommandScheduler.getInstance().onCommandExecute((Command command) -> {
+            commandExecutedEntry.append(command.getName());
+        });
+        commandInterruptedEntry = new StringLogEntry(log, "CommandsInterrupted");
+        CommandScheduler.getInstance()
+                .onCommandInterrupt((Command interrupted, Optional<Command> interruptingCommand) -> {
+                    commandInterruptedEntry.append("INT: " + interrupted.getName() + ", BY: "
+                            + (interruptingCommand.isPresent() ? interruptingCommand.get().getName() : "NONE"));
+                });
 
         m_containter.getShooter().setAimToCoastMode();
         Flags.pieceState = subsystemsStates.noPiece;

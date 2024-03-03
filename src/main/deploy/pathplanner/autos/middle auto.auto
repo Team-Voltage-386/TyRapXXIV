@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.477971343959805,
-      "y": 7.366116187296568
+      "x": 1.48,
+      "y": 7.37
     },
     "rotation": 0
   },
@@ -11,12 +11,6 @@
     "type": "sequential",
     "data": {
       "commands": [
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake Down"
-          }
-        },
         {
           "type": "path",
           "data": {
@@ -33,6 +27,12 @@
           "type": "path",
           "data": {
             "pathName": "go back"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]

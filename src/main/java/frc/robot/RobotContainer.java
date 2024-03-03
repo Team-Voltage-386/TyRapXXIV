@@ -4,14 +4,22 @@
 
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
+
+import org.json.simple.JSONObject;
+
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.util.GeometryUtil;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -98,8 +106,14 @@ public class RobotContainer {
         Commands.runOnce(() -> m_swerve.setLockTargetInAuto(true)));
     NamedCommands.registerCommand("Dont Lock Target in Auto",
         Commands.runOnce(() -> m_swerve.setLockTargetInAuto(false)));
-    NamedCommands.registerCommand("Shoot", Commands.runOnce(m_shooter::shoot));
-    NamedCommands.registerCommand("Dont Shoot", Commands.runOnce(m_shooter::noShoot));
+    NamedCommands.registerCommand("Shoot", Commands.runOnce(() -> {
+      m_shooter.shoot();
+      m_feederMotor.runShootFeederMotorToShoot();
+    }));
+    NamedCommands.registerCommand("Dont Shoot", Commands.runOnce(() -> {
+      m_shooter.noShoot();
+      m_feederMotor.stopFeederMotor();
+    }));
     NamedCommands.registerCommand("Intake Down", m_pickup.runIntakeCommand());
     NamedCommands.registerCommand("Intake Up", m_pickup.disableIntakeCommand());
     NamedCommands.registerCommand("Pickup Note", new autoPickupNote(m_swerve));
@@ -131,7 +145,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    Controller.kManipulatorController.rightBumper()
+    Controller.kManipulatorController.rightTrigger(0.1)
         .and(() -> Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece))
         .onTrue(Commands.runOnce(() -> {
           m_shooter.shoot();
@@ -154,19 +168,18 @@ public class RobotContainer {
             },
                 m_shooter))));
 
-    Controller.kManipulatorController.povLeft()
+    Controller.kManipulatorController.back()
         .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.AMP)));
-    Controller.kManipulatorController.povRight()
+    Controller.kManipulatorController.start()
         .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.SPEAKER)));
-    Controller.kManipulatorController.povDown()
+    Controller.kManipulatorController.b()
         .whileTrue(Commands.run(() -> m_pickupMotors.runMotorsReverse(),
             m_pickupMotors))
         .onFalse(m_pickupMotors.stopMotorsCommand());
-    Controller.kManipulatorController.a().and(m_pickup.noPieceTrigger).onTrue(m_pickup.runIntakeCommand());
-    Controller.kManipulatorController.b()
-        .onTrue(new ParallelCommandGroup(m_pickup.disableIntakeCommand(), m_feederMotor.stopFeederMotorCommand()));
+    Controller.kDriveController.rightTrigger(0.1).and(m_pickup.noPieceTrigger).whileTrue(m_pickup.runIntakeCommand())
+        .onFalse(m_pickup.disableIntakeCommand());
 
-    Controller.kManipulatorController.x().whileTrue(new autoPickupNote(m_swerve));
+    Controller.kDriveController.leftTrigger(0.1).whileTrue(new autoPickupNote(m_swerve));
 
     // Controller.kManipulatorController.leftBumper().and(() ->
     // !m_shooter.getBottomLimit())
@@ -182,11 +195,11 @@ public class RobotContainer {
     // Aimlock.setPipeline(PipeLineID.kSpeakerID)));
 
     // drive cont bindings
-    Controller.kDriveController.rightBumper().onTrue((new resetOdo(m_swerve)));
+    Controller.kDriveController.y().onTrue((new resetOdo(m_swerve)));
 
     Controller.kDriveController.leftBumper().onTrue(new lockTarget(m_swerve));
     // drive cont bindings
-    Controller.kDriveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());
+    // Controller.kDriveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());
 
     Controller.kDriveController.povUp().whileTrue(Commands.run(() -> m_shooter.driveHoodManually(2.5)))
         .onFalse(Commands.run(() -> m_shooter.driveHoodManually(0)));
@@ -220,9 +233,48 @@ public class RobotContainer {
     // SmartDashboard.putData("Example Auto", AutoBuilder.buildAuto("Example
     // Auto"));
     // Add a button to run a simple example path
+
     auto1 = AutoBuilder.buildAuto("middle auto");
     auto1.setName("AUTO1");
     autoChooser.addOption("auto1", auto1);
+
+    // Pose2d auto1StartPose = new Pose2d(1.48, 7.37, Rotation2d.fromDegrees(0));
+    // auto1 = Commands.runOnce(
+    // () -> {
+
+    // boolean flip = new BooleanSupplier() {
+    // public boolean getAsBoolean() {
+    // // Boolean supplier that controls when the path will be mirrored for the red
+    // // alliance
+    // // This will flip the path being followed to the red side of the field.
+    // // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+    // var alliance = DriverStation.getAlliance();
+    // if (alliance.isPresent()) {
+    // return alliance.get() == DriverStation.Alliance.Red;
+    // }
+    // return false;
+    // }
+    // }.getAsBoolean();
+    // if (flip) {
+    // m_swerve.resetOdo(GeometryUtil.flipFieldPose(auto1StartPose));
+    // } else {
+    // m_swerve.resetOdo(auto1StartPose);
+    // }
+    // }).withName("AUTO1: SET START POSE").finallyDo(
+    // () -> m_pickup.runIntakeCommand().withName("AUTO1: RUN INTAKE").finallyDo(
+    // () -> AutoBuilder.followPath(PathPlannerPath.fromPathFile("go in a line"))
+    // .withName("AUTO1: GO IN A LINE")
+    // .finallyDo(() -> new autoPickupNote(m_swerve).withName("AUTO1: AUTO PICKUP
+    // NOTE").finallyDo(
+    // () -> AutoBuilder.followPath(PathPlannerPath.fromPathFile("go back"))
+    // .withName("AUTO1: GO BACK")
+    // .finallyDo(() -> Commands.runOnce(m_shooter::shoot).withName("AUTO1:
+    // SHOOT").schedule())
+    // .schedule())
+    // .schedule())
+    // .schedule())
+    // .schedule());
+
     // auto1 = auto1.withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
 
     // Load the path we want to pathfind to and follow

@@ -28,10 +28,12 @@ public class PickupOrchestrator extends SubsystemBase {
     public Trigger holdingPieceTrigger;
     public Trigger loadedPieceTrigger;
     public Trigger enabledTrigger;
+    public Trigger AutoTrigger;
 
     ShuffleboardTab IntakeSensors;
 
     SimpleWidget lowHoodSensorWidget;
+    SimpleWidget HoldingPieceWidget;
 
     public PickupOrchestrator(PneumaticsSubsystem pneumatics, PickupMotorsSubsystem pickupMotors,
             FeederMotorSubsystem feederMotor) {
@@ -45,25 +47,32 @@ public class PickupOrchestrator extends SubsystemBase {
         noPieceTrigger = new Trigger(() -> Flags.pieceState.equals(subsystemsStates.noPiece));
         holdingPieceTrigger = new Trigger(() -> Flags.pieceState.equals(subsystemsStates.holdingPiece));
         enabledTrigger = new Trigger(() -> DriverStation.isEnabled());
+        AutoTrigger = new Trigger(() -> DriverStation.isAutonomousEnabled());
 
         // Automatically puts piece into the loaded position
-        (lowSensorTrigger.negate().and(holdingPieceTrigger)).onTrue(loadPieceCommand())
-                .onFalse(new SequentialCommandGroup(runOnce(() -> {
+        (lowSensorTrigger.and(holdingPieceTrigger))
+                .onTrue(new SequentialCommandGroup(runOnce(() -> {
                     if (DriverStation.isEnabled()) {
                         Flags.pieceState = subsystemsStates.loadedPiece;
                     }
-                }), stopLoadingPieceCommand()));
+                }), stopLoadingPieceCommand()).withName("CHANGE_TO_LOADED_PIECE_S_STOP_LOADING"));
 
         (lowSensorTrigger.negate()).and(noPieceTrigger).and(enabledTrigger)
-                .onTrue(new SequentialCommandGroup(runOnce(() -> {
-                    if (DriverStation.isEnabled()) {
-                        Flags.pieceState = subsystemsStates.holdingPiece;
-                    }
-                }), disableIntakeCommand()));
+                .onTrue(new SequentialCommandGroup(
+                        disableIntakeCommand(),
+                        loadPieceCommand().withName("LOAD PIECE"),
+                        runOnce(() -> {
+                            if (DriverStation.isEnabled()) {
+                                Flags.pieceState = subsystemsStates.holdingPiece;
+                            }
+                        })).withName("CHANGE_TO_HOLDING_PIECE_S_DISABLE_INTAKE"));
+
+        AutoTrigger.and(noPieceTrigger).onTrue(runIntakeCommand());
 
         IntakeSensors = Shuffleboard.getTab("Intake");
 
         lowHoodSensorWidget = IntakeSensors.add("Low Hood Sensors", false);
+        HoldingPieceWidget = IntakeSensors.add("Loaded Piece", false);
     }
 
     public ParallelCommandGroup runIntakeCommand() {
@@ -71,33 +80,22 @@ public class PickupOrchestrator extends SubsystemBase {
                 m_pickupMotors.runMotorsCommand(), m_FeederMotor.runFeederMotorToLoadCommand());
     }
 
-    public SequentialCommandGroup disableIntakeCommand() {
-        return new SequentialCommandGroup(m_pneumatics.disableIntakeSolenoidCommand(),
-                m_pickupMotors.runMotorsSlowCommand());
+    public Command disableIntakeCommand() {
+        return new SequentialCommandGroup(new TimerWaitCommand(0.25), m_pneumatics.disableIntakeSolenoidCommand(),
+                m_pickupMotors.runMotorsSlowCommand()).withName("DISABLE_INTAKE_COMMAND");
     }
 
-    public InstantCommand loadPieceCommand() {
-        return new InstantCommand(() -> m_FeederMotor.runFeederMotorToLoad());
+    public Command loadPieceCommand() {
+        return m_FeederMotor.runFeederMotorToLoadCommand();
     }
 
-    public InstantCommand stopLoadingPieceCommand() {
-        return new InstantCommand(() -> m_FeederMotor.stopFeederMotor());
+    public Command stopLoadingPieceCommand() {
+        return m_FeederMotor.stopFeederMotorCommand();
     }
 
     @Override
     public void periodic() {
         lowHoodSensorWidget.getEntry().setBoolean(lowHoodSensor.get());
-
-        // if (DriverStation.isEnabled()) {
-        // if (Flags.pieceState.equals(subsystemsStates.noPiece)) {
-        // if (!lowHoodSensor.get()) {
-        // (new SequentialCommandGroup(runOnce(() -> {
-        // if (DriverStation.isEnabled()) {
-        // Flags.pieceState = subsystemsStates.holdingPiece;
-        // }
-        // }), disableIntakeCommand())).schedule();
-        // }
-        // }
-        // }
+        HoldingPieceWidget.getEntry().setBoolean(Flags.pieceState.equals(subsystemsStates.loadedPiece));
     }
 }
