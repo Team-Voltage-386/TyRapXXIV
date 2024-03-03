@@ -6,7 +6,6 @@ import frc.robot.Subsystems.Drivetrain;
 
 public class StopDrive extends Command {
     Drivetrain dt;
-    private final DSControlWord m_word = new DSControlWord();
 
     public StopDrive(Drivetrain dt) {
         this.dt = dt;
@@ -15,16 +14,11 @@ public class StopDrive extends Command {
     @Override
     public void schedule() {
         System.out.println("Stopped Driving.");
-    }
-    
-    @Override
-    public void execute() {
-        m_word.refresh();
         dt.stopDriving();
     }
 
     @Override
     public boolean isFinished() {
-        return m_word.isTeleop();
+        return true;
     }
 }

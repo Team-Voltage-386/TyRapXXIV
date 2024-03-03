@@ -43,7 +43,7 @@ public class Aimlock {
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
     private SimpleMotorFeedforward RRaimFF = new SimpleMotorFeedforward(0.0, 0.0);
-    private ProfiledPIDController RRaimPID = new ProfiledPIDController(4, 0.01, 0.1,
+    private ProfiledPIDController RRaimPID = new ProfiledPIDController(3.5, 0.0, 0.1,
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
     private static final String limelightName = "limelight-b";
@@ -258,7 +258,7 @@ public class Aimlock {
         // horizontal vector
         double noteDropMeters = ((9.80665 * Shooter.kFallingDragCoefficient
                 * Math.pow((getDistToTag() / (getShooterSpeedwDrag() * Math.cos(perfectAngle))), 2))) / 2;
-        double tuningFactor = 0.99; // tweak how much it adjusts
+        double tuningFactor = 1; // tweak how much it adjusts
         // the angle we NEED to shoot at to hit the target, including drop. (just the
         // amount of degrees
         // of error in the other direction)

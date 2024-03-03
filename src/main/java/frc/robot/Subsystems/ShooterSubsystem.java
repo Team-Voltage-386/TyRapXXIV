@@ -259,7 +259,6 @@ public class ShooterSubsystem extends SubsystemBase {
      * set motors spinning at their desired rpms
      */
     public void spoolMotors() {
-        // dece
         switch (Aimlock.getDoState()) {
             case SPEAKER:
                 if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)) {

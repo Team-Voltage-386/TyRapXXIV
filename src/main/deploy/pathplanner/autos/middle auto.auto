@@ -2,19 +2,49 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.48,
-      "y": 7.37
+      "x": 1.3725738150477713,
+      "y": 6.99
     },
-    "rotation": 0
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Pickup Note"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "go in a line"
+            "pathName": "get A1"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Dont Lock Target in Auto"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "get A4"
           }
         },
         {
@@ -26,7 +56,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "go back"
+            "pathName": "A4 to Speak"
           }
         },
         {

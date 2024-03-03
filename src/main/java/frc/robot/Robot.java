@@ -48,6 +48,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         m_containter.clearDefaultCommand();
+        m_containter.setAutoDefaultCommand();
         m_containter.getShooter().setAimToBreakMode();
         Flags.pieceState = subsystemsStates.noPiece; // todo
         m_containter.getAutonomousCommand().schedule();
@@ -61,7 +62,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         m_containter.getShooter().setAimToBreakMode();
-        m_containter.setDefaultCommand();
+        m_containter.setTeleDefaultCommand();
     }
 
     @Override

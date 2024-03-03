@@ -56,6 +56,6 @@ public class autoPickupNote extends Command {
     public boolean isFinished() {
         return this.timer.hasElapsed(2.5)
                 // || (LimelightHelpers.getTY("limelight-c") > -5 && Aimlock.hasTarget())
-                || Flags.pieceState.equals(subsystemsStates.loadedPiece);
+                || Flags.pieceState.equals(subsystemsStates.holdingPiece);
     }
 }

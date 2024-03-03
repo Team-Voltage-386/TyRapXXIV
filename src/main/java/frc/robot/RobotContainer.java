@@ -176,10 +176,18 @@ public class RobotContainer {
         .whileTrue(Commands.run(() -> m_pickupMotors.runMotorsReverse(),
             m_pickupMotors))
         .onFalse(m_pickupMotors.stopMotorsCommand());
-    Controller.kDriveController.rightTrigger(0.1).and(m_pickup.noPieceTrigger).whileTrue(m_pickup.runIntakeCommand())
+
+    Controller.kManipulatorController.x()
+        .onTrue(Commands.runOnce(() -> Flags.pieceState = Flags.subsystemsStates.loadedPiece))
+        .onFalse(Commands.runOnce(() -> Flags.pieceState = Flags.subsystemsStates.noPiece));
+    Controller.kDriveController.rightTrigger(0.1).and(m_pickup.noPieceTrigger)
+        .whileTrue(m_pickup.runIntakeCommand())
         .onFalse(m_pickup.disableIntakeCommand());
 
-    Controller.kDriveController.leftTrigger(0.1).whileTrue(new autoPickupNote(m_swerve));
+    Controller.kDriveController.leftTrigger(0.1).and(() -> Aimlock.getNoteVision())
+        .whileTrue(new autoPickupNote(m_swerve));
+    Controller.kDriveController.leftTrigger(0.1).and(() -> !Aimlock.getNoteVision())
+        .whileTrue(new lockTarget(m_swerve));
 
     // Controller.kManipulatorController.leftBumper().and(() ->
     // !m_shooter.getBottomLimit())
@@ -197,7 +205,6 @@ public class RobotContainer {
     // drive cont bindings
     Controller.kDriveController.y().onTrue((new resetOdo(m_swerve)));
 
-    Controller.kDriveController.leftBumper().onTrue(new lockTarget(m_swerve));
     // drive cont bindings
     // Controller.kDriveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());
 
@@ -319,10 +326,16 @@ public class RobotContainer {
     return auto1;
   }
 
-  public void setDefaultCommand() {
+  public void setTeleDefaultCommand() {
     if (this.m_swerve.getDefaultCommand() == null) {
       this.m_swerve.setDefaultCommand(driveCommand);
     }
+    if (this.m_shooter.getDefaultCommand() == null) {
+      this.m_shooter.setDefaultCommand(new aimShooterCommand(m_shooter));
+    }
+  }
+
+  public void setAutoDefaultCommand() {
     if (this.m_shooter.getDefaultCommand() == null) {
       this.m_shooter.setDefaultCommand(new aimShooterCommand(m_shooter));
     }
