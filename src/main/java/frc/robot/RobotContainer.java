@@ -4,35 +4,23 @@
 
 package frc.robot;
 
-import java.util.function.BooleanSupplier;
-
-import org.json.simple.JSONObject;
-
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.util.GeometryUtil;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Controller;
 import frc.robot.Constants.ID;
-import frc.robot.Constants.PipeLineID;
 import frc.robot.Subsystems.CameraSubsystem;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.ElevatorSubsystem;
@@ -45,8 +33,6 @@ import frc.robot.Subsystems.PickupMotorsSubsystem;
 import frc.robot.Subsystems.PickupOrchestrator;
 import frc.robot.Subsystems.PneumaticsSubsystem;
 import frc.robot.Commands.Drive;
-import frc.robot.Commands.ElevatorDownCommand;
-import frc.robot.Commands.ElevatorUpCommand;
 import frc.robot.Commands.StopDrive;
 import frc.robot.Commands.aimShooterCommand;
 import frc.robot.Commands.autoPickupNote;
@@ -90,7 +76,7 @@ public class RobotContainer {
     this.m_pneumatics = new PneumaticsSubsystem();
     this.m_feederMotor = new FeederMotorSubsystem();
     this.m_pickup = new PickupOrchestrator(m_pneumatics, m_pickupMotors, m_feederMotor);
-    this.m_shooter = new ShooterSubsystem(m_feederMotor);
+    this.m_shooter = new ShooterSubsystem();
     this.m_aim = new Aimlock(m_swerve, m_shooter);
     this.m_elevatorSubsystem = new ElevatorSubsystem();
 

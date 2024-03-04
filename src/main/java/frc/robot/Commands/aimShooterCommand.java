@@ -2,7 +2,6 @@ package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.ShooterSubsystem;
-import frc.robot.Utils.Aimlock;
 
 public class aimShooterCommand extends Command {
     ShooterSubsystem m_shooter;
