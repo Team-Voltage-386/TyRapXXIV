@@ -12,8 +12,8 @@ public class ampAlignCommand extends Command {
     Drivetrain dt;
     BellController bc;
 
-    double xSpeed;
-    double ySpeed;
+    private double xSpeed;
+    private double ySpeed;
 
     public ampAlignCommand(Drivetrain dt) {
         this.dt = dt;

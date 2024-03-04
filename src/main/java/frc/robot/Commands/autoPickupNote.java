@@ -1,18 +1,17 @@
 package frc.robot.Commands;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Utils.Aimlock;
 import frc.robot.Utils.Flags;
-import frc.robot.Utils.LimelightHelpers;
 import frc.robot.Utils.Flags.subsystemsStates;
 
 public class autoPickupNote extends Command {
     Drivetrain dt;
 
     private Timer timer;
+    private double xSpeed;
 
     public autoPickupNote(Drivetrain dt) {
         this.dt = dt;
@@ -28,22 +27,14 @@ public class autoPickupNote extends Command {
         Aimlock.setNoteVision(true);
     }
 
-    double xSpeed;
-    double ySpeed;
-    double rotSpeed;
-
-    private void readControllers() {
-        // Get the x speed. We are inverting this because Xbox controllers return
-        // negative values when we push forward.
+    private void getSpeeds() {
         xSpeed = Aimlock.hasNoteTarget() ? 1 : 0;
-        // ySpeed = Aimlock.hasTarget() ?
-        // MathUtil.clamp(LimelightHelpers.getTY("limelight-c") / 20, 0, 1) : 0;
     }
 
     @Override
     public void execute() {
-        readControllers();
-        dt.lockTarget(xSpeed, ySpeed, 0, true, true);
+        getSpeeds();
+        dt.lockTarget(xSpeed, 0, 0, true, true);
     }
 
     @Override
