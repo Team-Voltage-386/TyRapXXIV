@@ -43,7 +43,7 @@ public class autoPickupNote extends Command {
     @Override
     public void execute() {
         readControllers();
-        dt.lockPiece(xSpeed, ySpeed, 0, true, true);
+        dt.lockTarget(xSpeed, ySpeed, 0, true, true);
     }
 
     @Override

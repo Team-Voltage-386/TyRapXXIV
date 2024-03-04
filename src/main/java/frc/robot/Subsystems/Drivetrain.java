@@ -324,7 +324,7 @@ public class Drivetrain extends SubsystemBase {
         // this.layout.setDesiredRotSpeed(Math.toDegrees(rotSpeed));
     }
 
-    public void lockPiece(double xSpeed, double ySpeed, double rotSpeed, boolean fieldRelative, boolean hardLocked) {
+    public void lockTarget(double xSpeed, double ySpeed, double rotSpeed, boolean fieldRelative, boolean hardLocked) {
         SwerveModuleState[] swerveModuleStates; // MAKE SURE swervestates can be init like this with this kinda array
         if (Aimlock.hasTarget() || (Aimlock.hasNoteTarget() && Aimlock.getNoteVision())) {
             rotSpeed = m_aim.getRotationSpeedForTarget();
