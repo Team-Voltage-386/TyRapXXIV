@@ -159,7 +159,7 @@ public class RobotContainer {
     // m_shooter.shootToggle(), m_shooter),
     // m_pickup.lowerLoaderCommand()));
 
-    new Trigger(() -> m_shooter.hasShotNote())
+    new Trigger(() -> m_shooter.hasShotNote()).onTrue(Commands.runOnce(() -> System.out.println("trigger worked")))
         .onTrue(new SequentialCommandGroup(new TimerWaitCommand(0.25),
             new ParallelCommandGroup(Commands.runOnce(() -> {
               m_shooter.noShoot();
@@ -179,6 +179,7 @@ public class RobotContainer {
 
     Controller.kManipulatorController.x()
         .onTrue(Commands.runOnce(() -> Flags.pieceState = Flags.subsystemsStates.loadedPiece))
+        .onTrue(m_feederMotor.stopFeederMotorCommand())
         .onFalse(Commands.runOnce(() -> Flags.pieceState = Flags.subsystemsStates.noPiece));
     Controller.kDriveController.rightTrigger(0.1).and(m_pickup.noPieceTrigger)
         .whileTrue(m_pickup.runIntakeCommand())
@@ -241,7 +242,7 @@ public class RobotContainer {
     // Auto"));
     // Add a button to run a simple example path
 
-    auto1 = AutoBuilder.buildAuto("middle auto");
+    auto1 = AutoBuilder.buildAuto("race auto");
     auto1.setName("AUTO1");
     autoChooser.addOption("auto1", auto1);
 

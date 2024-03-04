@@ -52,7 +52,7 @@ public class PickupOrchestrator extends SubsystemBase {
         AutoTrigger = new Trigger(() -> DriverStation.isAutonomousEnabled());
 
         // Automatically puts piece into the loaded position
-        (holdingPieceTrigger.and(leftSensorTrigger.or(rightSensorTrigger)))
+        (holdingPieceTrigger.and((leftSensorTrigger.or(rightSensorTrigger))))
                 .onTrue(new SequentialCommandGroup(runOnce(() -> {
                     if (DriverStation.isEnabled()) {
                         Flags.pieceState = subsystemsStates.loadedPiece;
@@ -87,7 +87,8 @@ public class PickupOrchestrator extends SubsystemBase {
     public Command disableIntakeCommand() {
         return new SequentialCommandGroup(Commands.runOnce(() -> Aimlock.setNoteVision(false)),
                 new TimerWaitCommand(0.25), m_pneumatics.disableIntakeSolenoidCommand(),
-                m_pickupMotors.runMotorsSlowCommand()).withName("DISABLE_INTAKE_COMMAND");
+                m_pickupMotors.runMotorsSlowCommand(), m_FeederMotor.stopFeederMotorCommand())
+                .withName("DISABLE_INTAKE_COMMAND");
     }
 
     public Command loadPieceCommand() {

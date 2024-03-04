@@ -94,7 +94,7 @@ public class ShooterSubsystem extends SubsystemBase {
         bottomShooterMotor.setIdleMode(IdleMode.kCoast);
         bottomShooterMotor.setInverted(true);
         // bottomShooterMotor.follow(topShooterMotor, false);
-        m_shootPID = new ProfiledPIDController(0.2, 0, 0.0, new Constraints(10, 10));
+        m_shootPID = new ProfiledPIDController(0.275, 0, 0.0, new Constraints(10, 10));
         m_shootFF = new SimpleMotorFeedforward(0.0, 0.415);
 
         // m_shootPID = new ProfiledPIDController(0.0, 0, 0, new Constraints(10, 10));
@@ -335,19 +335,19 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public void aimShooter(double targetAngle) {
         double volts = 0;
-        if (Aimlock.hasTarget()) {
-            // if we see the LL target, aim at it
-            volts = m_aimPID.calculate(
-                    getShooterAngleRelative(),
-                    targetAngle)
-                    + m_aimFF.calculate(targetAngle, targetAngle - getShooterAngleRelative());
-            // volts = m_aimPC.calc(targetAngle - getShooterAngleRelative()); //todo test
+        // if (Aimlock.hasTarget()) {
+        // if we see the LL target, aim at it
+        volts = m_aimPID.calculate(
+                getShooterAngleRelative(),
+                targetAngle)
+                + m_aimFF.calculate(targetAngle, targetAngle - getShooterAngleRelative());
+        // volts = m_aimPC.calc(targetAngle - getShooterAngleRelative()); //todo test
 
-            // volts = m_aimBC.calc(targetAngle - getShooterAngleRelative()); //todo test
-        } else {
-            // if we dont see the with the limelight, go to the upper limit slowly
-            volts = 2.5;
-        }
+        // volts = m_aimBC.calc(targetAngle - getShooterAngleRelative()); //todo test
+        // } else {
+        // // if we dont see the with the limelight, go to the upper limit slowly
+        // volts = 2.5;
+        // }
 
         // check if hitting limits, if hitting limit, let the motor still drive the
         // other direction.
@@ -358,7 +358,7 @@ public class ShooterSubsystem extends SubsystemBase {
         }
 
         // cap the voltage at 2.5
-        volts = MathUtil.clamp(volts, -2.5, 2.5);
+        volts = MathUtil.clamp(volts, -4, 4);
 
         aimMotor.setVoltage(volts);
     }
@@ -396,9 +396,9 @@ public class ShooterSubsystem extends SubsystemBase {
         // SmartDashboard.putNumber("top shoot", getTopShooterMPS());
         // SmartDashboard.putNumber("bot shoot", getBottomShooterMPS());
         // SmartDashboard.putNumber("des shoot speed", getDesiredShooterSpeed());
-        SmartDashboard.putNumber("volts to hood", aimMotor.getAppliedOutput());
-        SmartDashboard.putNumber("target shooter angle",
-                m_aim.getShooterTargetAngle());
+        // SmartDashboard.putNumber("volts to hood", aimMotor.getAppliedOutput());
+        // SmartDashboard.putNumber("target shooter angle",
+        // m_aim.getShooterTargetAngle());
         SmartDashboard.putNumber("Top Shooter Accel", previousTopMotorData[2]);
         SmartDashboard.putNumber("Bottom Shooter Accel", previousBottomMotorData[2]);
         SmartDashboard.putBoolean("has shot?", hasShotNote());

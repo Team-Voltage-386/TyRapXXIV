@@ -64,7 +64,7 @@ public class Constants {
         public static final double kShooterSpeed = 18;
         /** the lower the drag coefficient, the lower the drag */
         public static final double kDragCoefficient = 0.33;
-        public static final double kFallingDragCoefficient = 0.2;
+        public static final double kFallingDragCoefficient = 0.0;
         public static final double kBottomAmpShooterSpeed = 14.0 * 0.75;
         public static final double kTopAmpShooterSpeed = 9 * 0.75;
         public static final double kMaxAngle = 20;

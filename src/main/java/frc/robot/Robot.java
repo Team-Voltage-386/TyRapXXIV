@@ -50,7 +50,7 @@ public class Robot extends TimedRobot {
         m_containter.clearDefaultCommand();
         m_containter.setAutoDefaultCommand();
         m_containter.getShooter().setAimToBreakMode();
-        Flags.pieceState = subsystemsStates.noPiece; // todo
+        Flags.pieceState = subsystemsStates.loadedPiece; // todo
         m_containter.getAutonomousCommand().schedule();
     }
 

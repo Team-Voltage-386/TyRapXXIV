@@ -38,18 +38,18 @@ public class Aimlock {
     }
 
     // PID/FF for chassis rotation speed
-    private SimpleMotorFeedforward aimFF = new SimpleMotorFeedforward(0.0, 11);
-    private ProfiledPIDController aimPID = new ProfiledPIDController(8, 0.2, 0.2,
+    private SimpleMotorFeedforward aimFF = new SimpleMotorFeedforward(0.0, 12);
+    private ProfiledPIDController aimPID = new ProfiledPIDController(8, 0.5, 0.2,
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
     private SimpleMotorFeedforward RRaimFF = new SimpleMotorFeedforward(0.0, 0.0);
-    private ProfiledPIDController RRaimPID = new ProfiledPIDController(3.5, 0.0, 0.1,
+    private ProfiledPIDController RRaimPID = new ProfiledPIDController(3, 0.0, 0.1,
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
     private static final String limelightName = "limelight-b";
-    private double limelightHeight = Units.inchesToMeters(25);
+    private double limelightHeight = Units.inchesToMeters(25.3);
     private double targetTagHeight = Units.inchesToMeters(51.88);
-    private double speakerHeight = Units.inchesToMeters(81); // was 69 on 36 hour monday
+    private double speakerHeight = Units.inchesToMeters(79.5);
 
     /**
      * select the pipeline you want to use
@@ -143,8 +143,9 @@ public class Aimlock {
         double Vx = m_swerve.getChassisSpeeds().vxMetersPerSecond
                 + getShooterSpeedwDrag() * Math.cos(Math.toRadians(getAngleToSpeaker()));
         // return 2 * Math.toRadians(getAngleToSpeaker()) - Math.atan(Vy / Vx);
-        return Math.atan(Vy / Vx); // dont know why this suddenly isnt inverted also consider using gyro and not
-                                   // swerve odo
+        return Math.atan(Vy / Vx); // dont know why this suddenly isnt inverted also
+        // consider using gyro and not
+        // // swerve odo
     }
 
     public double getShooterSpeedwDrag() {
@@ -240,7 +241,7 @@ public class Aimlock {
      */
     public double getShooterTargetAngleSPEAKER() {
         if (!hasTarget()) {
-            return Shooter.kMaxAngle; // go to 10 degrees if u no see
+            return 10; // go to 10 degrees if u no see
         }
         // motion towards target
         double M = Math.hypot( // get magnitude of robot motion vector towards speaker
@@ -258,7 +259,7 @@ public class Aimlock {
         // horizontal vector
         double noteDropMeters = ((9.80665 * Shooter.kFallingDragCoefficient
                 * Math.pow((getDistToTag() / (getShooterSpeedwDrag() * Math.cos(perfectAngle))), 2))) / 2;
-        double tuningFactor = 1; // tweak how much it adjusts
+        double tuningFactor = 1.06; // tweak how much it adjusts
         // the angle we NEED to shoot at to hit the target, including drop. (just the
         // amount of degrees
         // of error in the other direction)
@@ -272,7 +273,7 @@ public class Aimlock {
         // 32 is the bottom of the shooter angle IRL
         // 3 is just a guestimate of from where we measure to where the note actually
         // comes out
-        return MathUtil.clamp(angleWithDrop - 32, Shooter.kMinAngle, Shooter.kMaxAngle);
+        return MathUtil.clamp(angleWithDrop - 32.0, Shooter.kMinAngle, Shooter.kMaxAngle);
     }
 
     /**
