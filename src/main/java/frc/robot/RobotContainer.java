@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -35,6 +36,7 @@ import frc.robot.Subsystems.PneumaticsSubsystem;
 import frc.robot.Commands.Drive;
 import frc.robot.Commands.StopDrive;
 import frc.robot.Commands.aimShooterCommand;
+import frc.robot.Commands.ampAlignCommand;
 import frc.robot.Commands.autoPickupNote;
 import frc.robot.Commands.lockTarget;
 import frc.robot.Commands.TimerWaitCommand;
@@ -171,23 +173,19 @@ public class RobotContainer {
         .whileTrue(m_pickup.runIntakeCommand())
         .onFalse(m_pickup.disableIntakeCommand());
 
+    // aimlock bindings
+
+    // while the intake is down and we hold the left trigger, autoPickupNote
     Controller.kDriveController.leftTrigger(0.1).and(() -> Aimlock.getNoteVision())
         .whileTrue(new autoPickupNote(m_swerve));
+    // while the left trigger is held and we are in speaker mode, lock the speaker
     Controller.kDriveController.leftTrigger(0.1).and(() -> !Aimlock.getNoteVision())
+        .and(() -> Aimlock.getDoState().equals(DoState.SPEAKER))
         .whileTrue(new lockTarget(m_swerve));
-
-    // Controller.kManipulatorController.leftBumper().and(() ->
-    // !m_shooter.getBottomLimit())
-    // .whileTrue(Commands.runOnce(() -> m_shooter.driveShooterManually(-2.5)))
-    // .onFalse(Commands.runOnce(() -> m_shooter.stopDrivingShooter()));
-    // Controller.kManipulatorController.rightBumper().and(() ->
-    // !m_shooter.getTopLimit())
-    // .whileTrue(Commands.runOnce(() -> m_shooter.driveShooterManually(2.5)))
-    // .onFalse(Commands.runOnce(() -> m_shooter.stopDrivingShooter()));
-    // Controller.kDriveController.b().onTrue(m_pickup.disableIntakeCommand());
-
-    // Controller.kDriveController.x().onTrue(Commands.runOnce(() ->
-    // Aimlock.setPipeline(PipeLineID.kSpeakerID)));
+    // while the left trigger is held and we are in amp mode, go up to the amp
+    Controller.kDriveController.leftTrigger(0.1).and(() -> !Aimlock.getNoteVision())
+        .and(() -> Aimlock.getDoState().equals(DoState.AMP))
+        .whileTrue(new RepeatCommand(new ampAlignCommand(m_swerve)));
 
     // drive cont bindings
     Controller.kDriveController.y().onTrue((new resetOdo(m_swerve)));
