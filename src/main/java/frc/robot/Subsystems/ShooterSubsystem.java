@@ -1,7 +1,5 @@
 package frc.robot.Subsystems;
 
-import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -20,15 +18,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ID;
 import frc.robot.Constants.Shooter;
-// import frc.robot.Utils.Aimlock;
-// import frc.robot.Utils.LimelightHelpers;
 import frc.robot.Utils.Aimlock;
 import frc.robot.Utils.BellController;
 import frc.robot.Utils.Flags;
 import frc.robot.Utils.ParabolicController;
 
 public class ShooterSubsystem extends SubsystemBase {
-    private FeederMotorSubsystem m_FeederMotor;
 
     private CANSparkMax aimMotor;
     private CANSparkMax topShooterMotor;
@@ -66,8 +61,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private SlewRateLimiter m_slewRateLimiter;
 
-    public ShooterSubsystem(FeederMotorSubsystem feederMotor) {
-        m_FeederMotor = feederMotor;
+    public ShooterSubsystem() {
         // init aim motor
         aimMotor = new CANSparkMax(ID.kShooterAimMotorID, MotorType.kBrushless);
         aimMotor.setIdleMode(IdleMode.kBrake); // todo change to brake after testing

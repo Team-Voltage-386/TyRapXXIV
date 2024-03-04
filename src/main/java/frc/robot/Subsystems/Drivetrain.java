@@ -7,7 +7,6 @@ package frc.robot.Subsystems;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -121,7 +120,6 @@ public class Drivetrain extends SubsystemBase {
     private final SwerveDriveOdometry m_odometry;
 
     private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds();
-    private Pose2d robotFieldPosition;
     private boolean lockTargetInAuto = false;
 
     private ExecutorService executorService = Executors.newFixedThreadPool(4);
@@ -142,8 +140,6 @@ public class Drivetrain extends SubsystemBase {
                         m_backLeft.getPosition(),
                         m_backRight.getPosition()
                 });
-
-        robotFieldPosition = getRoboPose2d();
 
         // Configure AutoBuilder last
         AutoBuilder.configureHolonomic(
@@ -425,7 +421,6 @@ public class Drivetrain extends SubsystemBase {
         // Converting module speeds to chassis speeds
         m_chassisSpeeds = m_kinematics.toChassisSpeeds(
                 frontLeftState, frontRightState, backLeftState, backRightState);
-        robotFieldPosition = getRoboPose2d();
     }
 
     @Override
