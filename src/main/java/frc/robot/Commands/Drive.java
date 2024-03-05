@@ -46,19 +46,6 @@ public class Drive extends Command {
         rotSpeed = -m_rotLimiter
                 .calculate(MathUtil.applyDeadband(m_controller.getRightX(), Deadbands.kRightJoyStickDeadband))
                 * Drivetrain.kMaxAngularSpeed;
-
-        if (!dt.getFieldRelative()) {
-            switch (dt.getDirectionOption()) {
-                case BACKWARD: {
-                    xSpeed *= -1;
-                    ySpeed *= -1;
-                    break;
-                }
-                default: {
-                    break;
-                }
-            }
-        }
     }
 
     @Override

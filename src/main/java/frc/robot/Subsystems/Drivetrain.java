@@ -33,16 +33,10 @@ import frc.robot.Constants.ID;
 import frc.robot.Constants.Offsets;
 import frc.robot.SwerveModule;
 import frc.robot.Constants.DriveTrain;
-// import frc.robot.ShuffleboardLayouts.DrivetrainLayout;
 import frc.robot.Utils.Aimlock;
 
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain extends SubsystemBase {
-    public static enum DirectionOption {
-        FORWARD,
-        BACKWARD
-    }
-
     public static final double kMaxPossibleSpeed = 5; // meters per second
     public static final double kMaxAngularSpeed = 3 * Math.PI; // per second
 
@@ -100,13 +94,10 @@ public class Drivetrain extends SubsystemBase {
     private final CameraSubsystem m_camera;
 
     private boolean fieldRelative = true;
-    private DirectionOption m_forwardDirection = DirectionOption.FORWARD;
     private final ShuffleboardTab m_driveTab = Shuffleboard.getTab("drive subsystem");
     private final SimpleWidget m_fieldRelativeWidget = m_driveTab.add("drive field relative", fieldRelative);
 
     private Aimlock m_aim;
-
-    // private DrivetrainLayout layout = new DrivetrainLayout();
 
     /**
      * The order that you initialize these is important! Later uses of functions
@@ -214,24 +205,18 @@ public class Drivetrain extends SubsystemBase {
         return m_chassisSpeeds;
     }
 
-    public DirectionOption getDirectionOption() {
-        return this.m_forwardDirection;
-    }
-
-    public Command setDirectionOptionCommand(DirectionOption option) {
-        return runOnce(() -> {
-            this.m_forwardDirection = option;
-        });
-    }
-
     public boolean getFieldRelative() {
         return fieldRelative;
     }
 
-    public Command toggleFieldRelativeCommand() {
+    public void setFieldRelative(boolean isFieldRelative) {
+        fieldRelative = isFieldRelative;
+        m_fieldRelativeWidget.getEntry().setBoolean(fieldRelative);
+    }
+
+    public Command setFieldRelativeCommand(boolean isFieldRelative) {
         return runOnce(() -> {
-            fieldRelative = !fieldRelative;
-            m_fieldRelativeWidget.getEntry().setBoolean(fieldRelative);
+            this.setFieldRelative(isFieldRelative);
         });
     }
 

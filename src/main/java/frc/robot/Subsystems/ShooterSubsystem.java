@@ -91,12 +91,8 @@ public class ShooterSubsystem extends SubsystemBase {
         m_shootPID = new ProfiledPIDController(0.275, 0, 0.0, new Constraints(10, 10));
         m_shootFF = new SimpleMotorFeedforward(0.0, 0.415);
 
-        // m_shootPID = new ProfiledPIDController(0.0, 0, 0, new Constraints(10, 10));
-        // m_shootFF = new SimpleMotorFeedforward(0.0, 0.0);
-
         // get shooter speed
-        shootSpeed = Shooter.kShooterSpeed;// SmartDashboard.getNumber("ShootSpeed", Shooter.kShooterSpeed);
-        // hoodAngle = SmartDashboard.getNumber("hood angle", 5);
+        shootSpeed = Shooter.kShooterSpeed;
         shoot = false;
         m_slewRateLimiter = new SlewRateLimiter(20);
     }
@@ -314,7 +310,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return returns if we have shot the note
      */
     public boolean hasShotNote() {
-        if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece) && shoot
+        if (shoot
                 && (previousTopMotorData[2] < -1) // todo tune this range
                 && (previousBottomMotorData[2] < -1)) {
             return true;
@@ -351,7 +347,7 @@ public class ShooterSubsystem extends SubsystemBase {
             volts = 0;
         }
 
-        // cap the voltage at 2.5
+        // cap the voltage
         volts = MathUtil.clamp(volts, -4, 4);
 
         aimMotor.setVoltage(volts);

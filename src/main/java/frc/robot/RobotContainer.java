@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -34,6 +33,7 @@ import frc.robot.Subsystems.PickupMotorsSubsystem;
 import frc.robot.Subsystems.PickupOrchestrator;
 import frc.robot.Subsystems.PneumaticsSubsystem;
 import frc.robot.Commands.Drive;
+import frc.robot.Commands.ForceShooterUpCommand;
 import frc.robot.Commands.StopDrive;
 import frc.robot.Commands.aimShooterCommand;
 import frc.robot.Commands.ampAlignCommand;
@@ -139,41 +139,69 @@ public class RobotContainer {
           m_shooter.shoot();
           m_feederMotor.runShootFeederMotorToShoot();
         }));
-    // .onFalse(Commands.runOnce(() -> {
-    // m_shooter.noShoot();
-    // m_feederMotor.stopFeederMotor();
-    // }));
-    // .onFalse(new ParallelCommandGroup(Commands.runOnce(() ->
-    // m_shooter.shootToggle(), m_shooter),
-    // m_pickup.lowerLoaderCommand()));
 
     new Trigger(() -> m_shooter.hasShotNote()).onTrue(Commands.runOnce(() -> System.out.println("trigger worked")))
-        .onTrue(new SequentialCommandGroup(new TimerWaitCommand(0.25),
-            new ParallelCommandGroup(Commands.runOnce(() -> {
+        .onTrue(new SequentialCommandGroup(
+            new TimerWaitCommand(0.25),
+            Commands.runOnce(() -> {
               m_shooter.noShoot();
-              m_feederMotor.stopFeederMotor();
+            }),
+            m_feederMotor.stopFeederMotorCommand()).finallyDo(() -> {
               Flags.pieceState = Flags.subsystemsStates.noPiece;
-            },
-                m_shooter))));
+            }));
 
     Controller.kManipulatorController.back()
         .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.AMP)));
     Controller.kManipulatorController.start()
         .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.SPEAKER)));
+
+    /* OVERRIDE CONTROLS BEGIN */
+
+    // Manipulator "Y" button: Force the shooter to the up position and stop it
+    // using the auto-aim feature as a toggle. If toggled off, resume using the
+    // auto-aim feature
+    // Motivation: The robot's auto-aim feature depends on the limelight camera and
+    // for accurate vision from the field. If the limelight fails or the field is
+    // unreliable, this will allow you to have a predictable shooter angle. We know
+    // we can score with it all the way up and bumpered up to the speaker
+    Controller.kManipulatorController.y()
+        .toggleOnTrue(new ForceShooterUpCommand(m_shooter));
+
+    // Manipulator "X" button: Force to loaded state and stop the feeder motors. Now
+    // the robot thinks it has a piece.
+    // Motivation: Can force the robot to think it has a piece loaded and ready to
+    // shoot.
+    Controller.kManipulatorController.x()
+        .onTrue(Commands.runOnce(() -> Flags.pieceState = Flags.subsystemsStates.loadedPiece))
+        .onTrue(m_feederMotor.stopFeederMotorCommand());
+
+    // Manipulator "B" button: Signal the shooter to stop running, stop the feed
+    // motors, and then transition to NoPiece state
+    // Motivation: The robot failed to detect that it shot a piece. This can force
+    // it back to a NoPiece state
     Controller.kManipulatorController.b()
+        .onTrue(new SequentialCommandGroup(
+            Commands.runOnce(() -> {
+              m_shooter.noShoot();
+            }),
+            m_feederMotor.stopFeederMotorCommand())
+            .finallyDo(() -> {
+              Flags.pieceState = Flags.subsystemsStates.noPiece;
+            }));
+
+    // Manipulator "A" button: Run pickup in reverse while held. Let go: stop the
+    // pickup motors. No state change!
+    // Motivation: The piece got jammed. Run the pickup in reverse
+    Controller.kManipulatorController.a()
         .whileTrue(Commands.run(() -> m_pickupMotors.runMotorsReverse(),
             m_pickupMotors))
         .onFalse(m_pickupMotors.stopMotorsCommand());
 
-    Controller.kManipulatorController.x()
-        .onTrue(Commands.runOnce(() -> Flags.pieceState = Flags.subsystemsStates.loadedPiece))
-        .onTrue(m_feederMotor.stopFeederMotorCommand())
-        .onFalse(Commands.runOnce(() -> Flags.pieceState = Flags.subsystemsStates.noPiece));
+    /* OVERRIDE CONTROLS END */
+
     Controller.kDriveController.rightTrigger(0.1).and(m_pickup.noPieceTrigger)
         .whileTrue(m_pickup.runIntakeCommand())
         .onFalse(m_pickup.disableIntakeCommand());
-
-    // aimlock bindings
 
     // while the intake is down and we hold the left trigger, autoPickupNote
     Controller.kDriveController.leftTrigger(0.1).and(() -> Aimlock.getNoteVision())
@@ -189,31 +217,22 @@ public class RobotContainer {
 
     // drive cont bindings
     Controller.kDriveController.y().onTrue((new resetOdo(m_swerve)));
+    Controller.kDriveController.rightBumper().onTrue(this.m_swerve.setFieldRelativeCommand(false))
+        .onFalse(this.m_swerve.setFieldRelativeCommand(true));
 
-    // drive cont bindings
-    // Controller.kDriveController.rightTrigger(0.25).toggleOnTrue(this.m_swerve.toggleFieldRelativeCommand());
+    Controller.kDriveController.start().onTrue(Commands.runOnce(() -> Aimlock.setDoState(DoState.ENDGAME)));
 
+    new Trigger(() -> m_shooter.getBottomLimit())
+        .onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(0)).ignoringDisable(true));
+    new Trigger(() -> m_shooter.getTopLimit()).onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(
+        20)).ignoringDisable(true));
+
+    // DEBUGGING MODE START
     Controller.kDriveController.povUp().whileTrue(Commands.run(() -> m_shooter.driveHoodManually(2.5)))
         .onFalse(Commands.run(() -> m_shooter.driveHoodManually(0)));
     Controller.kDriveController.povDown().whileTrue(Commands.run(() -> m_shooter.driveHoodManually(-2.5)))
         .onFalse(Commands.run(() -> m_shooter.driveHoodManually(0)));
-
-    // Controller.kDriveController.y().whileTrue(new
-    // ElevatorUpCommand(m_elevatorSubsystem));
-    // Controller.kDriveController.a().whileTrue(new
-    // ElevatorDownCommand(m_elevatorSubsystem));
-    Controller.kDriveController.start().onTrue(Commands.runOnce(() -> Aimlock.setDoState(DoState.ENDGAME)));
-
-    // Temporary
-    // Controller.kDriveController.rightTrigger(0.25).onTrue(m_pickup.runIntakeCommand())
-    // .onFalse(m_pickup.disableIntakeCommand());
-
-    // Controller.kManipulatorController.x()
-
-    new Trigger(() -> m_shooter.getBottomLimit())
-        .onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(0)));
-    new Trigger(() -> m_shooter.getTopLimit()).onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(
-        20)));
+    // DEBUGGING MODE END
   }
 
   Command auto1;
@@ -229,45 +248,6 @@ public class RobotContainer {
     auto1 = AutoBuilder.buildAuto("race auto");
     auto1.setName("AUTO1");
     autoChooser.addOption("auto1", auto1);
-
-    // Pose2d auto1StartPose = new Pose2d(1.48, 7.37, Rotation2d.fromDegrees(0));
-    // auto1 = Commands.runOnce(
-    // () -> {
-
-    // boolean flip = new BooleanSupplier() {
-    // public boolean getAsBoolean() {
-    // // Boolean supplier that controls when the path will be mirrored for the red
-    // // alliance
-    // // This will flip the path being followed to the red side of the field.
-    // // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-    // var alliance = DriverStation.getAlliance();
-    // if (alliance.isPresent()) {
-    // return alliance.get() == DriverStation.Alliance.Red;
-    // }
-    // return false;
-    // }
-    // }.getAsBoolean();
-    // if (flip) {
-    // m_swerve.resetOdo(GeometryUtil.flipFieldPose(auto1StartPose));
-    // } else {
-    // m_swerve.resetOdo(auto1StartPose);
-    // }
-    // }).withName("AUTO1: SET START POSE").finallyDo(
-    // () -> m_pickup.runIntakeCommand().withName("AUTO1: RUN INTAKE").finallyDo(
-    // () -> AutoBuilder.followPath(PathPlannerPath.fromPathFile("go in a line"))
-    // .withName("AUTO1: GO IN A LINE")
-    // .finallyDo(() -> new autoPickupNote(m_swerve).withName("AUTO1: AUTO PICKUP
-    // NOTE").finallyDo(
-    // () -> AutoBuilder.followPath(PathPlannerPath.fromPathFile("go back"))
-    // .withName("AUTO1: GO BACK")
-    // .finallyDo(() -> Commands.runOnce(m_shooter::shoot).withName("AUTO1:
-    // SHOOT").schedule())
-    // .schedule())
-    // .schedule())
-    // .schedule())
-    // .schedule());
-
-    // auto1 = auto1.withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
 
     // Load the path we want to pathfind to and follow
     PathPlannerPath path = PathPlannerPath.fromPathFile("Score Amp");
@@ -291,11 +271,6 @@ public class RobotContainer {
 
   public ShooterSubsystem getShooter() {
     return m_shooter;
-  }
-
-  public Command getTeleOpCommand() {
-    return new ParallelCommandGroup(driveCommand,
-        Commands.runOnce(m_shooter::setAimToBreakMode, m_shooter));
   }
 
   public void print() {
