@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.188280684692609,
-        "y": 2.3538781457020823
+        "x": 2.6362321955413157,
+        "y": 5.535354916863679
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.84611337554328,
-        "y": 0.6558068465604732
+        "x": 1.7679412281901503,
+        "y": 6.482581426701315
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.3328624117948826,
-        "y": 3.5366726368293047
+        "x": 2.6362321955413157,
+        "y": 6.82792442507962
       },
       "prevControl": {
-        "x": 2.824717546717705,
-        "y": 3.0096849922691367
+        "x": 2.0639495125144114,
+        "y": 6.462847541079698
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,18 +30,18 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.65,
-      "rotationDegrees": -38.35723341829653,
+      "waypointRelativePos": 0.45,
+      "rotationDegrees": 32.14346722439146,
       "rotateFast": false
     }
   ],
   "constraintZones": [
     {
       "name": "New Constraints Zone",
-      "minWaypointRelativePos": 0.8,
-      "maxWaypointRelativePos": 1.0,
+      "minWaypointRelativePos": 0.2,
+      "maxWaypointRelativePos": 0.6,
       "constraints": {
-        "maxVelocity": 1.0,
+        "maxVelocity": 0.8,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 900.0
@@ -50,25 +50,8 @@
   ],
   "eventMarkers": [
     {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.65,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Lock Target in Auto"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.85,
+      "name": "shoot",
+      "waypointRelativePos": 0.2,
       "command": {
         "type": "parallel",
         "data": {
@@ -92,13 +75,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -40.914383219768666,
+    "rotation": 33.690067525979785,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "race auto",
+  "folder": "4 note B",
   "previewStartingState": {
-    "rotation": 30.9637565320736,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": true

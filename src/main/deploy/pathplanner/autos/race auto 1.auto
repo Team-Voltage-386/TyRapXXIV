@@ -14,7 +14,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 0.6
           }
         },
         {
@@ -26,13 +26,13 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 0.35
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "race to D7"
+            "pathName": "DS to 7"
           }
         },
         {
@@ -44,7 +44,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "D7 to speak"
+            "pathName": "7 to DS"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Dont Lock Target in Auto"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DS to 6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pickup Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "6 to BS"
           }
         }
       ]

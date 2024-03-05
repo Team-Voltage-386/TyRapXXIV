@@ -1,0 +1,79 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.4620660010550806,
+      "y": 4.114515152107228
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C to 3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "3 to 2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "2 to 1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1 to 5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pickup Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "5 to A"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Dont Lock Target in Auto"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A to 6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pickup Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "6 to B"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}
