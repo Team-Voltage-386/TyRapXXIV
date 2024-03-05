@@ -52,21 +52,22 @@ public class PickupOrchestrator extends SubsystemBase {
 
         // Automatically puts piece into the loaded position
         (holdingPieceTrigger.and((leftSensorTrigger.or(rightSensorTrigger))))
-                .onTrue(new SequentialCommandGroup(runOnce(() -> {
-                    if (DriverStation.isEnabled()) {
-                        Flags.pieceState = subsystemsStates.loadedPiece;
-                    }
-                }), stopLoadingPieceCommand()).withName("CHANGE_TO_LOADED_PIECE_S_STOP_LOADING"));
+                .onTrue(stopLoadingPieceCommand().withName("CHANGE_TO_LOADED_PIECE_S_STOP_LOADING").finallyDo(
+                        () -> {
+                            if (DriverStation.isEnabled()) {
+                                Flags.pieceState = subsystemsStates.loadedPiece;
+                            }
+                        }));
 
         (leftSensorTrigger.negate().or(rightSensorTrigger.negate())).and(noPieceTrigger).and(enabledTrigger)
                 .onTrue(new SequentialCommandGroup(
                         disableIntakeCommand(),
-                        loadPieceCommand().withName("LOAD PIECE"),
-                        runOnce(() -> {
+                        loadPieceCommand().withName("LOAD PIECE")).withName("CHANGE_TO_HOLDING_PIECE_S_DISABLE_INTAKE")
+                        .finallyDo(() -> {
                             if (DriverStation.isEnabled()) {
                                 Flags.pieceState = subsystemsStates.holdingPiece;
                             }
-                        })).withName("CHANGE_TO_HOLDING_PIECE_S_DISABLE_INTAKE"));
+                        }));
 
         AutoTrigger.and(noPieceTrigger).onTrue(runIntakeCommand());
 

@@ -6,7 +6,6 @@ import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Utils.Aimlock;
 import frc.robot.Utils.BellController;
 import frc.robot.Utils.LimelightHelpers;
-import frc.robot.Utils.Aimlock.DoState;
 
 public class ampAlignCommand extends Command {
     Drivetrain dt;
@@ -24,7 +23,6 @@ public class ampAlignCommand extends Command {
     @Override
     public void initialize() {
         System.out.println("Locking amp.");
-        Aimlock.setDoState(DoState.AMP);
     }
 
     private void getSpeeds() {

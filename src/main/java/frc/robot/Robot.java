@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Utils.Aimlock;
 import frc.robot.Utils.Flags;
 import frc.robot.Utils.Flags.subsystemsStates;
 
@@ -47,6 +48,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        m_containter.getDrivetrain().setFieldRelative(true);
+        Aimlock.setDoState(Aimlock.DoState.SPEAKER);
         m_containter.clearDefaultCommand();
         m_containter.setAutoDefaultCommand();
         m_containter.getShooter().setAimToBreakMode();
@@ -61,6 +64,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        m_containter.getDrivetrain().setFieldRelative(true);
+        Aimlock.setDoState(Aimlock.DoState.SPEAKER);
         m_containter.getShooter().setAimToBreakMode();
         m_containter.setTeleDefaultCommand();
     }
