@@ -44,6 +44,7 @@ public class EndgameModeCommand extends Command {
     for (int i = 0; i < m_LedSubsystem.length(); i += 4)/* Set Every 4th LED to RED */ {
       m_LedSubsystem.setLedColor(i, 255, 0, 0);
     }
+
     if (m_timer.hasElapsed(0.1))/* Create the scrolling bar */ {
       m_timer.reset();
       for (int i = 0; i < 4; i++) {
@@ -60,6 +61,8 @@ public class EndgameModeCommand extends Command {
         m_shouldAdd = true;
       }
     }
+    // Actually change the LEDs by updating them.
+    m_LedSubsystem.updateLEDs();
   }
 
   // Called once the command ends or is interrupted.

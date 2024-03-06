@@ -17,17 +17,14 @@ public class LEDSubsystem extends SubsystemBase {
     // Length is expensive to set, so only set it once, then just update data
     private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(LEDs.kLEDBufferLength);
 
-    private DisabledLEDCommand m_DisabledLEDCommand;
-
     public LEDSubsystem() {
         m_led.setLength(m_ledBuffer.getLength());
         m_led.setData(m_ledBuffer);
         m_led.start();
-        m_DisabledLEDCommand = new DisabledLEDCommand(this);
     }
 
-    public DisabledLEDCommand getDisabledLEDCommand() {
-        return this.m_DisabledLEDCommand;
+    public void updateLEDs() {
+        m_led.setData(m_ledBuffer);
     }
 
     public void setLedColor(int index, int r, int g, int b) {
@@ -38,6 +35,7 @@ public class LEDSubsystem extends SubsystemBase {
         for (int i = 0; i < m_ledBuffer.getLength(); i++) {
             m_ledBuffer.setRGB(i, r, g, b);
         }
+        this.updateLEDs();
     }
 
     // Returns the length of the LED Strip
@@ -50,6 +48,7 @@ public class LEDSubsystem extends SubsystemBase {
         for (int i = 0; i < m_ledBuffer.getLength(); i++) {
             m_ledBuffer.setRGB(i, 0, 0, 0);
         }
+        this.updateLEDs();
     }
 
 }
