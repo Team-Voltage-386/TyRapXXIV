@@ -87,7 +87,7 @@ public class PickupOrchestrator extends SubsystemBase {
     public Command disableIntakeCommand() {
         return new SequentialCommandGroup(Commands.runOnce(() -> Aimlock.setNoteVision(false)),
                 new TimerWaitCommand(0.25), m_pneumatics.disableIntakeSolenoidCommand(),
-                m_pickupMotors.runMotorsSlowCommand(), m_FeederMotor.stopFeederMotorCommand())
+                m_pickupMotors.runMotorsSlowCommand())
                 .withName("DISABLE_INTAKE_COMMAND");
     }
 
