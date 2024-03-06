@@ -248,7 +248,9 @@ public class RobotContainer {
     // Auto"));
     // Add a button to run a simple example path
 
-    auto1 = AutoBuilder.buildAuto("race auto");
+    // auto1 = AutoBuilder.buildAuto("race auto");
+    auto1 = Commands.runOnce(() -> {
+    });
     auto1.setName("AUTO1");
     autoChooser.addOption("auto1", auto1);
 

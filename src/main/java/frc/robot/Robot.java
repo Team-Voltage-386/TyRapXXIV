@@ -91,4 +91,14 @@ public class Robot extends TimedRobot {
         // m_containter.print();
     }
 
+    @Override
+    public void testInit() {
+        m_containter.getLedSubsystem().getEndgameModeCommand().schedule();
+    }
+
+    @Override
+    public void testExit() {
+        m_containter.getLedSubsystem().getEndgameModeCommand().cancel();
+    }
+
 }

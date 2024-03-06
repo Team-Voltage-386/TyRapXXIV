@@ -2,7 +2,9 @@ package frc.robot.Subsystems;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Commands.EndgameModeCommand;
 import frc.robot.Constants.LEDs;
 
 public class LEDSubsystem extends SubsystemBase {
@@ -16,10 +18,17 @@ public class LEDSubsystem extends SubsystemBase {
     // Length is expensive to set, so only set it once, then just update data
     private AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(LEDs.kLEDBufferLength);
 
+    private EndgameModeCommand m_EndgameModeCommand;
+
     public LEDSubsystem() {
         m_led.setLength(m_ledBuffer.getLength());
         m_led.setData(m_ledBuffer);
         m_led.start();
+        m_EndgameModeCommand = new EndgameModeCommand(this);
+    }
+
+    public Command getEndgameModeCommand() {
+        return this.m_EndgameModeCommand;
     }
 
     public void updateLEDs() {

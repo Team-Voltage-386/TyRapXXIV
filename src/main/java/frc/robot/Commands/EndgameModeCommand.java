@@ -36,20 +36,37 @@ public class EndgameModeCommand extends Command {
     m_enable = 0;
     m_shouldAdd = true;
     m_timer.start();
+
+    for (int i = 0; i < m_LedSubsystem.length(); i += 4)/* Set Every 4th LED to RED */ {
+      m_LedSubsystem.setLedColor(i, 255, 0, 0);
+    }
+    m_LedSubsystem.updateLEDs();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    for (int i = 0; i < m_LedSubsystem.length(); i += 4)/* Set Every 4th LED to RED */ {
-      m_LedSubsystem.setLedColor(i, 255, 0, 0);
-    }
 
-    if (m_timer.hasElapsed(0.1))/* Create the scrolling bar */ {
+    if (true)/* Create the scrolling bar */ {
       m_timer.reset();
+
+      int disableOffset; // Whether to disable the LED on the Left, or the Right.
+      if (m_shouldAdd) {// Checks to see if it was previously rolling to the Right or the Left, then
+                        // disables the LED Behind it.
+        disableOffset = -1;
+      } else {
+        disableOffset = 4;
+      }
+      if ((m_enable + disableOffset >= 0) && (m_enable + disableOffset < m_LedSubsystem.length())
+          && (m_enable + disableOffset) % 4 != 0) {
+        /* Disable the LED ONLY IF it shouldn't be on already. */
+        m_LedSubsystem.setLedColor(m_enable + disableOffset, 0, 0, 0);
+      }
+
       for (int i = 0; i < 4; i++) {
         m_LedSubsystem.setLedColor(i + m_enable, 255, 0, 0);
       }
+
       if (m_shouldAdd)/* Ether adds or subtracts from m_enable */ {
         m_enable += 1;
       } else {
