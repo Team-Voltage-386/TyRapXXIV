@@ -2,61 +2,37 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.1852004303152672,
-      "y": 4.087081954477746
+      "x": 1.4620660010550806,
+      "y": 4.114515152107228
     },
-    "rotation": -45.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 0.6
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.35
+            "pathName": "C to 3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DS to 7"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Pickup Note"
+            "pathName": "3 to 2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "7 to DS"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Dont Lock Target in Auto"
+            "pathName": "2 to 1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "DS to 6"
+            "pathName": " 1 to 4"
           }
         },
         {
@@ -68,7 +44,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "6 to BS"
+            "pathName": "4 to B"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B to 5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pickup Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "5 to B"
           }
         }
       ]

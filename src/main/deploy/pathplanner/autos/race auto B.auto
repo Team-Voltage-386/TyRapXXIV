@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7050561319382253,
-      "y": 6.640044321458116
+      "x": 1.1852004303152672,
+      "y": 4.087081954477746
     },
-    "rotation": 59.23728046576106
+    "rotation": -45.0
   },
   "command": {
     "type": "sequential",
@@ -20,55 +20,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "blue 1 to pickup note 1"
+            "pathName": "DS to 7"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Dont Shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake Down"
+            "name": "Pickup Note"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "New Path"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.5
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Dont Shoot"
+            "pathName": "7 to DS"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Dont Lock Target in Auto"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DS to 6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pickup Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "6 to BS"
           }
         }
       ]
