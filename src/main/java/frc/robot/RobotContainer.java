@@ -106,10 +106,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake Up", m_pickup.disableIntakeCommand());
     NamedCommands.registerCommand("Pickup Note", new autoPickupNote(m_swerve));
 
-    // Configure the trigger bindings
-    configureBindings();
-    // Configure the button bindings
-
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()'
     // Create choices for autonomous functions in the Smart Dashboard
     configPathPlannerStuff();
