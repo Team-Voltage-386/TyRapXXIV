@@ -20,6 +20,9 @@ public class LEDSubsystem extends SubsystemBase {
     private DisabledLEDCommand m_DisabledLEDCommand;
 
     public LEDSubsystem() {
+        m_led.setLength(m_ledBuffer.getLength());
+        m_led.setData(m_ledBuffer);
+        m_led.start();
         m_DisabledLEDCommand = new DisabledLEDCommand(this);
     }
 
