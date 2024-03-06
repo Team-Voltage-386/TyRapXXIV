@@ -141,8 +141,7 @@ public class RobotContainer {
             new TimerWaitCommand(0.25),
             Commands.runOnce(() -> {
               m_shooter.noShoot();
-            }),
-            m_feederMotor.stopFeederMotorCommand()).finallyDo(() -> {
+            })).finallyDo(() -> {
               Flags.pieceState = Flags.subsystemsStates.noPiece;
             }));
 

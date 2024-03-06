@@ -311,8 +311,8 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public boolean hasShotNote() {
         if (shoot
-                && (previousTopMotorData[2] < -1) // todo tune this range
-                && (previousBottomMotorData[2] < -1)) {
+                && (previousTopMotorData[2] < -0.5) // todo tune this range
+                && (previousBottomMotorData[2] < -0.5)) {
             return true;
         } else
             return false;
