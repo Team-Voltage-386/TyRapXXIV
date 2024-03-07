@@ -30,8 +30,8 @@ public class CameraSubsystem extends SubsystemBase {
   private static String shooterLimeLightName = "limelight-b";
   private static String shooterLimeLightHttp = "http://10.3.86.12";
 
-  private static String pickupLimeLightName = "limelight-c";
-  private static String pickupLimeLightHttp = "http://10.3.86.13";
+  private static String pickupLimeLightName = "limelight";
+  private static String pickupLimeLightHttp = "http://10.3.86.31";
 
   public CameraSubsystem() {
     // Creates UsbCamera and MjpegServer [1] and connects them\

@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Modules;
 
 public class SwerveModule {
@@ -249,8 +250,8 @@ public class SwerveModule {
         double FFVal = m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity,
                 targetAcceleration);
 
-        // desiredTurningSpeed.setDouble(targetVelocity);
-        // actualTurningSpeed.setDouble(actualVelocity);
+        SmartDashboard.putNumber(m_swerveModuleName + " trgt", targetVelocity);
+        SmartDashboard.putNumber(m_swerveModuleName + " actl", actualVelocity);
 
         m_turningMotor.setVoltage(pidVal + FFVal);
         this.m_turningLastSpeed = actualVelocity;
@@ -282,8 +283,10 @@ public class SwerveModule {
 
         final double driveFeedforward = m_driveFeedforward.calculate(state.speedMetersPerSecond);
 
-        // desiredDriveSpeed.setDouble(state.speedMetersPerSecond);
-        // actualDriveSpeed.setDouble(currentMPS);
+        // SmartDashboard.putNumber("desired drive speed" + m_swerveModuleName,
+        // state.speedMetersPerSecond);
+        // SmartDashboard.putNumber("actual drive speed" + m_swerveModuleName,
+        // currentMPS);
 
         if (desiredState.speedMetersPerSecond < 0.1) {
             m_driveMotor.setVoltage(0);

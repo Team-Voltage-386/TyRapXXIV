@@ -13,6 +13,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -251,7 +252,8 @@ public class ShooterSubsystem extends SubsystemBase {
     public void spoolMotors() {
         switch (Aimlock.getDoState()) {
             case SPEAKER:
-                if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)) {
+                if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)
+                        || DriverStation.isAutonomousEnabled()) {
                     runShooterSpeakMode();
                 } else {
                     topShooterMotor.setVoltage(0);
@@ -259,7 +261,8 @@ public class ShooterSubsystem extends SubsystemBase {
                 }
                 break;
             case AMP:
-                if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)) {
+                if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)
+                        || DriverStation.isAutonomousEnabled()) {
                     runShooterAmpMode();
                 } else {
                     topShooterMotor.setVoltage(0);
