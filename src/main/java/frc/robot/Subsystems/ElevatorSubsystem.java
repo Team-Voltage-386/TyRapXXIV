@@ -12,12 +12,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
+    // Move these out of the subsystem into constants
     private int kElevatorMotor1ID = 20;
     private int kElevatorMotor2ID = 21;
     private int kElevatorUpperLimitDIOChannel = 4;
     private int kElevatorLowerLimitDIOChannel = 5;
 
+    // magnetic sensor
     private DigitalInput m_elevatorUpperLimit;
+    // limit switch
     private DigitalInput m_elevatorLowerLimit;
 
     private CANSparkMax m_elevatorMotor1;

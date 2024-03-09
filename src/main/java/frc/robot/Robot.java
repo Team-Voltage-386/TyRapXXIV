@@ -44,6 +44,7 @@ public class Robot extends TimedRobot {
 
         m_containter.getShooter().setAimToCoastMode();
         Flags.pieceState = subsystemsStates.noPiece;
+        Flags.buttonMapMode = Flags.buttonMapStates.notEndgameMode;
     }
 
     @Override
@@ -55,6 +56,7 @@ public class Robot extends TimedRobot {
         m_containter.getShooter().setAimToBreakMode();
         Flags.pieceState = subsystemsStates.loadedPiece; // todo
         m_containter.getAutonomousCommand().schedule();
+        Flags.buttonMapMode = Flags.buttonMapStates.notEndgameMode;
     }
 
     @Override
@@ -68,6 +70,7 @@ public class Robot extends TimedRobot {
         Aimlock.setDoState(Aimlock.DoState.SPEAKER);
         m_containter.getShooter().setAimToBreakMode();
         m_containter.setTeleDefaultCommand();
+        Flags.buttonMapMode = Flags.buttonMapStates.notEndgameMode;
     }
 
     @Override
