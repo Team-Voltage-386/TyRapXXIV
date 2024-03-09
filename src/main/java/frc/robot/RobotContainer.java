@@ -158,6 +158,10 @@ public class RobotContainer {
 
     Trigger validLimelightTrigger = new Trigger(() -> LimelightHelpers.getTV("limelight-b"));
 
+    Trigger aimWithingErrorBounds = new Trigger(() -> Math.abs(m_aim.getSpeakerAimTargetAngle()) < Math.PI / 120);
+
+    aimWithingErrorBounds.whileTrue(new AutoReadyLEDCommand(m_LedSubsystem));
+
     validLimelightTrigger.whileTrue(new ParallelCommandGroup(new ContinuousRumble(m_driverRumbleSubsystem, 0.05),
         new TargetAquiredLEDCommand(m_LedSubsystem)));
 
@@ -281,7 +285,6 @@ public class RobotContainer {
     Controller.kDriveController.leftTrigger(0.1).and(() -> !Aimlock.getNoteVision()).and(endgameButtons.negate())
         .and(() -> Aimlock.getDoState().equals(DoState.SPEAKER)).whileTrue(
             new ParallelCommandGroup(new lockTarget(m_swerve),
-                new AutoReadyLEDCommand(m_LedSubsystem),
                 new ContinuousRumble(m_manipulatorRumbleSubsystem, 0.05)));
 
     // drive cont bindings
