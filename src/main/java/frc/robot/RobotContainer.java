@@ -26,6 +26,7 @@ import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.Subsystems.FeederMotorSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
+import frc.robot.Subsystems.TrapSubsystem;
 import frc.robot.Utils.Aimlock;
 import frc.robot.Utils.Flags;
 import frc.robot.Utils.Aimlock.DoState;
@@ -33,6 +34,8 @@ import frc.robot.Subsystems.PickupMotorsSubsystem;
 import frc.robot.Subsystems.PickupOrchestrator;
 import frc.robot.Subsystems.PneumaticsSubsystem;
 import frc.robot.Commands.Drive;
+import frc.robot.Commands.ElevatorDownCommand;
+import frc.robot.Commands.ElevatorUpCommand;
 import frc.robot.Commands.ForceShooterUpCommand;
 import frc.robot.Commands.StopDrive;
 import frc.robot.Commands.aimShooterCommand;
@@ -40,6 +43,10 @@ import frc.robot.Commands.ampAlignCommand;
 import frc.robot.Commands.autoPickupNote;
 import frc.robot.Commands.lockTarget;
 import frc.robot.Commands.TimerWaitCommand;
+import frc.robot.Commands.TrapInCommand;
+import frc.robot.Commands.TrapManualInCommand;
+import frc.robot.Commands.TrapManualOutCommand;
+import frc.robot.Commands.TrapOutCommand;
 import frc.robot.Commands.resetOdo;
 
 /**
@@ -62,6 +69,7 @@ public class RobotContainer {
   private final PneumaticsSubsystem m_pneumatics;
   private final FeederMotorSubsystem m_feederMotor;
   private final ElevatorSubsystem m_elevatorSubsystem;
+  private final TrapSubsystem m_trapSubsystem;
 
   private final PickupOrchestrator m_pickup;
 
@@ -80,6 +88,7 @@ public class RobotContainer {
     this.m_pickup = new PickupOrchestrator(m_pneumatics, m_pickupMotors, m_feederMotor);
     this.m_shooter = new ShooterSubsystem();
     this.m_aim = new Aimlock(m_swerve, m_shooter);
+    this.m_trapSubsystem = new TrapSubsystem();
     this.m_elevatorSubsystem = new ElevatorSubsystem();
 
     m_swerve.setAim(m_aim);
@@ -129,7 +138,53 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    Controller.kManipulatorController.rightTrigger(0.1)
+    // New Triggers
+    Trigger endgameButtons = new Trigger(() -> Flags.buttonMapMode == Flags.buttonMapStates.endgameMode);
+
+    Controller.kManipulatorController.leftStick().and(endgameButtons.negate())
+        .onFalse(new SequentialCommandGroup(
+            Commands.runOnce(() -> Flags.buttonMapMode = Flags.buttonMapStates.endgameMode),
+            Commands.runOnce(() -> System.out.println("Cruel"))));
+
+    Controller.kManipulatorController.leftStick().and(endgameButtons)
+        .onFalse(new SequentialCommandGroup(
+            Commands.runOnce(() -> Flags.buttonMapMode = Flags.buttonMapStates.notEndgameMode),
+            Commands.runOnce(() -> m_trapSubsystem.setTrapIntakeMotorOff()),
+            Commands.runOnce(() -> System.out.println("WHY"))));
+
+    // Endgame buttons
+    Controller.kManipulatorController.povUp().and(endgameButtons)
+        .onTrue(new TrapOutCommand(m_trapSubsystem));
+
+    Controller.kManipulatorController.povDown().and(endgameButtons)
+        .onTrue(new TrapInCommand(m_trapSubsystem));
+
+    Controller.kManipulatorController.povRight().and(endgameButtons)
+        .whileTrue(new TrapManualOutCommand(m_trapSubsystem));
+
+    Controller.kManipulatorController.povLeft().and(endgameButtons)
+        .whileTrue(new TrapManualInCommand(m_trapSubsystem));
+
+    Controller.kManipulatorController.rightBumper().and(endgameButtons)
+        .whileTrue(new ElevatorUpCommand(m_elevatorSubsystem));
+
+    Controller.kManipulatorController.leftBumper().and(endgameButtons)
+        .whileTrue(new ElevatorDownCommand(m_elevatorSubsystem));
+
+    Controller.kManipulatorController.start().and(endgameButtons)
+        .onTrue(m_pneumatics.disableLegSolenoidCommand());
+
+    Controller.kManipulatorController.back().and(endgameButtons)
+        .onTrue(m_pneumatics.enableLegSolenoidCommand());
+
+    Controller.kManipulatorController.axisGreaterThan(3, 0.25).and(endgameButtons)
+        .onTrue(Commands.runOnce(() -> m_trapSubsystem.setTrapIntakeMotorOn()));
+
+    Controller.kManipulatorController.axisGreaterThan(2, 0.25).and(endgameButtons)
+        .onTrue(Commands.runOnce(() -> m_trapSubsystem.setTrapIntakeMotorReverse()));
+
+    // Regular non endgame button controlls
+    Controller.kManipulatorController.rightTrigger(0.1).and(endgameButtons.negate())
         .and(() -> Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece))
         .onTrue(Commands.runOnce(() -> {
           m_shooter.shoot();
@@ -145,9 +200,9 @@ public class RobotContainer {
               Flags.pieceState = Flags.subsystemsStates.noPiece;
             }));
 
-    Controller.kManipulatorController.back()
+    Controller.kManipulatorController.back().and(endgameButtons.negate())
         .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.AMP)));
-    Controller.kManipulatorController.start()
+    Controller.kManipulatorController.start().and(endgameButtons.negate())
         .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.SPEAKER)));
 
     /* OVERRIDE CONTROLS BEGIN */
@@ -159,14 +214,14 @@ public class RobotContainer {
     // for accurate vision from the field. If the limelight fails or the field is
     // unreliable, this will allow you to have a predictable shooter angle. We know
     // we can score with it all the way up and bumpered up to the speaker
-    Controller.kManipulatorController.y()
+    Controller.kManipulatorController.y().and(endgameButtons.negate())
         .toggleOnTrue(new ForceShooterUpCommand(m_shooter));
 
     // Manipulator "X" button: Force to loaded state and stop the feeder motors. Now
     // the robot thinks it has a piece.
     // Motivation: Can force the robot to think it has a piece loaded and ready to
     // shoot.
-    Controller.kManipulatorController.x()
+    Controller.kManipulatorController.x().and(endgameButtons.negate())
         .onTrue(Commands.runOnce(() -> Flags.pieceState = Flags.subsystemsStates.loadedPiece))
         .onTrue(m_feederMotor.stopFeederMotorCommand());
 
@@ -174,7 +229,7 @@ public class RobotContainer {
     // motors, and then transition to NoPiece state
     // Motivation: The robot failed to detect that it shot a piece. This can force
     // it back to a NoPiece state
-    Controller.kManipulatorController.b()
+    Controller.kManipulatorController.b().and(endgameButtons.negate())
         .onTrue(new SequentialCommandGroup(
             Commands.runOnce(() -> {
               m_shooter.noShoot();
@@ -187,40 +242,42 @@ public class RobotContainer {
     // Manipulator "A" button: Run pickup in reverse while held. Let go: stop the
     // pickup motors. No state change!
     // Motivation: The piece got jammed. Run the pickup in reverse
-    Controller.kManipulatorController.a()
+    Controller.kManipulatorController.a().and(endgameButtons.negate())
         .whileTrue(Commands.run(() -> m_pickupMotors.runMotorsReverse(),
             m_pickupMotors))
         .onFalse(m_pickupMotors.stopMotorsCommand());
 
     /* OVERRIDE CONTROLS END */
 
-    Controller.kDriveController.rightTrigger(0.1).and(m_pickup.noPieceTrigger)
+    Controller.kDriveController.rightTrigger(0.1).and(m_pickup.noPieceTrigger).and(endgameButtons.negate())
         .whileTrue(m_pickup.runIntakeCommand())
         .onFalse(m_pickup.disableIntakeCommand());
 
     // while the intake is down and we hold the left trigger, autoPickupNote
-    Controller.kDriveController.leftTrigger(0.1).and(() -> Aimlock.getNoteVision())
+    Controller.kDriveController.leftTrigger(0.1).and(() -> Aimlock.getNoteVision()).and(endgameButtons.negate())
         .whileTrue(new autoPickupNote(m_swerve));
     // while the left trigger is held and we are in speaker mode, lock the speaker
-    Controller.kDriveController.leftTrigger(0.1).and(() -> !Aimlock.getNoteVision())
+    Controller.kDriveController.leftTrigger(0.1).and(() -> !Aimlock.getNoteVision()).and(endgameButtons.negate())
         .and(() -> Aimlock.getDoState().equals(DoState.SPEAKER))
         .whileTrue(new lockTarget(m_swerve));
     // while the left trigger is held and we are in amp mode, go up to the amp
-    Controller.kDriveController.leftTrigger(0.1).and(() -> !Aimlock.getNoteVision())
+    Controller.kDriveController.leftTrigger(0.1).and(() -> !Aimlock.getNoteVision()).and(endgameButtons.negate())
         .and(() -> Aimlock.getDoState().equals(DoState.AMP))
         .whileTrue(new RepeatCommand(new ampAlignCommand(m_swerve)));
 
     // drive cont bindings
     Controller.kDriveController.y().onTrue((new resetOdo(m_swerve)));
-    Controller.kDriveController.rightBumper().onTrue(this.m_swerve.setFieldRelativeCommand(false))
+    Controller.kDriveController.rightBumper().and(endgameButtons.negate())
+        .onTrue(this.m_swerve.setFieldRelativeCommand(false))
         .onFalse(this.m_swerve.setFieldRelativeCommand(true));
 
-    Controller.kDriveController.start().onTrue(Commands.runOnce(() -> Aimlock.setDoState(DoState.ENDGAME)));
+    Controller.kDriveController.start()
+        .onTrue(Commands.runOnce(() -> Aimlock.setDoState(DoState.ENDGAME)));
 
     new Trigger(() -> m_shooter.getBottomLimit())
         .onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(0)).ignoringDisable(true));
-    new Trigger(() -> m_shooter.getTopLimit()).onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(
-        20)).ignoringDisable(true));
+    new Trigger(() -> m_shooter.getTopLimit())
+        .onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(20)).ignoringDisable(true));
 
     // DEBUGGING MODE START
     Controller.kDriveController.povUp().whileTrue(Commands.run(() -> m_shooter.driveHoodManually(2.5)))

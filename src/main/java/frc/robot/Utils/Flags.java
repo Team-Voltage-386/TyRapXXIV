@@ -5,5 +5,11 @@ public class Flags {
         noPiece, holdingPiece, loadedPiece
     }
 
+    public static enum buttonMapStates {
+        endgameMode, notEndgameMode
+    }
+
     public static subsystemsStates pieceState = subsystemsStates.noPiece;
+
+    public static buttonMapStates buttonMapMode = buttonMapStates.notEndgameMode;
 }
