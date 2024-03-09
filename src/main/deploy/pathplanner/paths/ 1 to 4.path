@@ -82,6 +82,23 @@
           ]
         }
       }
+    },
+    {
+      "name": "nolock",
+      "waypointRelativePos": 0.35,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Dont Lock Target in Auto"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "globalConstraints": {

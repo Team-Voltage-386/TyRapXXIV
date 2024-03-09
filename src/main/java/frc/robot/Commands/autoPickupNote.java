@@ -28,7 +28,7 @@ public class autoPickupNote extends Command {
     }
 
     private void getSpeeds() {
-        xSpeed = Aimlock.hasNoteTarget() ? 1 : 0;
+        xSpeed = 1;
     }
 
     @Override
