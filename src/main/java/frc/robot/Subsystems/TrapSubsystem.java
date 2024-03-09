@@ -20,7 +20,7 @@ public class TrapSubsystem extends SubsystemBase {
     private int kTrapExtendMotorID = 20;
     private int kTrapIntakeMotorID = 21;
 
-    private int kTrapExtendMotorPDH = 13;
+    private int kTrapExtendMotorPDH = 4;
     private int kTrapIntakeMotorPDH = 12;
 
     private double kHoldingPieceCurrent = 10; // Figure out during testing. Should be the current drop when the intake

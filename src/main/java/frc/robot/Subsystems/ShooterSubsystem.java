@@ -35,7 +35,11 @@ public class ShooterSubsystem extends SubsystemBase {
     DigitalInput bottomLimit;
 
     private ArmFeedforward m_aimFF;
-    private SimpleMotorFeedforward m_shootFF;
+    private ProfiledPIDController m_aimPID;
+    private SimpleMotorFeedforward m_topShootFF;
+    private ProfiledPIDController m_topShootPID;
+    private SimpleMotorFeedforward m_botShootFF;
+    private ProfiledPIDController m_botShootPID;
 
     // if this is true it lets the handoff roller motor and the shooter rollers know
     // to start spinning
@@ -46,8 +50,6 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * constraints in degrees
      */
-    ProfiledPIDController m_aimPID;
-    ProfiledPIDController m_shootPID;
 
     ParabolicController m_aimPC;
 
@@ -89,8 +91,11 @@ public class ShooterSubsystem extends SubsystemBase {
         bottomShooterMotor.setIdleMode(IdleMode.kCoast);
         bottomShooterMotor.setInverted(true);
         // bottomShooterMotor.follow(topShooterMotor, false);
-        m_shootPID = new ProfiledPIDController(0.275, 0, 0.0, new Constraints(10, 10));
-        m_shootFF = new SimpleMotorFeedforward(0.0, 0.415);
+        m_botShootPID = new ProfiledPIDController(0.0, 0, 0.0, new Constraints(10, 10));
+        m_botShootFF = new SimpleMotorFeedforward(0.0, 0.39);
+
+        m_topShootPID = new ProfiledPIDController(0.0, 0, 0.0, new Constraints(10, 10));
+        m_topShootFF = new SimpleMotorFeedforward(0.0, 0.49);
 
         // get shooter speed
         shootSpeed = Shooter.kShooterSpeed;
@@ -228,10 +233,10 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public void runShooterSpeakMode() {
         topShooterMotor.setVoltage(
-                m_shootFF.calculate(shootSpeed) + m_shootPID.calculate(getTopShooterMPS(), shootSpeed));
+                m_topShootFF.calculate(shootSpeed) + m_botShootPID.calculate(getTopShooterMPS(), shootSpeed));
         bottomShooterMotor.setVoltage(
-                m_shootFF.calculate(shootSpeed)
-                        + m_shootPID.calculate(getBottomShooterMPS(), shootSpeed));
+                m_topShootFF.calculate(shootSpeed)
+                        + m_botShootPID.calculate(getBottomShooterMPS(), shootSpeed));
     }
 
     /**
@@ -239,11 +244,11 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public void runShooterAmpMode() {
         topShooterMotor.setVoltage(
-                m_shootFF.calculate(Shooter.kTopAmpShooterSpeed)
-                        + m_shootPID.calculate(getTopShooterMPS(), Shooter.kTopAmpShooterSpeed));
+                m_topShootFF.calculate(Shooter.kTopAmpShooterSpeed)
+                        + m_topShootPID.calculate(getTopShooterMPS(), Shooter.kTopAmpShooterSpeed));
         bottomShooterMotor.setVoltage(
-                m_shootFF.calculate(Shooter.kBottomAmpShooterSpeed)
-                        + m_shootPID.calculate(getBottomShooterMPS(), Shooter.kBottomAmpShooterSpeed));
+                m_botShootFF.calculate(Shooter.kBottomAmpShooterSpeed)
+                        + m_botShootPID.calculate(getBottomShooterMPS(), Shooter.kBottomAmpShooterSpeed));
     }
 
     /**
@@ -386,8 +391,8 @@ public class ShooterSubsystem extends SubsystemBase {
         // SmartDashboard.putNumber("Shooter angle (rel)", getShooterAngleRelative());
         SmartDashboard.putBoolean("top limit", getTopLimit());
         SmartDashboard.putBoolean("bottom limit", getBottomLimit());
-        // SmartDashboard.putNumber("top shoot", getTopShooterMPS());
-        // SmartDashboard.putNumber("bot shoot", getBottomShooterMPS());
+        SmartDashboard.putNumber("top shoot", getTopShooterMPS());
+        SmartDashboard.putNumber("bot shoot", getBottomShooterMPS());
         // SmartDashboard.putNumber("des shoot speed", getDesiredShooterSpeed());
         // SmartDashboard.putNumber("volts to hood", aimMotor.getAppliedOutput());
         // SmartDashboard.putNumber("target shooter angle",

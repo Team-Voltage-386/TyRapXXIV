@@ -12,7 +12,7 @@ public class ElevatorUpCommand extends Command {
     private double m_motorVoltage;
 
     public ElevatorUpCommand(ElevatorSubsystem subsystem) {
-        this.m_motorVoltage = 4;
+        this.m_motorVoltage = 10;
         this.m_subsystem = subsystem;
 
         addRequirements(subsystem);
