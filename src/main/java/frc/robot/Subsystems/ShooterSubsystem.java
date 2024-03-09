@@ -75,10 +75,7 @@ public class ShooterSubsystem extends SubsystemBase {
         bottomLimit = new DigitalInput(9);
 
         m_aimPID = new ProfiledPIDController(0.5, 0.0, 0.04, new Constraints(15, 90)); // 0.19
-        m_aimFF = new ArmFeedforward(0.09, 0.1, 0.5); // 0.225
-
-        m_aimPC = new ParabolicController(0); // test these
-        m_aimBC = new BellController(0, 0);
+        m_aimFF = new ArmFeedforward(0.09, 0.1, 0.625); // 0.225
 
         // m_aimPID = new ProfiledPIDController(0.0, 0.0, 0.0, new Constraints(15, 90));
         // m_aimFF = new ArmFeedforward(0.0, 0.0, 0.0);
