@@ -50,7 +50,7 @@
   ],
   "eventMarkers": [
     {
-      "name": "New Event Marker",
+      "name": "shoot",
       "waypointRelativePos": 0,
       "command": {
         "type": "parallel",
@@ -67,8 +67,8 @@
       }
     },
     {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.25,
+      "name": "noshoot",
+      "waypointRelativePos": 0.2,
       "command": {
         "type": "parallel",
         "data": {
@@ -76,7 +76,7 @@
             {
               "type": "named",
               "data": {
-                "name": "Dont Lock Target in Auto"
+                "name": "Dont Shoot"
               }
             }
           ]

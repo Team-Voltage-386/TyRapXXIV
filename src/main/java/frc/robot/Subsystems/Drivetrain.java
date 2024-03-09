@@ -34,6 +34,7 @@ import frc.robot.Constants.Offsets;
 import frc.robot.SwerveModule;
 import frc.robot.Constants.DriveTrain;
 import frc.robot.Utils.Aimlock;
+import frc.robot.Utils.Aimlock.DoState;
 
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain extends SubsystemBase {
@@ -140,8 +141,8 @@ public class Drivetrain extends SubsystemBase {
                 this::driveInAuto, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
                 new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your
                                                  // Constants class
-                        new PIDConstants(7.5, 0.1, 0.0), // Translation PID constants p used to be 7
-                        new PIDConstants(5.5, 0.0, 0.0), // Rotation PID constants
+                        new PIDConstants(4, 0.1, 0.0), // Translation PID constants p used to be 7
+                        new PIDConstants(5, 0.01, 0.0), // Rotation PID constants
                         kMaxPossibleSpeed, // Max module speed, in m/s
                         DriveTrain.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to
                                                      // furthest module.
@@ -307,7 +308,8 @@ public class Drivetrain extends SubsystemBase {
 
     public void lockTarget(double xSpeed, double ySpeed, double rotSpeed, boolean fieldRelative, boolean hardLocked) {
         SwerveModuleState[] swerveModuleStates; // MAKE SURE swervestates can be init like this with this kinda array
-        if (Aimlock.hasTarget() || (Aimlock.hasNoteTarget() && Aimlock.getNoteVision())) {
+        if (Aimlock.hasTarget() || (Aimlock.hasNoteTarget() && Aimlock.getNoteVision())
+                || Aimlock.getDoState().equals(DoState.AMP)) {
             rotSpeed = m_aim.getRotationSpeedForTarget();
             if (hardLocked) {
                 swerveModuleStates = m_kinematics.toSwerveModuleStates(
@@ -353,7 +355,7 @@ public class Drivetrain extends SubsystemBase {
                         ? ChassisSpeeds.fromRobotRelativeSpeeds(chassisSpeeds.vxMetersPerSecond,
                                 chassisSpeeds.vyMetersPerSecond,
                                 Aimlock.hasTarget() ? m_aim.getRotationSpeedForTarget()
-                                        : chassisSpeeds.omegaRadiansPerSecond, // comment
+                                        : chassisSpeeds.omegaRadiansPerSecond, // test this
                                 getGyroYawRotation2d())
                         : chassisSpeeds);
 

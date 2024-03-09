@@ -1,6 +1,7 @@
 package frc.robot.Commands;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Utils.Aimlock;
@@ -9,7 +10,7 @@ import frc.robot.Utils.LimelightHelpers;
 
 public class ampAlignCommand extends Command {
     Drivetrain dt;
-    BellController bc;
+    PIDController xPid;
 
     private double xSpeed;
     private double ySpeed;
@@ -17,7 +18,7 @@ public class ampAlignCommand extends Command {
     public ampAlignCommand(Drivetrain dt) {
         this.dt = dt;
         addRequirements(dt);
-        bc = new BellController(2, 3);
+        xPid = new PIDController(2, 0, 0);
     }
 
     @Override
@@ -26,14 +27,15 @@ public class ampAlignCommand extends Command {
     }
 
     private void getSpeeds() {
-        xSpeed = Aimlock.hasTarget() ? MathUtil.clamp(LimelightHelpers.getTY("limelight-b") / 30, 0, 1.5) : 0;
-        ySpeed = Aimlock.hasTarget() ? bc.calc(LimelightHelpers.getTX("limelight-b")) : 0;
+        ySpeed = Aimlock.hasTarget() ? MathUtil.clamp(5 / LimelightHelpers.getTY("limelight-b"), 0, 1.5) : 0;
+        xSpeed = Aimlock.hasTarget() ? -MathUtil.clamp(xPid.calculate(LimelightHelpers.getTX("limelight-b")), 0, 1.5)
+                : 0;
     }
 
     @Override
     public void execute() {
         getSpeeds();
-        dt.lockTarget(xSpeed, ySpeed, 0, false,
+        dt.lockTarget(xSpeed, ySpeed, 0, true,
                 false);
     }
 

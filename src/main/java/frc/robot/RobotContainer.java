@@ -240,7 +240,7 @@ public class RobotContainer {
     // Auto"));
     // Add a button to run a simple example path
 
-    auto1 = AutoBuilder.buildAuto("weird 4 piece");
+    auto1 = AutoBuilder.buildAuto("4 piece B");
     // auto1.setName("AUTO1");
     autoChooser.addOption("auto1", auto1);
 

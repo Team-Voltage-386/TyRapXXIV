@@ -47,7 +47,7 @@ public class Aimlock {
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
     private static final String limelightName = "limelight-b";
-    private double limelightHeight = Units.inchesToMeters(25.3);
+    private double limelightHeight = Units.inchesToMeters(26);
     private double targetTagHeight = Units.inchesToMeters(51.88);
     private double speakerHeight = Units.inchesToMeters(79.5);
 
@@ -201,6 +201,11 @@ public class Aimlock {
             return -RRaimFF.calculate(Math.toRadians(getNoteLLAngleToTarget()))
                     + RRaimPID.calculate(Math.toRadians(getNoteLLAngleToTarget()));
         }
+        if (doState.equals(DoState.AMP)) {
+            return (aimFF.calculate(Math.toRadians(-90) - Math.toRadians(getGyroYaw()))
+                    + aimPID.calculate(Math.toRadians(getGyroYaw()), Math.toRadians(-90)))
+                    / 3;
+        }
         if (!doState.equals(DoState.SPEAKER)) {
             return -RRaimFF.calculate(Math.toRadians(getLLAngleToTarget()))
                     + RRaimPID.calculate(Math.toRadians(getLLAngleToTarget()));
@@ -209,6 +214,7 @@ public class Aimlock {
                     + aimPID.calculate(Math.toRadians(getGyroYaw()), getSpeakerAimTargetAngle()))
                     / 3; // if you remove the /3 the earth will explode
         }
+
     }
 
     /**

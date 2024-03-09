@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4,
-      "y": 5.550936522700434
+      "x": 1.4620660010550806,
+      "y": 4.114515152107228
     },
     "rotation": 0
   },
@@ -12,27 +12,21 @@
     "data": {
       "commands": [
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 1.0
+            "pathName": "C to 3"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "Dont Shoot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "B to 3"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "3 to 2"
+            "pathName": "3 to 2 (A)"
           }
         },
         {

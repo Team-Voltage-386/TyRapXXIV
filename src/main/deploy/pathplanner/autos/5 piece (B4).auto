@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.4620660010550806,
-      "y": 4.114515152107228
+      "x": 1.44283883432246,
+      "y": 5.515804013063089
     },
     "rotation": 0
   },
@@ -14,13 +14,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "C to 3"
+            "pathName": "B to 3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Dont Shoot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3 to 2"
+            "pathName": "3 to 2 (A)"
           }
         },
         {
@@ -30,21 +36,21 @@
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 0.5
+            "pathName": " 1 to 4"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "Pickup Note"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Dont Lock Target in Auto"
+            "pathName": "4 to B"
           }
         }
       ]
