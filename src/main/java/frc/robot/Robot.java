@@ -57,6 +57,7 @@ public class Robot extends TimedRobot {
         Flags.pieceState = subsystemsStates.loadedPiece; // todo
         m_containter.getAutonomousCommand().schedule();
         Flags.buttonMapMode = Flags.buttonMapStates.notEndgameMode;
+
     }
 
     @Override
@@ -91,6 +92,16 @@ public class Robot extends TimedRobot {
         // Only needed when measuring and configuring the encoder offsets. Can comment
         // out when not used
         // m_containter.print();
+    }
+
+    @Override
+    public void testInit() {
+
+    }
+
+    @Override
+    public void testExit() {
+
     }
 
 }

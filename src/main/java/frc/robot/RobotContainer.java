@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -26,6 +27,7 @@ import frc.robot.Subsystems.CameraSubsystem;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.ElevatorSubsystem;
 import frc.robot.Subsystems.FeederMotorSubsystem;
+import frc.robot.Subsystems.LEDSubsystem;
 import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Subsystems.TrapSubsystem;
 import frc.robot.Utils.Aimlock;
@@ -76,7 +78,7 @@ public class RobotContainer {
   private final TrapSubsystem m_trapSubsystem;
   private final RumbleSubsystem m_manipulatorRumbleSubsystem;
   private final RumbleSubsystem m_driverRumbleSubsystem;
-
+  private final LEDSubsystem m_LedSubsystem;
   private final PickupOrchestrator m_pickup;
 
   Command driveCommand;
@@ -98,6 +100,7 @@ public class RobotContainer {
     this.m_aim = new Aimlock(m_swerve, m_shooter);
     this.m_trapSubsystem = new TrapSubsystem(m_manipulatorRumbleSubsystem);
     this.m_elevatorSubsystem = new ElevatorSubsystem();
+    this.m_LedSubsystem = new LEDSubsystem();
 
     m_swerve.setAim(m_aim);
     m_shooter.setAim(m_aim);
@@ -310,8 +313,8 @@ public class RobotContainer {
     // Auto"));
     // Add a button to run a simple example path
 
-    auto1 = AutoBuilder.buildAuto("5 piece (B4)");
-    // auto1.setName("AUTO1");
+    auto1 = AutoBuilder.buildAuto("race auto");
+    auto1.setName("AUTO1");
     autoChooser.addOption("auto1", auto1);
 
     // Load the path we want to pathfind to and follow
@@ -336,6 +339,10 @@ public class RobotContainer {
 
   public ShooterSubsystem getShooter() {
     return m_shooter;
+  }
+
+  public LEDSubsystem getLedSubsystem() {
+    return m_LedSubsystem;
   }
 
   public void print() {
