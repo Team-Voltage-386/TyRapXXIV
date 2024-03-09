@@ -30,6 +30,7 @@ public class PickupOrchestrator extends SubsystemBase {
     public Trigger loadedPieceTrigger;
     public Trigger enabledTrigger;
     public Trigger AutoTrigger;
+    public Trigger endgameTime;
 
     ShuffleboardTab IntakeSensors;
 
@@ -48,11 +49,12 @@ public class PickupOrchestrator extends SubsystemBase {
         Trigger rightSensorTrigger = new Trigger(rightHoodSensor::get);
         noPieceTrigger = new Trigger(() -> Flags.pieceState.equals(subsystemsStates.noPiece));
         holdingPieceTrigger = new Trigger(() -> Flags.pieceState.equals(subsystemsStates.holdingPiece));
+        endgameTime = new Trigger(() -> Flags.buttonMapMode == Flags.buttonMapStates.endgameMode);
         enabledTrigger = new Trigger(() -> DriverStation.isEnabled());
         AutoTrigger = new Trigger(() -> DriverStation.isAutonomousEnabled());
 
         // Automatically puts piece into the loaded position
-        (holdingPieceTrigger.and((leftSensorTrigger.or(rightSensorTrigger))))
+        (holdingPieceTrigger.and(endgameTime.negate()).and((leftSensorTrigger.or(rightSensorTrigger))))
                 .onTrue(stopLoadingPieceCommand().withName("CHANGE_TO_LOADED_PIECE_S_STOP_LOADING").finallyDo(
                         () -> {
                             if (DriverStation.isEnabled()) {
@@ -60,7 +62,8 @@ public class PickupOrchestrator extends SubsystemBase {
                             }
                         }));
 
-        (leftSensorTrigger.negate().or(rightSensorTrigger.negate())).and(noPieceTrigger).and(enabledTrigger)
+        (leftSensorTrigger.negate().or(rightSensorTrigger.negate())).and(endgameTime.negate()).and(noPieceTrigger)
+                .and(enabledTrigger)
                 .onTrue(new SequentialCommandGroup(
                         disableIntakeCommand(),
                         loadPieceCommand().withName("LOAD PIECE")).withName("CHANGE_TO_HOLDING_PIECE_S_DISABLE_INTAKE")

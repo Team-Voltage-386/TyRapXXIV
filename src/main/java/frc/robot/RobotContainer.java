@@ -171,11 +171,17 @@ public class RobotContainer {
     Controller.kManipulatorController.leftBumper().and(endgameButtons)
         .whileTrue(new ElevatorDownCommand(m_elevatorSubsystem));
 
+    Controller.kManipulatorController.start().and(endgameButtons)
+        .onTrue(m_pneumatics.disableLegSolenoidCommand());
+
+    Controller.kManipulatorController.back().and(endgameButtons)
+        .onTrue(m_pneumatics.enableLegSolenoidCommand());
+
     Controller.kManipulatorController.axisGreaterThan(3, 0.25).and(endgameButtons)
         .onTrue(Commands.runOnce(() -> m_trapSubsystem.setTrapIntakeMotorOn()));
 
     Controller.kManipulatorController.axisGreaterThan(2, 0.25).and(endgameButtons)
-        .onTrue(Commands.runOnce(() -> m_trapSubsystem.setTrapIntakeMotorOff()));
+        .onTrue(Commands.runOnce(() -> m_trapSubsystem.setTrapIntakeMotorReverse()));
 
     // Regular non endgame button controlls
     Controller.kManipulatorController.rightTrigger(0.1).and(endgameButtons.negate())
