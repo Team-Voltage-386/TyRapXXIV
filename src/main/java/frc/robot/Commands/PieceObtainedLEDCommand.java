@@ -40,6 +40,6 @@ public class PieceObtainedLEDCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Flags.pieceState == Flags.subsystemsStates.noPiece);
+    return (Flags.pieceState.equals(Flags.subsystemsStates.noPiece));
   }
 }

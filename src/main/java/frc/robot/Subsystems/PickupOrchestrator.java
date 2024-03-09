@@ -73,7 +73,6 @@ public class PickupOrchestrator extends SubsystemBase {
                 .and(enabledTrigger)
                 .onTrue(new ParallelCommandGroup(
                         new DoublePulseRumble(new SinglePulseRumble(m_driveRumble, 0.75, 0.4), 0.3),
-                        new PieceObtainedLEDCommand(ledSubsystem),
                         new SequentialCommandGroup(
                                 disableIntakeCommand(),
                                 loadPieceCommand().withName("LOAD PIECE"))
@@ -81,6 +80,7 @@ public class PickupOrchestrator extends SubsystemBase {
                                 .finallyDo(() -> {
                                     if (DriverStation.isEnabled()) {
                                         Flags.pieceState = subsystemsStates.holdingPiece;
+                                        new PieceObtainedLEDCommand(ledSubsystem).schedule();
                                     }
                                 })));
 
