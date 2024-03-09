@@ -4,12 +4,14 @@
 
 package frc.robot.Subsystems;
 
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -161,6 +163,19 @@ public class Drivetrain extends SubsystemBase {
                 },
                 this // Reference to this subsystem to set requirements
         );
+        PPHolonomicDriveController.setRotationTargetOverride(this::getRotationTargetOverride);
+    }
+
+    public Optional<Rotation2d> getRotationTargetOverride() {
+        // Some condition that should decide if we want to override rotation
+        if (Aimlock.hasTarget() && lockTargetInAuto) {
+            // Return an optional containing the rotation override (this should be a field
+            // relative rotation)
+            return Optional.of(Rotation2d.fromRadians(m_aim.getSpeakerAimTargetAngle()));
+        } else {
+            // return an empty optional when we don't want to override the path's rotation
+            return Optional.empty();
+        }
     }
 
     public void setAim(Aimlock m_aim) {
@@ -345,19 +360,42 @@ public class Drivetrain extends SubsystemBase {
         // this.layout.setDesiredRotSpeed(Math.toDegrees(rotSpeed));
     }
 
+    // public void driveInAuto(ChassisSpeeds chassisSpeeds) {
+    // // SwerveModuleState[] swerveModuleStates =
+    // // m_kinematics.toSwerveModuleStates(chassisSpeeds);
+    // // comment: if speakermode, use speakeraim, if not speakermode, use piece
+    // aim.
+    // // if using piece aim and dont see a piece, follow normal path.
+    // SwerveModuleState[] swerveModuleStates = m_kinematics.toSwerveModuleStates(
+    // lockTargetInAuto
+    // ? ChassisSpeeds.fromRobotRelativeSpeeds(chassisSpeeds.vxMetersPerSecond,
+    // chassisSpeeds.vyMetersPerSecond,
+    // Aimlock.hasTarget() ? m_aim.getRotationSpeedForTarget()
+    // : chassisSpeeds.omegaRadiansPerSecond, // test this
+    // getGyroYawRotation2d())
+    // : chassisSpeeds);
+
+    // SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates,
+    // kMaxPossibleSpeed);
+
+    // // this.layout.setDesiredXSpeed(chassisSpeeds.vxMetersPerSecond);
+    // // this.layout.setDesiredYSpeed(chassisSpeeds.vyMetersPerSecond);
+    // //
+    // this.layout.setDesiredRotSpeed(Math.toDegrees(chassisSpeeds.omegaRadiansPerSecond));
+
+    // // passing back the math from kinematics to the swerves themselves.
+    // m_frontLeft.setDesiredState(swerveModuleStates[0]);
+    // m_frontRight.setDesiredState(swerveModuleStates[1]);
+    // m_backLeft.setDesiredState(swerveModuleStates[2]);
+    // m_backRight.setDesiredState(swerveModuleStates[3]);
+    // }
+
     public void driveInAuto(ChassisSpeeds chassisSpeeds) {
         // SwerveModuleState[] swerveModuleStates =
         // m_kinematics.toSwerveModuleStates(chassisSpeeds);
         // comment: if speakermode, use speakeraim, if not speakermode, use piece aim.
         // if using piece aim and dont see a piece, follow normal path.
-        SwerveModuleState[] swerveModuleStates = m_kinematics.toSwerveModuleStates(
-                lockTargetInAuto
-                        ? ChassisSpeeds.fromRobotRelativeSpeeds(chassisSpeeds.vxMetersPerSecond,
-                                chassisSpeeds.vyMetersPerSecond,
-                                Aimlock.hasTarget() ? m_aim.getRotationSpeedForTarget()
-                                        : chassisSpeeds.omegaRadiansPerSecond, // test this
-                                getGyroYawRotation2d())
-                        : chassisSpeeds);
+        SwerveModuleState[] swerveModuleStates = m_kinematics.toSwerveModuleStates(chassisSpeeds);
 
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, kMaxPossibleSpeed);
 

@@ -354,7 +354,7 @@ public class ShooterSubsystem extends SubsystemBase {
         }
 
         // cap the voltage
-        volts = MathUtil.clamp(volts, -4, 4);
+        volts = MathUtil.clamp(volts, -5.25, 5.25);
 
         aimMotor.setVoltage(volts);
     }
