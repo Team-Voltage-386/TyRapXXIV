@@ -33,6 +33,7 @@ import frc.robot.Utils.Aimlock.DoState;
 import frc.robot.Subsystems.PickupMotorsSubsystem;
 import frc.robot.Subsystems.PickupOrchestrator;
 import frc.robot.Subsystems.PneumaticsSubsystem;
+import frc.robot.Subsystems.RumbleSubsystem;
 import frc.robot.Commands.Drive;
 import frc.robot.Commands.ElevatorDownCommand;
 import frc.robot.Commands.ElevatorUpCommand;
@@ -70,6 +71,8 @@ public class RobotContainer {
   private final FeederMotorSubsystem m_feederMotor;
   private final ElevatorSubsystem m_elevatorSubsystem;
   private final TrapSubsystem m_trapSubsystem;
+  private final RumbleSubsystem m_manipulatorRumbleSubsystem;
+  private final RumbleSubsystem m_driverRumbleSubsystem;
 
   private final PickupOrchestrator m_pickup;
 
@@ -79,13 +82,15 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    m_gyro.getConfigurator().apply(new MountPoseConfigs().withMountPoseYaw(-90));
+    this.m_manipulatorRumbleSubsystem = new RumbleSubsystem(Controller.kManipulatorController);
+    this.m_driverRumbleSubsystem = new RumbleSubsystem(Controller.kDriveController);
+    this.m_gyro.getConfigurator().apply(new MountPoseConfigs().withMountPoseYaw(-90));
     this.m_cameraSubsystem = new CameraSubsystem();
     this.m_swerve = new Drivetrain(m_gyro, m_cameraSubsystem);
     this.m_pickupMotors = new PickupMotorsSubsystem();
     this.m_pneumatics = new PneumaticsSubsystem();
     this.m_feederMotor = new FeederMotorSubsystem();
-    this.m_pickup = new PickupOrchestrator(m_pneumatics, m_pickupMotors, m_feederMotor);
+    this.m_pickup = new PickupOrchestrator(m_pneumatics, m_pickupMotors, m_feederMotor, m_driverRumbleSubsystem);
     this.m_shooter = new ShooterSubsystem();
     this.m_aim = new Aimlock(m_swerve, m_shooter);
     this.m_trapSubsystem = new TrapSubsystem();

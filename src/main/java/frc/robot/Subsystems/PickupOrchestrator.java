@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Commands.DoublePulseRumble;
+import frc.robot.Commands.SinglePulseRumble;
 import frc.robot.Commands.TimerWaitCommand;
 import frc.robot.Utils.Aimlock;
 import frc.robot.Utils.Flags;
@@ -21,6 +23,7 @@ public class PickupOrchestrator extends SubsystemBase {
     private PneumaticsSubsystem m_pneumatics;
     private PickupMotorsSubsystem m_pickupMotors;
     private FeederMotorSubsystem m_FeederMotor;
+    private RumbleSubsystem m_driveRumble;
 
     private DigitalInput rightHoodSensor;
     private DigitalInput leftHoodSensor;
@@ -39,10 +42,11 @@ public class PickupOrchestrator extends SubsystemBase {
     SimpleWidget rightHoodSensorWidget;
 
     public PickupOrchestrator(PneumaticsSubsystem pneumatics, PickupMotorsSubsystem pickupMotors,
-            FeederMotorSubsystem feederMotor) {
+            FeederMotorSubsystem feederMotor, RumbleSubsystem driveRumble) {
         m_pickupMotors = pickupMotors;
         m_pneumatics = pneumatics;
         m_FeederMotor = feederMotor;
+        m_driveRumble = driveRumble;
         rightHoodSensor = new DigitalInput(6);
         leftHoodSensor = new DigitalInput(7);
         Trigger leftSensorTrigger = new Trigger(leftHoodSensor::get);
@@ -64,14 +68,17 @@ public class PickupOrchestrator extends SubsystemBase {
 
         (leftSensorTrigger.negate().or(rightSensorTrigger.negate())).and(endgameTime.negate()).and(noPieceTrigger)
                 .and(enabledTrigger)
-                .onTrue(new SequentialCommandGroup(
-                        disableIntakeCommand(),
-                        loadPieceCommand().withName("LOAD PIECE")).withName("CHANGE_TO_HOLDING_PIECE_S_DISABLE_INTAKE")
-                        .finallyDo(() -> {
-                            if (DriverStation.isEnabled()) {
-                                Flags.pieceState = subsystemsStates.holdingPiece;
-                            }
-                        }));
+                .onTrue(new ParallelCommandGroup(
+                        new DoublePulseRumble(new SinglePulseRumble(m_driveRumble, 0.75, 0.4), 0.10),
+                        new SequentialCommandGroup(
+                                disableIntakeCommand(),
+                                loadPieceCommand().withName("LOAD PIECE"))
+                                .withName("CHANGE_TO_HOLDING_PIECE_S_DISABLE_INTAKE")
+                                .finallyDo(() -> {
+                                    if (DriverStation.isEnabled()) {
+                                        Flags.pieceState = subsystemsStates.holdingPiece;
+                                    }
+                                })));
 
         AutoTrigger.and(noPieceTrigger).onTrue(runIntakeCommand());
 
