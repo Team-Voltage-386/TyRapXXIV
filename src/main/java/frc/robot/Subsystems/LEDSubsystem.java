@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Commands.AutoReadyLEDCommand;
 import frc.robot.Commands.EndgameModeCommand;
+import frc.robot.Commands.PieceObtainedLEDCommand;
+import frc.robot.Commands.TargetAquiredLEDCommand;
 import frc.robot.Constants.LEDs;
 
 public class LEDSubsystem extends SubsystemBase {
@@ -21,6 +23,8 @@ public class LEDSubsystem extends SubsystemBase {
 
     private EndgameModeCommand m_EndgameModeLEDCommand;
     private AutoReadyLEDCommand m_AutoReadyLEDCommand;
+    private PieceObtainedLEDCommand m_PieceObtainedLEDCommand;
+    private TargetAquiredLEDCommand m_TargetAquiredLEDCommand;
 
     public LEDSubsystem() { // Constructor
         m_led.setLength(m_ledBuffer.getLength());
@@ -28,6 +32,8 @@ public class LEDSubsystem extends SubsystemBase {
         m_led.start();
         m_EndgameModeLEDCommand = new EndgameModeCommand(this);
         m_AutoReadyLEDCommand = new AutoReadyLEDCommand(this);
+        m_PieceObtainedLEDCommand = new PieceObtainedLEDCommand(this);
+        m_TargetAquiredLEDCommand = new TargetAquiredLEDCommand(this);
     }
 
     public void updateLEDs() { // Updates the LEDs
@@ -40,7 +46,7 @@ public class LEDSubsystem extends SubsystemBase {
             m_ledBuffer.setRGB(i, 0, 0, 0);
         }
         // Math.round((m_ledBuffer.getLength() / 4) * 3)
-        for (int i = 33; i < m_ledBuffer.getLength(); i++) {
+        for (int i = m_ledBuffer.getLength() * 3 / 4; i < m_ledBuffer.getLength(); i++) {
             // While i is bigger than 3/4ths of the LEDs, turn them off.
             m_ledBuffer.setRGB(i, 0, 0, 0);
         }
@@ -48,9 +54,10 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     public void clearInteriorSegmant() {
-        for (int i = m_ledBuffer.getLength() / 2 + m_ledBuffer.getLength() / 4; i > m_ledBuffer.getLength() / 4; i--) {
-            // While i is between 1/4th and 3/4ths of the total LED Count, turn them off.
-            m_ledBuffer.setRGB(i, 0, 0, 0);
+        for (int i = m_ledBuffer.getLength() / 4; i < m_ledBuffer.getLength() * 3 / 4; i++) {
+            // i = 1/4th of total LEDs, while i is smaller than 3/4ths the LEDs, turn them
+            // off.
+            setLedColor(i, 0, 0, 0);
         }
         updateLEDs();
     }
@@ -83,6 +90,14 @@ public class LEDSubsystem extends SubsystemBase {
 
     public Command getAutoReadyCommand() {
         return this.m_AutoReadyLEDCommand;
+    }
+
+    public Command getPieceObtainedCommand() {
+        return this.m_PieceObtainedLEDCommand;
+    }
+
+    public Command getTargetAquiredCommand() {
+        return this.m_TargetAquiredLEDCommand;
     }
 
     public void setLedColor(int index, int r, int g, int b) {
