@@ -127,4 +127,9 @@ public class Constants {
         public static final double kBackLeftOffset = -1.61; // -1.53
         public static final double kBackRightOffset = -0.43; // 0.86
     }
+
+    public static class LEDs {
+        public static final int kLEDBufferLength = 44;
+        public static final int kpwm = 9;
+    }
 }
