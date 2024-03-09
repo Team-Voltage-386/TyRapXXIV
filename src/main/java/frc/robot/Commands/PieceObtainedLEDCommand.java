@@ -6,6 +6,7 @@ package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.LEDSubsystem;
+import frc.robot.Utils.Flags;
 
 public class PieceObtainedLEDCommand extends Command {
   /** Creates a new PieceObtainedLEDCommand. */
@@ -39,6 +40,6 @@ public class PieceObtainedLEDCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return (Flags.pieceState == Flags.subsystemsStates.noPiece);
   }
 }

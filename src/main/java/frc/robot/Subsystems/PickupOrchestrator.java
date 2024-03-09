@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.DoublePulseRumble;
+import frc.robot.Commands.PieceObtainedLEDCommand;
 import frc.robot.Commands.SinglePulseRumble;
 import frc.robot.Commands.TimerWaitCommand;
 import frc.robot.Utils.Aimlock;
@@ -24,6 +25,7 @@ public class PickupOrchestrator extends SubsystemBase {
     private PickupMotorsSubsystem m_pickupMotors;
     private FeederMotorSubsystem m_FeederMotor;
     private RumbleSubsystem m_driveRumble;
+    private LEDSubsystem m_LEDSubsystem;
 
     private DigitalInput rightHoodSensor;
     private DigitalInput leftHoodSensor;
@@ -42,7 +44,8 @@ public class PickupOrchestrator extends SubsystemBase {
     SimpleWidget rightHoodSensorWidget;
 
     public PickupOrchestrator(PneumaticsSubsystem pneumatics, PickupMotorsSubsystem pickupMotors,
-            FeederMotorSubsystem feederMotor, RumbleSubsystem driveRumble) {
+            FeederMotorSubsystem feederMotor, RumbleSubsystem driveRumble, LEDSubsystem ledSubsystem) {
+        m_LEDSubsystem = ledSubsystem;
         m_pickupMotors = pickupMotors;
         m_pneumatics = pneumatics;
         m_FeederMotor = feederMotor;
@@ -70,6 +73,7 @@ public class PickupOrchestrator extends SubsystemBase {
                 .and(enabledTrigger)
                 .onTrue(new ParallelCommandGroup(
                         new DoublePulseRumble(new SinglePulseRumble(m_driveRumble, 0.75, 0.4), 0.3),
+                        new PieceObtainedLEDCommand(ledSubsystem),
                         new SequentialCommandGroup(
                                 disableIntakeCommand(),
                                 loadPieceCommand().withName("LOAD PIECE"))

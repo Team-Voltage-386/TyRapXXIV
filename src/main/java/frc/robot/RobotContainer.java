@@ -42,8 +42,10 @@ import frc.robot.Commands.ContinuousRumble;
 import frc.robot.Commands.Drive;
 import frc.robot.Commands.ElevatorDownCommand;
 import frc.robot.Commands.ElevatorUpCommand;
+import frc.robot.Commands.EndgameModeCommand;
 import frc.robot.Commands.ForceShooterUpCommand;
 import frc.robot.Commands.StopDrive;
+import frc.robot.Commands.TargetAquiredLEDCommand;
 import frc.robot.Commands.aimShooterCommand;
 import frc.robot.Commands.ampAlignCommand;
 import frc.robot.Commands.autoPickupNote;
@@ -91,16 +93,17 @@ public class RobotContainer {
     this.m_driverRumbleSubsystem = new RumbleSubsystem(Controller.kDriveController);
     this.m_gyro.getConfigurator().apply(new MountPoseConfigs().withMountPoseYaw(-90));
     this.m_cameraSubsystem = new CameraSubsystem();
+    this.m_LedSubsystem = new LEDSubsystem();
     this.m_swerve = new Drivetrain(m_gyro, m_cameraSubsystem);
     this.m_pickupMotors = new PickupMotorsSubsystem();
     this.m_pneumatics = new PneumaticsSubsystem();
     this.m_feederMotor = new FeederMotorSubsystem();
-    this.m_pickup = new PickupOrchestrator(m_pneumatics, m_pickupMotors, m_feederMotor, m_driverRumbleSubsystem);
+    this.m_pickup = new PickupOrchestrator(m_pneumatics, m_pickupMotors, m_feederMotor, m_driverRumbleSubsystem,
+        m_LedSubsystem);
     this.m_shooter = new ShooterSubsystem();
     this.m_aim = new Aimlock(m_swerve, m_shooter);
     this.m_trapSubsystem = new TrapSubsystem(m_manipulatorRumbleSubsystem);
     this.m_elevatorSubsystem = new ElevatorSubsystem();
-    this.m_LedSubsystem = new LEDSubsystem();
 
     m_swerve.setAim(m_aim);
     m_shooter.setAim(m_aim);
@@ -159,6 +162,7 @@ public class RobotContainer {
     Controller.kManipulatorController.leftStick().and(endgameButtons.negate())
         .onFalse(new SequentialCommandGroup(
             Commands.runOnce(() -> Flags.buttonMapMode = Flags.buttonMapStates.endgameMode),
+            new EndgameModeCommand(m_LedSubsystem),
             Commands.runOnce(() -> System.out.println("Cruel"))));
 
     Controller.kManipulatorController.leftStick().and(endgameButtons)
@@ -275,6 +279,7 @@ public class RobotContainer {
     Controller.kDriveController.leftTrigger(0.1).and(() -> !Aimlock.getNoteVision()).and(endgameButtons.negate())
         .and(() -> Aimlock.getDoState().equals(DoState.SPEAKER)).whileTrue(
             new ParallelCommandGroup(new lockTarget(m_swerve),
+                new TargetAquiredLEDCommand(m_LedSubsystem),
                 new ContinuousRumble(m_manipulatorRumbleSubsystem, 0.05)));
     // while the left trigger is held and we are in amp mode, go up to the amp
     Controller.kDriveController.leftTrigger(0.1).and(() -> !Aimlock.getNoteVision()).and(endgameButtons.negate())
