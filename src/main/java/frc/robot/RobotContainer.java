@@ -38,6 +38,7 @@ import frc.robot.Subsystems.PickupMotorsSubsystem;
 import frc.robot.Subsystems.PickupOrchestrator;
 import frc.robot.Subsystems.PneumaticsSubsystem;
 import frc.robot.Subsystems.RumbleSubsystem;
+import frc.robot.Commands.AutoReadyLEDCommand;
 import frc.robot.Commands.ContinuousRumble;
 import frc.robot.Commands.Drive;
 import frc.robot.Commands.ElevatorDownCommand;
@@ -157,7 +158,8 @@ public class RobotContainer {
 
     Trigger validLimelightTrigger = new Trigger(() -> LimelightHelpers.getTV("limelight-b"));
 
-    validLimelightTrigger.whileTrue(new ContinuousRumble(m_driverRumbleSubsystem, 0.05));
+    validLimelightTrigger.whileTrue(new ParallelCommandGroup(new ContinuousRumble(m_driverRumbleSubsystem, 0.05),
+        new TargetAquiredLEDCommand(m_LedSubsystem)));
 
     Controller.kManipulatorController.leftStick().and(endgameButtons.negate())
         .onFalse(new SequentialCommandGroup(
@@ -279,7 +281,7 @@ public class RobotContainer {
     Controller.kDriveController.leftTrigger(0.1).and(() -> !Aimlock.getNoteVision()).and(endgameButtons.negate())
         .and(() -> Aimlock.getDoState().equals(DoState.SPEAKER)).whileTrue(
             new ParallelCommandGroup(new lockTarget(m_swerve),
-                new TargetAquiredLEDCommand(m_LedSubsystem),
+                new AutoReadyLEDCommand(m_LedSubsystem),
                 new ContinuousRumble(m_manipulatorRumbleSubsystem, 0.05)));
     // while the left trigger is held and we are in amp mode, go up to the amp
     Controller.kDriveController.leftTrigger(0.1).and(() -> !Aimlock.getNoteVision()).and(endgameButtons.negate())
