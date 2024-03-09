@@ -39,7 +39,7 @@ public class Aimlock {
 
     // PID/FF for chassis rotation speed
     private SimpleMotorFeedforward aimFF = new SimpleMotorFeedforward(0.0, 12);
-    private ProfiledPIDController aimPID = new ProfiledPIDController(8, 0.4, 0.2,
+    private ProfiledPIDController aimPID = new ProfiledPIDController(5, 0.35, 0.4,
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
     private SimpleMotorFeedforward RRaimFF = new SimpleMotorFeedforward(0.0, 0.0);
@@ -200,11 +200,6 @@ public class Aimlock {
         if (noteVision) {
             return -RRaimFF.calculate(Math.toRadians(getNoteLLAngleToTarget()))
                     + RRaimPID.calculate(Math.toRadians(getNoteLLAngleToTarget()));
-        }
-        if (doState.equals(DoState.AMP)) {
-            return (aimFF.calculate(Math.toRadians(-90) - Math.toRadians(getGyroYaw()))
-                    + aimPID.calculate(Math.toRadians(getGyroYaw()), Math.toRadians(-90)))
-                    / 3;
         }
         if (!doState.equals(DoState.SPEAKER)) {
             return -RRaimFF.calculate(Math.toRadians(getLLAngleToTarget()))

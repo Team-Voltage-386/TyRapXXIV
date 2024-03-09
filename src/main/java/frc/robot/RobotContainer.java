@@ -281,10 +281,6 @@ public class RobotContainer {
             new ParallelCommandGroup(new lockTarget(m_swerve),
                 new TargetAquiredLEDCommand(m_LedSubsystem),
                 new ContinuousRumble(m_manipulatorRumbleSubsystem, 0.05)));
-    // while the left trigger is held and we are in amp mode, go up to the amp
-    Controller.kDriveController.leftTrigger(0.1).and(() -> !Aimlock.getNoteVision()).and(endgameButtons.negate())
-        .and(() -> Aimlock.getDoState().equals(DoState.AMP))
-        .whileTrue(new RepeatCommand(new ampAlignCommand(m_swerve)));
 
     // drive cont bindings
     Controller.kDriveController.y().onTrue((new resetOdo(m_swerve)));
