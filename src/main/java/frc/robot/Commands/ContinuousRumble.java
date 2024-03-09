@@ -4,36 +4,38 @@
 
 package frc.robot.Commands;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Subsystems.RumbleSubsystem;
 
-public class DoublePulseRumble extends Command {
-  private Command m_doublePulseCommand;
-  private boolean m_isDone;
+public class ContinuousRumble extends Command {
+  private RumbleSubsystem m_subsystemRequirement;
+  private double m_intensity;
 
-  /** Creates a new DoublePulseRumble. */
-  public DoublePulseRumble(SinglePulseRumble singlePulseCommand, double delaySeconds) {
+  /** Creates a new SinglePulseRumble. */
+  public ContinuousRumble(RumbleSubsystem subsystem, double intensity) {
+    m_subsystemRequirement = subsystem;
+    m_intensity = intensity;
+
     // Use addRequirements() here to declare subsystem dependencies.
-    m_doublePulseCommand = singlePulseCommand.andThen(new TimerWaitCommand(delaySeconds))
-        .andThen(singlePulseCommand.copy()).andThen(Commands.runOnce(() -> m_isDone = true));
+    addRequirements(m_subsystemRequirement);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_isDone = false;
-    m_doublePulseCommand.schedule();
+    m_subsystemRequirement.setRumble(RumbleType.kBothRumble, m_intensity);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_doublePulseCommand.cancel();
+    m_subsystemRequirement.setRumble(RumbleType.kBothRumble, 0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_isDone;
+    return false;
   }
 }
