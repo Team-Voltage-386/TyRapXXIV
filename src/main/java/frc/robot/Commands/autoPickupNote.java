@@ -28,7 +28,7 @@ public class autoPickupNote extends Command {
     }
 
     private void getSpeeds() {
-        xSpeed = 1;
+        xSpeed = 2;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class autoPickupNote extends Command {
 
     @Override
     public boolean isFinished() {
-        return this.timer.hasElapsed(2)
+        return this.timer.hasElapsed(1)
                 // || (LimelightHelpers.getTY("limelight-c") > -5 && Aimlock.hasTarget())
                 || Flags.pieceState.equals(subsystemsStates.holdingPiece);
     }
