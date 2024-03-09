@@ -39,7 +39,7 @@ public class Aimlock {
 
     // PID/FF for chassis rotation speed
     private SimpleMotorFeedforward aimFF = new SimpleMotorFeedforward(0.0, 12);
-    private ProfiledPIDController aimPID = new ProfiledPIDController(8, 0.5, 0.2,
+    private ProfiledPIDController aimPID = new ProfiledPIDController(8, 0.4, 0.2,
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
     private SimpleMotorFeedforward RRaimFF = new SimpleMotorFeedforward(0.0, 0.0);

@@ -3,12 +3,12 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.75,
+        "x": 2.83,
         "y": 4.11
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4528388343224599,
+        "x": 1.53283883432246,
         "y": 5.019346407052301
       },
       "isLocked": false,
@@ -30,8 +30,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": -12.715062932281667,
+      "waypointRelativePos": 0.35,
+      "rotationDegrees": -21.29237687632316,
       "rotateFast": false
     },
     {
@@ -43,10 +43,10 @@
   "constraintZones": [
     {
       "name": "shoot zone",
-      "minWaypointRelativePos": 0.4,
-      "maxWaypointRelativePos": 0.6,
+      "minWaypointRelativePos": 0.25,
+      "maxWaypointRelativePos": 0.65,
       "constraints": {
-        "maxVelocity": 1.0,
+        "maxVelocity": 0.65,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 900.0
@@ -67,7 +67,7 @@
   "eventMarkers": [
     {
       "name": "shoot",
-      "waypointRelativePos": 0.45,
+      "waypointRelativePos": 0.5,
       "command": {
         "type": "parallel",
         "data": {
@@ -84,7 +84,7 @@
     },
     {
       "name": "noshoot",
-      "waypointRelativePos": 0.9,
+      "waypointRelativePos": 0.8,
       "command": {
         "type": "parallel",
         "data": {
@@ -93,6 +93,23 @@
               "type": "named",
               "data": {
                 "name": "Dont Shoot"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "lock",
+      "waypointRelativePos": 0.25,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Lock Target in Auto"
               }
             }
           ]
