@@ -158,7 +158,9 @@ public class RobotContainer {
 
     Trigger validLimelightTrigger = new Trigger(() -> LimelightHelpers.getTV("limelight-b"));
 
-    Trigger aimWithingErrorBounds = new Trigger(() -> Math.abs(m_aim.getSpeakerAimTargetAngle()) < Math.PI / 60);
+    Trigger aimWithingErrorBounds = new Trigger(
+        () -> Math.abs(m_aim.getSpeakerAimTargetAngle() - m_gyro.getYaw().getValueAsDouble()) < Math
+            .toRadians(3));
 
     aimWithingErrorBounds.whileTrue(new AutoReadyLEDCommand(m_LedSubsystem));
 
