@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Commands.SinglePulseRumble;
 
 public class TrapSubsystem extends SubsystemBase {
     // Move these out of the subsystem into constants
@@ -42,6 +43,7 @@ public class TrapSubsystem extends SubsystemBase {
     // Stores the position of the trap arm. 0 is at the bottom, 1 is source height,
     // 2 is max extend
     private int trapCounter = 0;
+    private RumbleSubsystem m_manipRumble;
 
     private TalonSRX m_trapExtendMotor;
     private TalonSRX m_trapIntakeMotor;
@@ -51,7 +53,8 @@ public class TrapSubsystem extends SubsystemBase {
     private SimpleWidget m_isLimitTriggeredEntry;
     private SimpleWidget m_trapCounterEntry;
 
-    public TrapSubsystem() {
+    public TrapSubsystem(RumbleSubsystem manipRumble) {
+        m_manipRumble = manipRumble;
         m_trapExtendMotor = new TalonSRX(kTrapExtendMotorID);
         m_trapExtendMotor.setInverted(true);
         m_trapIntakeMotor = new TalonSRX(kTrapIntakeMotorID);
@@ -69,6 +72,9 @@ public class TrapSubsystem extends SubsystemBase {
         new Trigger(this::isLimitTriggered).onTrue(Commands.runOnce(() -> this.incrementTrapCounter()))
                 .onFalse(Commands.runOnce(() -> this.decrementTrapCounter()));
 
+        Trigger maxExtend = new Trigger(() -> getTrapCounter() == 2);
+
+        maxExtend.onTrue(new SinglePulseRumble(m_manipRumble, 0.5, 0.3));
     }
 
     public void setTrapExtendMotor(double motorPercentage) {

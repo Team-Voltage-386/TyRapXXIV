@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -29,11 +30,13 @@ import frc.robot.Subsystems.ShooterSubsystem;
 import frc.robot.Subsystems.TrapSubsystem;
 import frc.robot.Utils.Aimlock;
 import frc.robot.Utils.Flags;
+import frc.robot.Utils.LimelightHelpers;
 import frc.robot.Utils.Aimlock.DoState;
 import frc.robot.Subsystems.PickupMotorsSubsystem;
 import frc.robot.Subsystems.PickupOrchestrator;
 import frc.robot.Subsystems.PneumaticsSubsystem;
 import frc.robot.Subsystems.RumbleSubsystem;
+import frc.robot.Commands.ContinuousRumble;
 import frc.robot.Commands.Drive;
 import frc.robot.Commands.ElevatorDownCommand;
 import frc.robot.Commands.ElevatorUpCommand;
@@ -93,7 +96,7 @@ public class RobotContainer {
     this.m_pickup = new PickupOrchestrator(m_pneumatics, m_pickupMotors, m_feederMotor, m_driverRumbleSubsystem);
     this.m_shooter = new ShooterSubsystem();
     this.m_aim = new Aimlock(m_swerve, m_shooter);
-    this.m_trapSubsystem = new TrapSubsystem();
+    this.m_trapSubsystem = new TrapSubsystem(m_manipulatorRumbleSubsystem);
     this.m_elevatorSubsystem = new ElevatorSubsystem();
 
     m_swerve.setAim(m_aim);
@@ -146,6 +149,10 @@ public class RobotContainer {
     // New Triggers
     Trigger endgameButtons = new Trigger(() -> Flags.buttonMapMode == Flags.buttonMapStates.endgameMode);
 
+    Trigger validLimelightTrigger = new Trigger(() -> LimelightHelpers.getTV("limelight-b"));
+
+    validLimelightTrigger.whileTrue(new ContinuousRumble(m_driverRumbleSubsystem, 0.05));
+
     Controller.kManipulatorController.leftStick().and(endgameButtons.negate())
         .onFalse(new SequentialCommandGroup(
             Commands.runOnce(() -> Flags.buttonMapMode = Flags.buttonMapStates.endgameMode),
@@ -171,10 +178,10 @@ public class RobotContainer {
         .whileTrue(new TrapManualInCommand(m_trapSubsystem));
 
     Controller.kManipulatorController.rightBumper().and(endgameButtons)
-        .whileTrue(new ElevatorUpCommand(m_elevatorSubsystem));
+        .whileTrue(new ElevatorUpCommand(m_elevatorSubsystem, m_manipulatorRumbleSubsystem));
 
     Controller.kManipulatorController.leftBumper().and(endgameButtons)
-        .whileTrue(new ElevatorDownCommand(m_elevatorSubsystem));
+        .whileTrue(new ElevatorDownCommand(m_elevatorSubsystem, m_manipulatorRumbleSubsystem));
 
     Controller.kManipulatorController.start().and(endgameButtons)
         .onTrue(m_pneumatics.disableLegSolenoidCommand());
@@ -263,8 +270,9 @@ public class RobotContainer {
         .whileTrue(new autoPickupNote(m_swerve));
     // while the left trigger is held and we are in speaker mode, lock the speaker
     Controller.kDriveController.leftTrigger(0.1).and(() -> !Aimlock.getNoteVision()).and(endgameButtons.negate())
-        .and(() -> Aimlock.getDoState().equals(DoState.SPEAKER))
-        .whileTrue(new lockTarget(m_swerve));
+        .and(() -> Aimlock.getDoState().equals(DoState.SPEAKER)).whileTrue(
+            new ParallelCommandGroup(new lockTarget(m_swerve),
+                new ContinuousRumble(m_manipulatorRumbleSubsystem, 0.05)));
     // while the left trigger is held and we are in amp mode, go up to the amp
     Controller.kDriveController.leftTrigger(0.1).and(() -> !Aimlock.getNoteVision()).and(endgameButtons.negate())
         .and(() -> Aimlock.getDoState().equals(DoState.AMP))

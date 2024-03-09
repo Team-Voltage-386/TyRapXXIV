@@ -69,7 +69,7 @@ public class PickupOrchestrator extends SubsystemBase {
         (leftSensorTrigger.negate().or(rightSensorTrigger.negate())).and(endgameTime.negate()).and(noPieceTrigger)
                 .and(enabledTrigger)
                 .onTrue(new ParallelCommandGroup(
-                        new DoublePulseRumble(new SinglePulseRumble(m_driveRumble, 0.75, 0.4), 0.10),
+                        new DoublePulseRumble(new SinglePulseRumble(m_driveRumble, 0.75, 0.4), 0.3),
                         new SequentialCommandGroup(
                                 disableIntakeCommand(),
                                 loadPieceCommand().withName("LOAD PIECE"))
