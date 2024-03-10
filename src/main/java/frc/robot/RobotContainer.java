@@ -87,7 +87,7 @@ public class RobotContainer {
   private final TrapSubsystem m_trapSubsystem;
   private final RumbleSubsystem m_manipulatorRumbleSubsystem;
   private final RumbleSubsystem m_driverRumbleSubsystem;
-  private final LEDSubsystem m_LedSubsystem;
+  public final LEDSubsystem m_LedSubsystem;
   private final PickupOrchestrator m_pickup;
 
   private ShuffleboardTab mainTab;
