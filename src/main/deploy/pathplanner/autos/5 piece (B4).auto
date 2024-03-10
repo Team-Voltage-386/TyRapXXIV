@@ -24,6 +24,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "I SHOT."
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "3 to 2 (A)"
@@ -32,7 +38,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "2 to 1"
+            "pathName": "5pce 2 to 1"
           }
         },
         {

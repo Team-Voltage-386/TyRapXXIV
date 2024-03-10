@@ -181,8 +181,6 @@ public class RobotContainer {
     validLimelightTrigger.and(m_pickup.holdingPieceTrigger)
         .whileTrue(new TargetAquiredLEDCommand(m_LedSubsystem));
 
-    validLimelightTrigger.whileTrue(new ContinuousRumble(m_driverRumbleSubsystem, 0.05));
-
     validLimelightTrigger.and(m_pickup.holdingPieceTrigger.negate())
         .whileTrue(new PieceObtainedAndAutoHasTargetLEDCommand(m_LedSubsystem));
 

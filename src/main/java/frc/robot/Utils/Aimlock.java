@@ -40,7 +40,7 @@ public class Aimlock {
 
     // PID/FF for chassis rotation speed
     private SimpleMotorFeedforward aimFF = new SimpleMotorFeedforward(0.0, 12);
-    private ProfiledPIDController aimPID = new ProfiledPIDController(4.4, 0.35, 0.4,
+    private ProfiledPIDController aimPID = new ProfiledPIDController(3.0, 0.35, 0.4,
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
     private SimpleMotorFeedforward RRaimFF = new SimpleMotorFeedforward(0.0, 0.0);
@@ -251,7 +251,7 @@ public class Aimlock {
 
         double Vy = getShooterSpeedwDrag() * Math.sin(getVerticalAngleToSpeaker()); // vertical vector of note
         double Vx = getShooterSpeedwDrag() * Math.cos(getVerticalAngleToSpeaker())
-                - m_swerve.getChassisSpeeds().vxMetersPerSecond;
+                - m_swerve.getChassisSpeeds().vxMetersPerSecond * 0.95;
         // - m_swerve.getChassisSpeeds().vxMetersPerSecond; // horizontal vector
         // of
         // note

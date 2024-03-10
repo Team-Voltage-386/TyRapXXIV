@@ -250,8 +250,8 @@ public class SwerveModule {
         double FFVal = m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity,
                 targetAcceleration);
 
-        SmartDashboard.putNumber(m_swerveModuleName + " trgt", targetVelocity);
-        SmartDashboard.putNumber(m_swerveModuleName + " actl", actualVelocity);
+        // SmartDashboard.putNumber(m_swerveModuleName + " trgt", targetVelocity);
+        // SmartDashboard.putNumber(m_swerveModuleName + " actl", actualVelocity);
 
         m_turningMotor.setVoltage(pidVal + FFVal);
         this.m_turningLastSpeed = actualVelocity;

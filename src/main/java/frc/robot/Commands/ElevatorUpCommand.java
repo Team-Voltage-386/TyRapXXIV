@@ -35,7 +35,9 @@ public class ElevatorUpCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         m_subsystem.setElevatorMotorsVoltage(0.0);
-        (new SinglePulseRumble(m_manipRumble, 0.5, 0.3)).schedule();
+        if (m_subsystem.isUpperLimitTriggered()) {
+            (new SinglePulseRumble(m_manipRumble, 0.5, 0.3)).schedule();
+        }
     }
 
     @Override

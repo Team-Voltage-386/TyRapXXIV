@@ -3,8 +3,9 @@
   "robotLength": 0.762,
   "holonomicMode": true,
   "pathFolders": [
-    "Auto1",
     "4 note B",
+    "Auto1",
+    "5 piece",
     "first real auto",
     "middle auto",
     "race auto",

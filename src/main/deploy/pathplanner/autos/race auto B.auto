@@ -2,21 +2,15 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7167669684840067,
-      "y": 4.414985377759629
+      "x": 0.7401886415755699,
+      "y": 4.438407050851191
     },
-    "rotation": -60.46121774044192
+    "rotation": -60.25511870305767
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
-        {
-          "type": "named",
-          "data": {
-            "name": "Lock Target in Auto"
-          }
-        },
         {
           "type": "path",
           "data": {

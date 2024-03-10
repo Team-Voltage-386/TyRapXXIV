@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.74,
-        "y": 4.22
+        "x": 2.77,
+        "y": 4.16
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.44283883432246,
-        "y": 5.1293464070523
+        "x": 1.4728388343224599,
+        "y": 5.069346407052301
       },
       "isLocked": false,
       "linkedName": null
@@ -43,10 +43,10 @@
   "constraintZones": [
     {
       "name": "shoot zone",
-      "minWaypointRelativePos": 0.4,
+      "minWaypointRelativePos": 0.3,
       "maxWaypointRelativePos": 0.6,
       "constraints": {
-        "maxVelocity": 1.0,
+        "maxVelocity": 0.8,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 900.0
@@ -54,7 +54,7 @@
     },
     {
       "name": "pickup zone",
-      "minWaypointRelativePos": 0.9,
+      "minWaypointRelativePos": 0.85,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.7,
@@ -67,7 +67,7 @@
   "eventMarkers": [
     {
       "name": "shoot",
-      "waypointRelativePos": 0.45,
+      "waypointRelativePos": 0.4,
       "command": {
         "type": "parallel",
         "data": {
@@ -101,7 +101,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.25,
+    "maxVelocity": 2.0,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 900.0

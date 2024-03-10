@@ -49,8 +49,8 @@ public class Constants {
     }
 
     public static class Deadbands {
-        public static final double kLeftJoystickDeadband = 0.1;
-        public static final double kRightJoyStickDeadband = 0.1;
+        public static final double kLeftJoystickDeadband = 0.04;
+        public static final double kRightJoyStickDeadband = 0.04;
     }
 
     public static class PipeLineID { // todo update these to actually use them in game
@@ -109,7 +109,7 @@ public class Constants {
          */
         public static final double kRateLimitXSpeed = 100.0;
         public static final double kRateLimitYSpeed = 100.0;
-        public static final double kRateLimitRot = 100.0;
+        public static final double kRateLimitRot = 70.0;
         public static final double kMaxNecessarySpeed = Drivetrain.kMaxPossibleSpeed * 0.8;
 
         public static final CommandXboxController kDriveController = new CommandXboxController(kDriveControllerID);

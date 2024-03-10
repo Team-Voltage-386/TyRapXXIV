@@ -23,6 +23,7 @@ import frc.robot.Utils.Aimlock;
 import frc.robot.Utils.BellController;
 import frc.robot.Utils.Flags;
 import frc.robot.Utils.ParabolicController;
+import frc.robot.Utils.Aimlock.DoState;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -337,10 +338,10 @@ public class ShooterSubsystem extends SubsystemBase {
         // volts = m_aimPC.calc(targetAngle - getShooterAngleRelative()); //todo test
 
         // volts = m_aimBC.calc(targetAngle - getShooterAngleRelative()); //todo test
-        // } else {
-        // // if we dont see the with the limelight, go to the upper limit slowly
-        // volts = 2.5;
-        // }
+        if (Aimlock.getDoState().equals(DoState.AMP)) {
+            // if we dont see the with the limelight, go to the upper limit slowly
+            volts = 3;
+        }
 
         // check if hitting limits, if hitting limit, let the motor still drive the
         // other direction.
@@ -383,21 +384,22 @@ public class ShooterSubsystem extends SubsystemBase {
         updateTopShooterAcceleration();
         // aimShooter(m_aim.getShooterTargetAngle());
         spoolMotors();
-        // SmartDashboard.putNumber("Shooter angle (rel)", getShooterAngleRelative());
+        SmartDashboard.putNumber("Shooter angle (real)", getShooterAngleRelative());
         SmartDashboard.putBoolean("top limit", getTopLimit());
         SmartDashboard.putBoolean("bottom limit", getBottomLimit());
         SmartDashboard.putNumber("top shoot", getTopShooterMPS());
         SmartDashboard.putNumber("bot shoot", getBottomShooterMPS());
         // SmartDashboard.putNumber("des shoot speed", getDesiredShooterSpeed());
         // SmartDashboard.putNumber("volts to hood", aimMotor.getAppliedOutput());
-        // SmartDashboard.putNumber("target shooter angle",
-        // m_aim.getShooterTargetAngle());
+        SmartDashboard.putNumber("target shooter angle",
+                m_aim.getShooterTargetAngle());
         SmartDashboard.putNumber("Top Shooter Accel", previousTopMotorData[2]);
         SmartDashboard.putNumber("Bottom Shooter Accel", previousBottomMotorData[2]);
         SmartDashboard.putBoolean("has shot?", hasShotNote());
         SmartDashboard.putBoolean("shooting?", shoot);
         SmartDashboard.putBoolean("is loaded?", Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece));
-        SmartDashboard.putBoolean("speaker mode?", Aimlock.getDoState().equals(Aimlock.DoState.SPEAKER));
+        // SmartDashboard.putBoolean("speaker mode?",
+        // Aimlock.getDoState().equals(Aimlock.DoState.SPEAKER));
         // SmartDashboard.putBoolean("top decel bool", previousTopMotorData[2] < -3);
         // SmartDashboard.putBoolean("down decel bool", previousBottomMotorData[2] <
         // -3);

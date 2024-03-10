@@ -62,7 +62,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
-        m_containter.getShooter().setAimToCoastMode();\
+        m_containter.getShooter().setAimToCoastMode();
         m_containter.m_LedSubsystem.clearLEDs();
     }
 
@@ -71,7 +71,7 @@ public class Robot extends TimedRobot {
         m_containter.getDrivetrain().setFieldRelative(true);
         Aimlock.setDoState(Aimlock.DoState.SPEAKER);
         m_containter.getShooter().setAimToBreakMode();
-        m_containter.setTeleDefaultCommand();
+        m_containter.setTeleDefaultCommand();   
         Flags.buttonMapMode = Flags.buttonMapStates.notEndgameMode;
     }
 
