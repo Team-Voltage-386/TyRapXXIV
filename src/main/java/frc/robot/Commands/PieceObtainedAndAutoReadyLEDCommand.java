@@ -34,7 +34,7 @@ public class PieceObtainedAndAutoReadyLEDCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_timer.hasElapsed(0.25)) {
+    if (m_timer.hasElapsed(0.1)) {
       m_shouldBeOn = !m_shouldBeOn;
       m_timer.reset();
     }

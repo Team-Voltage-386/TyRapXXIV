@@ -20,7 +20,7 @@ public class TargetAquiredLEDCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_LedSubsystem.setExteriorSegmants(0, 255, 0);
+    m_LedSubsystem.setExteriorSegmants(0, 0, 255);
     m_LedSubsystem.updateLEDs();
   }
 
