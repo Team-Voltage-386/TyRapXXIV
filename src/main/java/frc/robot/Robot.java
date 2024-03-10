@@ -96,12 +96,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        m_containter.getLedSubsystem().getPieceObtainedLEDCommand().schedule();
     }
 
     @Override
     public void testExit() {
-        m_containter.getLedSubsystem().getPieceObtainedLEDCommand().cancel();
+
     }
 
 }
