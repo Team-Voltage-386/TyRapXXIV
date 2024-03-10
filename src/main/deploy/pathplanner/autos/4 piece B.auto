@@ -42,15 +42,15 @@
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "go to middle"
+            "waitTime": 0.5
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Pickup Note"
+            "name": "Shoot"
           }
         }
       ]

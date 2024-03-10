@@ -136,16 +136,15 @@ public class Aimlock {
      * 
      * @return radians
      */
-    public double getSpeakerAimTargetAngle() { // when geting apriltag data, must invert dir with negative sign to match
-                                               // swerve (try this on tues)
+    public double getSpeakerAimTargetAngle() {
         double Vy = m_swerve.getChassisSpeeds().vyMetersPerSecond
-                + getShooterSpeedwDrag() * Math.sin(Math.toRadians(getAngleToSpeaker()));
+                + getShooterSpeedwDrag() * Math.sin(Math.toRadians(getAngleToSpeaker() + 180));
         double Vx = m_swerve.getChassisSpeeds().vxMetersPerSecond
-                + getShooterSpeedwDrag() * Math.cos(Math.toRadians(getAngleToSpeaker()));
-        // return 2 * Math.toRadians(getAngleToSpeaker()) - Math.atan(Vy / Vx);
-        return Math.atan(Vy / Vx); // dont know why this suddenly isnt inverted also
-        // consider using gyro and not
-        // // swerve odo
+                + getShooterSpeedwDrag() * Math.cos(Math.toRadians(getAngleToSpeaker() + 180));
+        return 2 * Math.toRadians(getAngleToSpeaker()) - Math.atan(Vy / Vx);
+        // return Math.atan(Vy / Vx); // dont know why this suddenly isnt inverted also
+        // (found out i think tho)
+        // consider using gyro and not swerve odo
     }
 
     public double getShooterSpeedwDrag() {
@@ -187,8 +186,12 @@ public class Aimlock {
             return getGyroYaw();
     }
 
+    /**
+     * @return returns rotation like wpi likes it, left is positive right is
+     *         negative
+     */
     public double getGyroYaw() {
-        return m_swerve.getRoboPose2d().getRotation().getDegrees();
+        return -m_swerve.getGyroYawRotation2d().getDegrees();// m_swerve.getRoboPose2d().getRotation().getDegrees();
     }
 
     /**
@@ -209,7 +212,6 @@ public class Aimlock {
                     + aimPID.calculate(Math.toRadians(getGyroYaw()), getSpeakerAimTargetAngle()))
                     / 3; // if you remove the /3 the earth will explode
         }
-
     }
 
     /**
@@ -244,14 +246,11 @@ public class Aimlock {
         if (!hasTarget()) {
             return 10; // go to 10 degrees if u no see
         }
-        // motion towards target
-        double M = Math.hypot( // get magnitude of robot motion vector towards speaker
-                m_swerve.getChassisSpeeds().vyMetersPerSecond * Math.sin(Math.toRadians(getSpeakerAimTargetAngle())),
-                m_swerve.getChassisSpeeds().vxMetersPerSecond * Math.cos(Math.toRadians(getSpeakerAimTargetAngle())));
 
         double Vy = getShooterSpeedwDrag() * Math.sin(getVerticalAngleToSpeaker()); // vertical vector of note
         double Vx = getShooterSpeedwDrag() * Math.cos(getVerticalAngleToSpeaker())
-                - m_swerve.getChassisSpeeds().vxMetersPerSecond / 1.1;// + M * 1.75; // horizontal vector
+                - m_swerve.getChassisSpeeds().vxMetersPerSecond;
+        // - m_swerve.getChassisSpeeds().vxMetersPerSecond; // horizontal vector
         // of
         // note
         // the angle that the shooter WILL shoot the note at if we aim directly at the
@@ -267,7 +266,9 @@ public class Aimlock {
         // the angle we NEED to shoot at to hit the target, including drop. (just the
         // amount of degrees
         // of error in the other direction)
-        double angle = Math.toDegrees(2 * getVerticalAngleToSpeaker() - (tuningFactor * perfectAngle));
+        double angle = Math.toDegrees(2 * getVerticalAngleToSpeaker() - (tuningFactor
+                * perfectAngle));
+        // double angle = Math.toDegrees((tuningFactor * perfectAngle));
         double angleWithDrop = angle - Math.toDegrees(
                 Math.atan(((Vy / Vx) * getDistToTag() + noteDropMeters) / getDistToTag()) - perfectAngle);
         SmartDashboard.putNumber("angle w drop", angleWithDrop - 32);
