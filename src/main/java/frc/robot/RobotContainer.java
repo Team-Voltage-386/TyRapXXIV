@@ -345,6 +345,7 @@ public class RobotContainer {
 
     autoChooser.addOption("4 Piece B", "4 piece B");
     autoChooser.addOption("4.5 Piece B", "4.5 piece B");
+    autoChooser.addOption("5 Piece (B4)", "5 piece (B4)");
     autoChooser.addOption("Shoot & Pickup", "shoot and backup");
     autoChooser.addOption("Shoot & Do Nothing", "shoot and do nothing");
     autoChooser.addOption("Race Auto", "race auto B");

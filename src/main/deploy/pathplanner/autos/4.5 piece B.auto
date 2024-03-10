@@ -52,6 +52,12 @@
           "data": {
             "name": "Pickup Note"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4 to B"
+          }
         }
       ]
     }
