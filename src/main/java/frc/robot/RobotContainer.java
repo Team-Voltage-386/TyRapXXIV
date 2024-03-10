@@ -14,6 +14,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -70,7 +72,7 @@ import frc.robot.Commands.resetOdo;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  private final SendableChooser<Command> autoChooser;
+  private final SendableChooser<String> autoChooser;
   private final Pigeon2 m_gyro = new Pigeon2(ID.kGyro);
   private final CameraSubsystem m_cameraSubsystem;
   private final Drivetrain m_swerve;
@@ -85,6 +87,8 @@ public class RobotContainer {
   private final RumbleSubsystem m_driverRumbleSubsystem;
   private final LEDSubsystem m_LedSubsystem;
   private final PickupOrchestrator m_pickup;
+
+  private ShuffleboardTab mainTab;
 
   Command driveCommand;
 
@@ -107,6 +111,8 @@ public class RobotContainer {
     this.m_aim = new Aimlock(m_swerve, m_shooter);
     this.m_trapSubsystem = new TrapSubsystem(m_manipulatorRumbleSubsystem);
     this.m_elevatorSubsystem = new ElevatorSubsystem();
+
+    mainTab = Shuffleboard.getTab("main");
 
     m_swerve.setAim(m_aim);
     m_shooter.setAim(m_aim);
@@ -133,12 +139,12 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake Up", m_pickup.disableIntakeCommand());
     NamedCommands.registerCommand("Pickup Note", new autoPickupNote(m_swerve));
 
-    autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()'
+    autoChooser = new SendableChooser<>(); // Default auto will be `Commands.none()'
     // Create choices for autonomous functions in the Smart Dashboard
     configPathPlannerStuff();
     configureBindings();
-    autoChooser.setDefaultOption("Autonomous Command", auto1);
-    SmartDashboard.putData("Auto Mode", autoChooser);
+    autoChooser.setDefaultOption("DO NOTHING!", "NO AUTO");
+    mainTab.add("Auto Chooser", autoChooser).withSize(3, 1).withPosition(4, 2);
   }
 
   /**
@@ -318,7 +324,6 @@ public class RobotContainer {
         .onFalse(m_swerve.setDriveMultCommand(1));
   }
 
-  Command auto1;
   Command pathfindAmp;
 
   private void configPathPlannerStuff() {
@@ -328,9 +333,13 @@ public class RobotContainer {
     // Auto"));
     // Add a button to run a simple example path
 
-    auto1 = AutoBuilder.buildAuto("4 piece B");
+    autoChooser.addOption("4 Piece B", "4 piece B");
+    autoChooser.addOption("4.5 Piece B", "4.5 piece B");
+    autoChooser.addOption("Shoot & Pickup", "shoot and backup");
+    autoChooser.addOption("Shoot & Do Nothing", "shoot and do nothing");
+    autoChooser.addOption("Race Auto", "race auto B");
+
     // auto1.setName("AUTO1");
-    autoChooser.addOption("auto1", auto1);
 
     // Load the path we want to pathfind to and follow
     PathPlannerPath path = PathPlannerPath.fromPathFile("Score Amp");
@@ -370,7 +379,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return auto1;
+    return AutoBuilder.buildAuto(autoChooser.getSelected());
   }
 
   public void setTeleDefaultCommand() {

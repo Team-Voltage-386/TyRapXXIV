@@ -92,7 +92,7 @@ public class LEDSubsystem extends SubsystemBase {
         return this.m_AutoReadyLEDCommand;
     }
 
-    public Command getPieceObtainedCommand() {
+    public Command getPieceObtainedLEDCommand() {
         return this.m_PieceObtainedLEDCommand;
     }
 
