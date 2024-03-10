@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.1852004303215282,
-        "y": 4.098792791018645
+        "x": 0.7167669684840067,
+        "y": 4.414985377759629
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.271155311541394,
-        "y": 3.404095269729001
+        "x": 1.8027218497038713,
+        "y": 3.7202878564699846
       },
       "isLocked": false,
       "linkedName": null
@@ -69,9 +69,9 @@
   ],
   "constraintZones": [
     {
-      "name": "New Constraints Zone",
-      "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.2,
+      "name": "shoot zone",
+      "minWaypointRelativePos": 0.1,
+      "maxWaypointRelativePos": 0.35,
       "constraints": {
         "maxVelocity": 0.8,
         "maxAcceleration": 5.0,
@@ -83,7 +83,7 @@
   "eventMarkers": [
     {
       "name": "shoot",
-      "waypointRelativePos": 0.0,
+      "waypointRelativePos": 0.1,
       "command": {
         "type": "parallel",
         "data": {
@@ -100,7 +100,7 @@
     },
     {
       "name": "dont aim",
-      "waypointRelativePos": 0.2,
+      "waypointRelativePos": 0.30000000000000004,
       "command": {
         "type": "parallel",
         "data": {
@@ -130,7 +130,7 @@
   "reversed": false,
   "folder": "race auto",
   "previewStartingState": {
-    "rotation": -44.99999999999995,
+    "rotation": -59.74356283647063,
     "velocity": 0
   },
   "useDefaultConstraints": true

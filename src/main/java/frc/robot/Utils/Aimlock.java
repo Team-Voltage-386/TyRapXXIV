@@ -250,7 +250,10 @@ public class Aimlock {
                 m_swerve.getChassisSpeeds().vxMetersPerSecond * Math.cos(Math.toRadians(getSpeakerAimTargetAngle())));
 
         double Vy = getShooterSpeedwDrag() * Math.sin(getVerticalAngleToSpeaker()); // vertical vector of note
-        double Vx = getShooterSpeedwDrag() * Math.cos(getVerticalAngleToSpeaker()) + M; // horizontal vector of note
+        double Vx = getShooterSpeedwDrag() * Math.cos(getVerticalAngleToSpeaker())
+                - m_swerve.getChassisSpeeds().vxMetersPerSecond / 1.1;// + M * 1.75; // horizontal vector
+        // of
+        // note
         // the angle that the shooter WILL shoot the note at if we aim directly at the
         // target.
         double perfectAngle = Math.atan(Vy / Vx);

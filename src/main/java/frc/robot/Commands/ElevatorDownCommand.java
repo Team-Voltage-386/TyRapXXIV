@@ -32,7 +32,7 @@ public class ElevatorDownCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        m_subsystem.setElevatorMotorsVoltage(0.0);
+        m_subsystem.setElevatorMotorsVoltage(-0.15);
         (new SinglePulseRumble(m_manipRumble, 0.5, 0.3)).schedule();
         // May need to sometimes leave it at a certain voltage if we aren't planning to
         // go down to the bottom stationary hooks

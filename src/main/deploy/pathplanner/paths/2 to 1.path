@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.247850590730259,
-        "y": 6.122282683026906
+        "x": 1.1852004303152672,
+        "y": 6.031080821077477
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 6.956236908194216
       },
       "prevControl": {
-        "x": 1.8644289499705946,
-        "y": 6.265297551993107
+        "x": 1.618501382509183,
+        "y": 6.230165042355762
       },
       "nextControl": null,
       "isLocked": false,
@@ -43,10 +43,10 @@
   "constraintZones": [
     {
       "name": "shoot zone",
-      "minWaypointRelativePos": 0.4,
-      "maxWaypointRelativePos": 0.75,
+      "minWaypointRelativePos": 0.25,
+      "maxWaypointRelativePos": 0.7,
       "constraints": {
-        "maxVelocity": 0.6,
+        "maxVelocity": 0.8,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 900.0
@@ -54,7 +54,7 @@
     },
     {
       "name": "pickup zone",
-      "minWaypointRelativePos": 0.9,
+      "minWaypointRelativePos": 0.95,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.6,
@@ -67,7 +67,7 @@
   "eventMarkers": [
     {
       "name": "shoot",
-      "waypointRelativePos": 0.4,
+      "waypointRelativePos": 0.25,
       "command": {
         "type": "parallel",
         "data": {
@@ -102,7 +102,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 2.0,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 900.0
   },

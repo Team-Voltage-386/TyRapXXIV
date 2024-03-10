@@ -44,13 +44,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "go to middle"
+            "pathName": " 1 to 4"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Pickup Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "4 to B"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]

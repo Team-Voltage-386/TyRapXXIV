@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.14198628397257,
-        "y": 4.09478126648561
+        "x": 0.8338753339418218,
+        "y": 6.663465994549679
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.7875591928074,
-        "y": 4.227611993027124
+        "x": 1.8338753339418212,
+        "y": 6.663465994549679
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.7030302876582923,
-        "y": 5.293298118693241
+        "x": 2.8715608929078047,
+        "y": 7.705730447124233
       },
       "prevControl": {
-        "x": 4.710162230595501,
-        "y": 4.450117887396973
+        "x": 1.8715608929078047,
+        "y": 7.705730447124233
       },
       "nextControl": null,
       "isLocked": false,
@@ -35,8 +35,19 @@
       "minWaypointRelativePos": 0.9,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 0.8,
-        "maxAcceleration": 5.0,
+        "maxVelocity": 0.5,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 900.0
+      }
+    },
+    {
+      "name": "New Constraints Zone",
+      "minWaypointRelativePos": 0.5,
+      "maxWaypointRelativePos": 0.8,
+      "constraints": {
+        "maxVelocity": 0.25,
+        "maxAcceleration": 2.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 900.0
       }
@@ -44,25 +55,8 @@
   ],
   "eventMarkers": [
     {
-      "name": "aim",
-      "waypointRelativePos": 0.9,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Lock Target in Auto"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "shoot",
-      "waypointRelativePos": 0.95,
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.5,
       "command": {
         "type": "parallel",
         "data": {
@@ -76,24 +70,41 @@
           ]
         }
       }
+    },
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 0.65,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Dont Lock Target in Auto"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.375,
-    "maxAcceleration": 5.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 900.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -6.63251461513845,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "race auto",
+  "folder": null,
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": 60.25511870305777,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

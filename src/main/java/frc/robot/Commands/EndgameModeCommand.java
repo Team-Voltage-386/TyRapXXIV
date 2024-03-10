@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.LEDSubsystem;
+import frc.robot.Utils.Flags;
 
 public class EndgameModeCommand extends Command {
   /** Creates a new EndgameModeCommand. */
@@ -92,6 +93,6 @@ public class EndgameModeCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return DriverStation.isDisabled();
+    return (DriverStation.isDisabled() || Flags.buttonMapMode.equals(Flags.buttonMapStates.notEndgameMode));
   }
 }

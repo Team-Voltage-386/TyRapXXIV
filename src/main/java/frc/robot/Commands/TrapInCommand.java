@@ -40,6 +40,7 @@ public class TrapInCommand extends Command {
             // counter back to 0
             m_subsystem.resetTrapCounter();
             // If you start at the source height or lower, go down until you hit the bottom
+            System.out.println("Resetting Trap");
             return m_subsystem.isMaxRetract();
         } else {
             // If you start above the source height, go down until you hit the source height

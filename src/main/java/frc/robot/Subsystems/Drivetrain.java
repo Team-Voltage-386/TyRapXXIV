@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ID;
 import frc.robot.Constants.Offsets;
@@ -171,8 +172,10 @@ public class Drivetrain extends SubsystemBase {
         if (Aimlock.hasTarget() && lockTargetInAuto) {
             // Return an optional containing the rotation override (this should be a field
             // relative rotation)
+            SmartDashboard.putBoolean("yeah we are aimed", true);
             return Optional.of(Rotation2d.fromRadians(m_aim.getSpeakerAimTargetAngle()));
         } else {
+            SmartDashboard.putBoolean("yeah we are aimed", false);
             // return an empty optional when we don't want to override the path's rotation
             return Optional.empty();
         }
@@ -270,6 +273,16 @@ public class Drivetrain extends SubsystemBase {
         return Rotation2d.fromDegrees(m_gyro.getYaw().getValue());
     }
 
+    private double driveMultiplier = 1;
+
+    public void setDriveMult(double mult) {
+        driveMultiplier = mult;
+    }
+
+    public Command setDriveMultCommand(double mult) {
+        return Commands.runOnce(() -> setDriveMult(mult));
+    }
+
     /**
      * Method to drive the robot using joystick info.
      *
@@ -280,6 +293,9 @@ public class Drivetrain extends SubsystemBase {
      *                      field.
      */
     public void drive(double xSpeed, double ySpeed, double rotSpeed) {
+        xSpeed = xSpeed * driveMultiplier;
+        ySpeed = ySpeed * driveMultiplier;
+        rotSpeed = rotSpeed * driveMultiplier;
         SwerveModuleState[] swerveModuleStates = m_kinematics.toSwerveModuleStates(
                 fieldRelative
                         ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rotSpeed, getGyroYawRotation2d())
@@ -322,6 +338,9 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void lockTarget(double xSpeed, double ySpeed, double rotSpeed, boolean fieldRelative, boolean hardLocked) {
+        xSpeed = xSpeed * driveMultiplier;
+        ySpeed = ySpeed * driveMultiplier;
+        rotSpeed = rotSpeed * driveMultiplier;
         SwerveModuleState[] swerveModuleStates; // MAKE SURE swervestates can be init like this with this kinda array
         if (Aimlock.hasTarget() || (Aimlock.hasNoteTarget() && Aimlock.getNoteVision())
                 || Aimlock.getDoState().equals(DoState.AMP)) {
@@ -452,6 +471,8 @@ public class Drivetrain extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Chassis Angle",
                 getRoboPose2d().getRotation().getDegrees());
+        SmartDashboard.putNumber("Chassis Angle Gyro",
+                m_gyro.getYaw().getValueAsDouble());
         SmartDashboard.putNumber("Desired Angle",
                 Math.toDegrees(m_aim.getSpeakerAimTargetAngle()));
         SmartDashboard.putNumber("Ang to Speak", m_aim.getAngleToSpeaker());

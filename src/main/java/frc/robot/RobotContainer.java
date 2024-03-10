@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import javax.print.attribute.standard.MediaSize.NA;
+
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -118,6 +120,7 @@ public class RobotContainer {
         Commands.runOnce(() -> m_swerve.setLockTargetInAuto(true)));
     NamedCommands.registerCommand("Dont Lock Target in Auto",
         Commands.runOnce(() -> m_swerve.setLockTargetInAuto(false)));
+    NamedCommands.registerCommand("I SHOT.", Commands.runOnce(() -> Flags.pieceState = Flags.subsystemsStates.noPiece));
     NamedCommands.registerCommand("Shoot", Commands.runOnce(() -> {
       m_shooter.shoot();
       m_feederMotor.runShootFeederMotorToShoot();
@@ -159,8 +162,8 @@ public class RobotContainer {
     Trigger validLimelightTrigger = new Trigger(() -> LimelightHelpers.getTV("limelight-b"));
 
     Trigger aimWithingErrorBounds = new Trigger(
-        () -> Math.abs(m_aim.getSpeakerAimTargetAngle() - m_gyro.getYaw().getValueAsDouble()) < Math
-            .toRadians(3));
+        () -> Math.abs(Math.toRadians(m_gyro.getYaw().getValueAsDouble()) - m_aim.getSpeakerAimTargetAngle()) < Math
+            .toRadians(6));
 
     aimWithingErrorBounds.whileTrue(new AutoReadyLEDCommand(m_LedSubsystem));
 
@@ -175,6 +178,7 @@ public class RobotContainer {
 
     Controller.kManipulatorController.leftStick().and(endgameButtons)
         .onFalse(new SequentialCommandGroup(
+            Commands.runOnce(() -> m_elevatorSubsystem.setElevatorMotorsVoltage(0)),
             Commands.runOnce(() -> Flags.buttonMapMode = Flags.buttonMapStates.notEndgameMode),
             Commands.runOnce(() -> m_trapSubsystem.setTrapIntakeMotorOff()),
             Commands.runOnce(() -> System.out.println("WHY"))));
@@ -291,7 +295,7 @@ public class RobotContainer {
 
     // drive cont bindings
     Controller.kDriveController.y().onTrue((new resetOdo(m_swerve)));
-    Controller.kDriveController.rightBumper().and(endgameButtons.negate())
+    Controller.kDriveController.rightBumper()
         .onTrue(this.m_swerve.setFieldRelativeCommand(false))
         .onFalse(this.m_swerve.setFieldRelativeCommand(true));
 
@@ -309,6 +313,9 @@ public class RobotContainer {
     Controller.kDriveController.povDown().whileTrue(Commands.run(() -> m_shooter.driveHoodManually(-2.5)))
         .onFalse(Commands.run(() -> m_shooter.driveHoodManually(0)));
     // DEBUGGING MODE END
+
+    Controller.kDriveController.leftBumper().onTrue(m_swerve.setDriveMultCommand(0.5))
+        .onFalse(m_swerve.setDriveMultCommand(1));
   }
 
   Command auto1;
@@ -321,7 +328,7 @@ public class RobotContainer {
     // Auto"));
     // Add a button to run a simple example path
 
-    auto1 = AutoBuilder.buildAuto("4 piece B");
+    auto1 = AutoBuilder.buildAuto("shoot and backup");
     // auto1.setName("AUTO1");
     autoChooser.addOption("auto1", auto1);
 

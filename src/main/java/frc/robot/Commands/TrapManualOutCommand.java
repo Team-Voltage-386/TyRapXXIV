@@ -25,7 +25,7 @@ public class TrapManualOutCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return m_subsystem.isLimitTriggered();
+        return false;
     }
 
 }

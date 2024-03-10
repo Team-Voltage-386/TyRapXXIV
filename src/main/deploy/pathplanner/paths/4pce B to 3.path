@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8502478337558452,
-        "y": 4.554839791123675
+        "x": 2.1806215367066955,
+        "y": 4.883418839590889
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.8335710517574895,
-        "y": 4.114515152107228
+        "x": 2.8481392198162414,
+        "y": 4.145636137206654
       },
       "prevControl": {
-        "x": 1.5903362575955933,
-        "y": 4.371055665188254
+        "x": 2.2743082290729473,
+        "y": 4.742888801041513
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,14 +31,14 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.5,
-      "rotationDegrees": -7.7098041339861,
+      "rotationDegrees": -41.68541417935653,
       "rotateFast": false
     }
   ],
   "constraintZones": [
     {
       "name": "pickup zone",
-      "minWaypointRelativePos": 0.85,
+      "minWaypointRelativePos": 0.75,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.7,
@@ -61,6 +61,12 @@
               "data": {
                 "name": "Dont Shoot"
               }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "I SHOT."
+              }
             }
           ]
         }
@@ -75,7 +81,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -10.007979801441474,
+    "rotation": -39.559667968994376,
     "rotateFast": false
   },
   "reversed": false,

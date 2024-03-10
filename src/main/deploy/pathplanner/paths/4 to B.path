@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.761063675973507,
-        "y": 6.344444227349993
+        "x": 3.375126864376409,
+        "y": 6.066213330714821
       },
       "prevControl": {
-        "x": 4.7970926711084205,
-        "y": 6.679920282917489
+        "x": 4.411155859511325,
+        "y": 6.4016893862823165
       },
       "nextControl": null,
       "isLocked": false,
@@ -35,19 +35,7 @@
       "rotateFast": false
     }
   ],
-  "constraintZones": [
-    {
-      "name": "New Constraints Zone",
-      "minWaypointRelativePos": 0.9,
-      "maxWaypointRelativePos": 1.0,
-      "constraints": {
-        "maxVelocity": 0.8,
-        "maxAcceleration": 5.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 900.0
-      }
-    }
-  ],
+  "constraintZones": [],
   "eventMarkers": [
     {
       "name": "aim",
@@ -60,23 +48,6 @@
               "type": "named",
               "data": {
                 "name": "Lock Target in Auto"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "shoot",
-      "waypointRelativePos": 0.9,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Shoot"
               }
             }
           ]

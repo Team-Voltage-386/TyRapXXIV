@@ -37,11 +37,11 @@
   ],
   "constraintZones": [
     {
-      "name": "New Constraints Zone",
+      "name": "shoot",
       "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.1,
+      "maxWaypointRelativePos": 0.15,
       "constraints": {
-        "maxVelocity": 0.5,
+        "maxVelocity": 0.55,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 900.0
@@ -68,7 +68,7 @@
     },
     {
       "name": "noshoot",
-      "waypointRelativePos": 0.2,
+      "waypointRelativePos": 0.3,
       "command": {
         "type": "parallel",
         "data": {
@@ -78,18 +78,7 @@
               "data": {
                 "name": "Dont Shoot"
               }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "nolock",
-      "waypointRelativePos": 0.35,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
+            },
             {
               "type": "named",
               "data": {

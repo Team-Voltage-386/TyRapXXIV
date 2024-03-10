@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.14198628397257,
-        "y": 4.09478126648561
+        "x": 2.8364283832704595,
+        "y": 6.96
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.7875591928074,
-        "y": 4.227611993027124
+        "x": 3.468813556742662,
+        "y": 5.3635631379679305
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.7030302876582923,
-        "y": 5.293298118693241
+        "x": 7.309967943758997,
+        "y": 7.4598028796628215
       },
       "prevControl": {
-        "x": 4.710162230595501,
-        "y": 4.450117887396973
+        "x": 6.309967943758997,
+        "y": 7.4598028796628215
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,10 +32,10 @@
   "constraintZones": [
     {
       "name": "New Constraints Zone",
-      "minWaypointRelativePos": 0.9,
-      "maxWaypointRelativePos": 1.0,
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.15,
       "constraints": {
-        "maxVelocity": 0.8,
+        "maxVelocity": 0.56,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 900.0
@@ -44,25 +44,8 @@
   ],
   "eventMarkers": [
     {
-      "name": "aim",
-      "waypointRelativePos": 0.9,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Lock Target in Auto"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
       "name": "shoot",
-      "waypointRelativePos": 0.95,
+      "waypointRelativePos": 0.05,
       "command": {
         "type": "parallel",
         "data": {
@@ -71,6 +54,23 @@
               "type": "named",
               "data": {
                 "name": "Shoot"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "stop aim",
+      "waypointRelativePos": 0.35,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Dont Lock Target in Auto"
               }
             }
           ]
@@ -86,13 +86,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -6.63251461513845,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "race auto",
+  "folder": "4 note B",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": 32.26753290914637,
     "velocity": 0
   },
   "useDefaultConstraints": true
