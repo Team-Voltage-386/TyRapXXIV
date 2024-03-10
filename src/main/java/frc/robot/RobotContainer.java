@@ -49,6 +49,8 @@ import frc.robot.Commands.ElevatorDownCommand;
 import frc.robot.Commands.ElevatorUpCommand;
 import frc.robot.Commands.EndgameModeCommand;
 import frc.robot.Commands.ForceShooterUpCommand;
+import frc.robot.Commands.PieceObtainedAndAutoHasTargetLEDCommand;
+import frc.robot.Commands.PieceObtainedAndAutoReadyLEDCommand;
 import frc.robot.Commands.StopDrive;
 import frc.robot.Commands.TargetAquiredLEDCommand;
 import frc.robot.Commands.aimShooterCommand;
@@ -171,10 +173,18 @@ public class RobotContainer {
         () -> Math.abs(Math.toRadians(m_gyro.getYaw().getValueAsDouble()) - m_aim.getSpeakerAimTargetAngle()) < Math
             .toRadians(6));
 
-    aimWithingErrorBounds.whileTrue(new AutoReadyLEDCommand(m_LedSubsystem));
+    aimWithingErrorBounds.and(m_pickup.noPieceTrigger.negate())
+        .whileTrue(new PieceObtainedAndAutoReadyLEDCommand(m_LedSubsystem));
 
-    validLimelightTrigger.whileTrue(new ParallelCommandGroup(new ContinuousRumble(m_driverRumbleSubsystem, 0.05),
-        new TargetAquiredLEDCommand(m_LedSubsystem)));
+    aimWithingErrorBounds.and(m_pickup.noPieceTrigger).whileTrue(new AutoReadyLEDCommand(m_LedSubsystem));
+
+    validLimelightTrigger.and(m_pickup.holdingPieceTrigger)
+        .whileTrue(new TargetAquiredLEDCommand(m_LedSubsystem));
+
+    validLimelightTrigger.whileTrue(new ContinuousRumble(m_driverRumbleSubsystem, 0.05));
+
+    validLimelightTrigger.and(m_pickup.holdingPieceTrigger.negate())
+        .whileTrue(new PieceObtainedAndAutoHasTargetLEDCommand(m_LedSubsystem));
 
     Controller.kManipulatorController.leftStick().and(endgameButtons.negate())
         .onFalse(new SequentialCommandGroup(
