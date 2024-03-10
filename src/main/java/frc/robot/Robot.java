@@ -62,7 +62,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
-        m_containter.getShooter().setAimToCoastMode();
+        m_containter.getShooter().setAimToCoastMode();\
+        m_containter.m_LedSubsystem.clearLEDs();
     }
 
     @Override
