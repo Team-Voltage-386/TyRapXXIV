@@ -5,6 +5,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.PipeLineID;
 import frc.robot.Constants.Shooter;
@@ -39,7 +40,7 @@ public class Aimlock {
 
     // PID/FF for chassis rotation speed
     private SimpleMotorFeedforward aimFF = new SimpleMotorFeedforward(0.0, 12);
-    private ProfiledPIDController aimPID = new ProfiledPIDController(5, 0.35, 0.4,
+    private ProfiledPIDController aimPID = new ProfiledPIDController(4.4, 0.35, 0.4,
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
     private SimpleMotorFeedforward RRaimFF = new SimpleMotorFeedforward(0.0, 0.0);
@@ -191,7 +192,8 @@ public class Aimlock {
      *         negative
      */
     public double getGyroYaw() {
-        return -m_swerve.getGyroYawRotation2d().getDegrees();// m_swerve.getRoboPose2d().getRotation().getDegrees();
+        return m_swerve.getRoboPose2d().getRotation().getDegrees();
+        // -m_swerve.getGyroYawRotation2d().getDegrees();
     }
 
     /**

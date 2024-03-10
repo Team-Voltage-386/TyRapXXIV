@@ -474,7 +474,7 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Chassis Angle Gyro",
                 m_gyro.getYaw().getValueAsDouble());
         SmartDashboard.putNumber("Desired Angle",
-                Math.toDegrees(m_aim.getSpeakerAimTargetAngle()));
+                Math.toDegrees(-m_aim.getSpeakerAimTargetAngle()));
         SmartDashboard.putNumber("Ang to Speak", m_aim.getAngleToSpeaker());
         // SmartDashboard.putNumber("X speed", getChassisSpeeds().vxMetersPerSecond);
         // SmartDashboard.putNumber("Y speed", getChassisSpeeds().vyMetersPerSecond);
