@@ -333,7 +333,7 @@ public class RobotContainer {
     // Auto"));
     // Add a button to run a simple example path
 
-    autoChooser.addOption("4 Piece Auto", "4 pice B");
+    autoChooser.addOption("4 Piece Auto", "4 piece B");
     autoChooser.addOption("Shoot & Pickup", "shoot and backup");
     autoChooser.addOption("Shoot & Do Nothing", "shoot and do nothing");
     autoChooser.addOption("Race Auto", "race auto B");
@@ -378,6 +378,9 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    if (autoChooser.getSelected().equals("NO AUTO")) {
+      return Commands.none();
+    }
     return AutoBuilder.buildAuto(autoChooser.getSelected());
   }
 
