@@ -343,7 +343,8 @@ public class RobotContainer {
     // Auto"));
     // Add a button to run a simple example path
 
-    autoChooser.addOption("4 Piece Auto", "4 piece B");
+    autoChooser.addOption("4 Piece B", "4 piece B");
+    autoChooser.addOption("4.5 Piece B", "4.5 piece B");
     autoChooser.addOption("Shoot & Pickup", "shoot and backup");
     autoChooser.addOption("Shoot & Do Nothing", "shoot and do nothing");
     autoChooser.addOption("Race Auto", "race auto B");
