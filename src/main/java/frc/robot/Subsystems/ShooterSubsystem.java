@@ -90,10 +90,10 @@ public class ShooterSubsystem extends SubsystemBase {
         bottomShooterMotor.setInverted(true);
         // bottomShooterMotor.follow(topShooterMotor, false);
         m_botShootPID = new ProfiledPIDController(0.0, 0, 0.0, new Constraints(10, 10));
-        m_botShootFF = new SimpleMotorFeedforward(0.0, 0.39);
+        m_botShootFF = new SimpleMotorFeedforward(0.0, 0.35);
 
         m_topShootPID = new ProfiledPIDController(0.0, 0, 0.0, new Constraints(10, 10));
-        m_topShootFF = new SimpleMotorFeedforward(0.0, 0.49);
+        m_topShootFF = new SimpleMotorFeedforward(0.0, 0.52);
 
         // get shooter speed
         shootSpeed = Shooter.kShooterSpeed;

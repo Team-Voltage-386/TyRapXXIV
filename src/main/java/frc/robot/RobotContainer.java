@@ -187,15 +187,17 @@ public class RobotContainer {
     Controller.kManipulatorController.leftStick().and(endgameButtons.negate())
         .onFalse(new SequentialCommandGroup(
             Commands.runOnce(() -> Flags.buttonMapMode = Flags.buttonMapStates.endgameMode),
+            Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.ENDGAME)),
             new EndgameModeCommand(m_LedSubsystem),
-            Commands.runOnce(() -> System.out.println("Cruel"))));
+            Commands.runOnce(() -> System.out.println("endgame mode activated"))));
 
     Controller.kManipulatorController.leftStick().and(endgameButtons)
         .onFalse(new SequentialCommandGroup(
             Commands.runOnce(() -> m_elevatorSubsystem.setElevatorMotorsVoltage(0)),
             Commands.runOnce(() -> Flags.buttonMapMode = Flags.buttonMapStates.notEndgameMode),
+            Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.SPEAKER)),
             Commands.runOnce(() -> m_trapSubsystem.setTrapIntakeMotorOff()),
-            Commands.runOnce(() -> System.out.println("WHY"))));
+            Commands.runOnce(() -> System.out.println("endgame mode disable"))));
 
     // Endgame buttons
     Controller.kManipulatorController.povUp().and(endgameButtons)
@@ -313,9 +315,6 @@ public class RobotContainer {
         .onTrue(this.m_swerve.setFieldRelativeCommand(false))
         .onFalse(this.m_swerve.setFieldRelativeCommand(true));
 
-    Controller.kDriveController.start()
-        .onTrue(Commands.runOnce(() -> Aimlock.setDoState(DoState.ENDGAME)));
-
     new Trigger(() -> m_shooter.getBottomLimit())
         .onTrue(Commands.runOnce(() -> m_shooter.setRelativeShooterEncoder(0)).ignoringDisable(true));
     new Trigger(() -> m_shooter.getTopLimit())
@@ -347,6 +346,7 @@ public class RobotContainer {
     autoChooser.addOption("Shoot & Pickup", "shoot and backup");
     autoChooser.addOption("Shoot & Do Nothing", "shoot and do nothing");
     autoChooser.addOption("Race Auto", "race auto B");
+    autoChooser.addOption("4 pce Race Auto", "4pce race auto B");
 
     // auto1.setName("AUTO1");
 

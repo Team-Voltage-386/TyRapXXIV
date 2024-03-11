@@ -1,5 +1,6 @@
 package frc.robot.Commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.Drivetrain;
@@ -45,7 +46,7 @@ public class autoPickupNote extends Command {
 
     @Override
     public boolean isFinished() {
-        return this.timer.hasElapsed(1)
+        return this.timer.hasElapsed(DriverStation.isAutonomousEnabled() ? 1 : 2)
                 // || (LimelightHelpers.getTY("limelight-c") > -5 && Aimlock.hasTarget())
                 || Flags.pieceState.equals(subsystemsStates.holdingPiece);
     }

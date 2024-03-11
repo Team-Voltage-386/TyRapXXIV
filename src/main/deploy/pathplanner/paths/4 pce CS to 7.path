@@ -3,55 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.14198628397257,
-        "y": 4.09478126648561
+        "x": 1.25,
+        "y": 4.11
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.136331239852207,
-        "y": 3.50154012718867
+        "x": 4.300282951493148,
+        "y": 2.213348107152705
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.9301150756367123,
-        "y": 5.187900589781208
+        "x": 7.427076309216811,
+        "y": 2.0611072320575454
       },
       "prevControl": {
-        "x": 5.2254390386098875,
-        "y": 5.059081387777612
-      },
-      "nextControl": {
-        "x": 2.436810617464475,
-        "y": 5.215586044066384
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 2.098645680886225,
-        "y": 4.578937089400569
-      },
-      "prevControl": {
-        "x": 2.1162119357048983,
-        "y": 5.035659714686048
+        "x": 4.46423466313409,
+        "y": 1.4053003854937813
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.1,
+      "rotationDegrees": -44.39256725309999,
+      "rotateFast": false
+    }
+  ],
   "constraintZones": [
     {
-      "name": "New Constraints Zone",
-      "minWaypointRelativePos": 1.35,
-      "maxWaypointRelativePos": 1.8,
+      "name": "shoot zone",
+      "minWaypointRelativePos": 0.1,
+      "maxWaypointRelativePos": 0.15,
       "constraints": {
-        "maxVelocity": 0.8,
+        "maxVelocity": 0.4,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 900.0
@@ -60,25 +50,8 @@
   ],
   "eventMarkers": [
     {
-      "name": "aim",
-      "waypointRelativePos": 0.9,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Lock Target in Auto"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
       "name": "shoot",
-      "waypointRelativePos": 1.45,
+      "waypointRelativePos": 0.1,
       "command": {
         "type": "parallel",
         "data": {
@@ -92,24 +65,51 @@
           ]
         }
       }
+    },
+    {
+      "name": "dont aim",
+      "waypointRelativePos": 0.2,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Dont Lock Target in Auto"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "aim",
+      "waypointRelativePos": 0.1,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": []
+        }
+      }
     }
   ],
   "globalConstraints": {
     "maxVelocity": 3.375,
-    "maxAcceleration": 5.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 900.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -30.96375653207344,
+    "rotation": 33.27488798483494,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "race auto",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": -45.0,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

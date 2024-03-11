@@ -293,8 +293,8 @@ public class Aimlock {
     /**
      * @return the maximum angle of the shooter
      */
-    public double getShooterTargetAngleSOURCE() {
-        return Shooter.kMaxAngle;
+    public double getShooterTargetAngleNOTE() {
+        return Shooter.kMinAngle;
     }
 
     // angle the shooter needs to hit the shot. ask me (Lucas) about the math if you
@@ -309,6 +309,7 @@ public class Aimlock {
         double angle = Shooter.kMinAngle;
         switch (doState) {
             case NOTE:
+                angle = getShooterTargetAngleNOTE();
                 break;
             case SPEAKER:
                 angle = getShooterTargetAngleSPEAKER();
@@ -317,7 +318,7 @@ public class Aimlock {
                 angle = getShooterTargetAngleAMP();
                 break;
             case SOURCE:
-                angle = getShooterTargetAngleSOURCE();
+                angle = getShooterTargetAngleNOTE();
                 break;
             case ENDGAME:
                 angle = Shooter.kMinAngle;

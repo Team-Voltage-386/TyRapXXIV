@@ -16,7 +16,7 @@ public class FeederMotorSubsystem extends SubsystemBase {
     }
 
     public void runShootFeederMotorToShoot() {
-        feederMotor.set(TalonSRXControlMode.PercentOutput, 0.5);
+        feederMotor.set(TalonSRXControlMode.PercentOutput, 0.8);
     }
 
     public void runFeederMotorToLoad() {

@@ -2,55 +2,31 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.44283883432246,
-      "y": 5.515804013063089
+      "x": 1.25,
+      "y": 4.11
     },
-    "rotation": 0
+    "rotation": -45.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "B to 3"
+            "waitTime": 0.5
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Dont Shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "I SHOT."
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Lock Target in Auto"
+            "name": "Shoot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3 to 2 (A)"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "5pce 2 to 1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": " 1 to 4"
+            "pathName": "4 pce CS to 7"
           }
         },
         {
@@ -62,7 +38,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "4 to B"
+            "pathName": "7 to DS"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Dont Lock Target in Auto"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "DS to 6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pickup Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "6 to BS"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pickup Note"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]
