@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import javax.print.attribute.standard.MediaSize.NA;
-
-import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -17,11 +14,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -54,7 +49,6 @@ import frc.robot.Commands.PieceObtainedAndAutoReadyLEDCommand;
 import frc.robot.Commands.StopDrive;
 import frc.robot.Commands.TargetAquiredLEDCommand;
 import frc.robot.Commands.aimShooterCommand;
-import frc.robot.Commands.ampAlignCommand;
 import frc.robot.Commands.autoPickupNote;
 import frc.robot.Commands.lockTarget;
 import frc.robot.Commands.TimerWaitCommand;
@@ -238,7 +232,7 @@ public class RobotContainer {
           m_feederMotor.runShootFeederMotorToShoot();
         }));
 
-    new Trigger(() -> m_shooter.hasShotNote()).onTrue(Commands.runOnce(() -> System.out.println("trigger worked")))
+    new Trigger(() -> m_shooter.hasShotNote()).onTrue(Commands.runOnce(() -> System.out.println("Shot Note.")))
         .onTrue(new SequentialCommandGroup(
             new TimerWaitCommand(0.25),
             Commands.runOnce(() -> {

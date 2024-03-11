@@ -5,7 +5,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.PipeLineID;
 import frc.robot.Constants.Shooter;
@@ -143,8 +142,6 @@ public class Aimlock {
         double Vx = m_swerve.getChassisSpeeds().vxMetersPerSecond
                 + getShooterSpeedwDrag() * Math.cos(Math.toRadians(getAngleToSpeaker() + 180));
         return 2 * Math.toRadians(getAngleToSpeaker()) - Math.atan(Vy / Vx);
-        // return Math.atan(Vy / Vx); // dont know why this suddenly isnt inverted also
-        // (found out i think tho)
         // consider using gyro and not swerve odo
     }
 
