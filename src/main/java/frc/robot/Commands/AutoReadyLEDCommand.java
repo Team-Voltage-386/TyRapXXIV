@@ -40,7 +40,7 @@ public class AutoReadyLEDCommand extends Command {
     }
     if (m_shouldBeOn) {
       // Changes the state of the lights to on
-      m_LedSubsystem.setExteriorSegmants(0, 255, 0);
+      m_LedSubsystem.setExteriorSegmants(241, 245, 7);
     } else {
       // Changes the state of the lights to off
       m_LedSubsystem.clearExteriorSegmants();
