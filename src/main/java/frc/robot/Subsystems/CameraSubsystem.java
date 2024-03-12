@@ -30,8 +30,11 @@ public class CameraSubsystem extends SubsystemBase {
   private static String shooterLimeLightName = "limelight-b";
   private static String shooterLimeLightHttp = "http://10.3.86.12";
 
-  private static String pickupLimeLightName = "limelight";
-  private static String pickupLimeLightHttp = "http://10.3.86.31";
+  private static String pickupLimeLightName = "limelight-c";
+  private static String pickupLimeLightHttp = "http://10.3.86.13";
+
+  ShuffleboardTab m_competitionTab = Shuffleboard.getTab("Competition Tab");
+  private ComplexWidget m_competitionCameraView;
 
   public CameraSubsystem() {
     // Creates UsbCamera and MjpegServer [1] and connects them\
@@ -43,6 +46,9 @@ public class CameraSubsystem extends SubsystemBase {
 
     m_cameraView = m_cameraTab.add(this.limeLightCamera).withWidget(BuiltInWidgets.kCameraStream).withPosition(3, 0)
         .withSize(6, 4);
+
+    m_competitionCameraView = m_competitionTab.add(this.limeLightCamera).withWidget(BuiltInWidgets.kCameraStream)
+        .withPosition(0, 0).withSize(5, 5);
 
     m_llTimeSinceUpdate.start();
   }

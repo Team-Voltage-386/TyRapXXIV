@@ -15,6 +15,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ID;
@@ -64,6 +67,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private SlewRateLimiter m_slewRateLimiter;
 
+    private ShuffleboardTab m_competitionTab;
+    private SimpleWidget m_competitionIsShooterOnEntry;
+    private SimpleWidget m_competitionThinksItShot;
+
     public ShooterSubsystem() {
         // init aim motor
         aimMotor = new CANSparkMax(ID.kShooterAimMotorID, MotorType.kBrushless);
@@ -101,6 +108,10 @@ public class ShooterSubsystem extends SubsystemBase {
         shootSpeed = Shooter.kShooterSpeed;
         shoot = false;
         m_slewRateLimiter = new SlewRateLimiter(20);
+
+        m_competitionTab = Shuffleboard.getTab("Competition Tab");
+        m_competitionThinksItShot = m_competitionTab.add("Thinks It Shot", false).withSize(2, 1).withPosition(7, 2);
+        m_competitionIsShooterOnEntry = m_competitionTab.add("Is Shooter On", false).withSize(2, 1).withPosition(7, 3);
     }
 
     /**
@@ -411,5 +422,8 @@ public class ShooterSubsystem extends SubsystemBase {
         // Math.toDegrees(m_aim.getVerticalAngleToSpeaker()));
         // SmartDashboard.putNumber("TY", LimelightHelpers.getTY("limelight-a"));
         // SmartDashboard.putNumber("dist speaker", m_aim.getDistToSpeaker());
+
+        m_competitionIsShooterOnEntry.getEntry().setBoolean(hasShotNote());
+        m_competitionIsShooterOnEntry.getEntry().setBoolean(shoot);
     }
 }

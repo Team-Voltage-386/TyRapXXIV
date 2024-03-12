@@ -31,6 +31,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     private SimpleWidget m_isUpperLimitTriggeredEntry;
     private SimpleWidget m_isLowerLimitTriggeredEntry;
 
+    private ShuffleboardTab m_competitionTab;
+    private SimpleWidget m_competitionIsUpperLimitTriggeredEntry;
+    private SimpleWidget m_competitionIsLowerLimitTriggeredEntry;
+
     private double lastVoltageSet;
 
     public ElevatorSubsystem() {
@@ -54,6 +58,12 @@ public class ElevatorSubsystem extends SubsystemBase {
                 .withPosition(0, 2);
         m_isLowerLimitTriggeredEntry = m_elevatorSubsystemTab.add("Is Lower Limit Triggered", false).withSize(2, 1)
                 .withPosition(0, 3);
+
+        m_competitionTab = Shuffleboard.getTab("Competition Tab");
+        m_competitionIsLowerLimitTriggeredEntry = m_competitionTab.add("Elevator Upper Limit", false).withSize(2, 1)
+                .withPosition(5, 0);
+        m_competitionIsUpperLimitTriggeredEntry = m_competitionTab.add("Elevator Lower Limit", false).withSize(2, 1)
+                .withPosition(5, 1);
     }
 
     public void setElevatorMotorsVoltage(double motorVoltage) {
@@ -73,6 +83,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         m_motorVoltageEntry.getEntry().setDouble(lastVoltageSet);
         m_isUpperLimitTriggeredEntry.getEntry().setBoolean(isUpperLimitTriggered());
         m_isLowerLimitTriggeredEntry.getEntry().setBoolean(isLowerLimitTriggered());
+
+        m_competitionIsLowerLimitTriggeredEntry.getEntry().setBoolean(isLowerLimitTriggered());
+        m_competitionIsLowerLimitTriggeredEntry.getEntry().setBoolean(isUpperLimitTriggered());
     }
 
     @Override
