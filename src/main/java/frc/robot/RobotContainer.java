@@ -44,6 +44,7 @@ import frc.robot.Commands.ElevatorDownCommand;
 import frc.robot.Commands.ElevatorUpCommand;
 import frc.robot.Commands.EndgameModeCommand;
 import frc.robot.Commands.ForceShooterUpCommand;
+import frc.robot.Commands.IntakeDownLEDCommand;
 import frc.robot.Commands.PieceObtainedAndAutoHasTargetLEDCommand;
 import frc.robot.Commands.PieceObtainedAndAutoReadyLEDCommand;
 import frc.robot.Commands.StopDrive;
@@ -292,7 +293,7 @@ public class RobotContainer {
     /* OVERRIDE CONTROLS END */
 
     Controller.kDriveController.rightTrigger(0.1).and(m_pickup.noPieceTrigger).and(endgameButtons.negate())
-        .whileTrue(m_pickup.runIntakeCommand())
+        .whileTrue(new ParallelCommandGroup(m_pickup.runIntakeCommand(), new IntakeDownLEDCommand(m_LedSubsystem)))
         .onFalse(m_pickup.disableIntakeCommand());
 
     // while the intake is down and we hold the left trigger, autoPickupNote

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.DoublePulseRumble;
+import frc.robot.Commands.IntakeDownLEDCommand;
 import frc.robot.Commands.PieceObtainedLEDCommand;
 import frc.robot.Commands.SinglePulseRumble;
 import frc.robot.Commands.TimerWaitCommand;
@@ -90,7 +91,7 @@ public class PickupOrchestrator extends SubsystemBase {
                                     }
                                 })));
 
-        AutoTrigger.and(noPieceTrigger).onTrue(runIntakeCommand());
+        AutoTrigger.and(noPieceTrigger).onTrue(runIntakeCommand().alongWith(new IntakeDownLEDCommand(ledSubsystem)));
 
         IntakeSensors = Shuffleboard.getTab("Intake");
 
