@@ -3,6 +3,7 @@ package frc.robot.Utils;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -189,7 +190,8 @@ public class Aimlock {
      *         negative
      */
     public double getGyroYaw() {
-        return m_swerve.getRoboPose2d().getRotation().getDegrees();
+        return new Rotation2d(Math.cos(m_swerve.getRoboPose2d().getRotation().getRadians()),
+                Math.sin(m_swerve.getRoboPose2d().getRotation().getRadians())).getDegrees();
         // -m_swerve.getGyroYawRotation2d().getDegrees();
     }
 
