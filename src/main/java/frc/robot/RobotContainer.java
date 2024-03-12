@@ -85,7 +85,7 @@ public class RobotContainer {
   public final LEDSubsystem m_LedSubsystem;
   private final PickupOrchestrator m_pickup;
 
-  private ShuffleboardTab mainTab;
+  private ShuffleboardTab m_competitionTab = Shuffleboard.getTab("Competition Tab");
 
   Command driveCommand;
 
@@ -108,8 +108,6 @@ public class RobotContainer {
     this.m_aim = new Aimlock(m_swerve, m_shooter);
     this.m_trapSubsystem = new TrapSubsystem(m_manipulatorRumbleSubsystem);
     this.m_elevatorSubsystem = new ElevatorSubsystem();
-
-    mainTab = Shuffleboard.getTab("main");
 
     m_swerve.setAim(m_aim);
     m_shooter.setAim(m_aim);
@@ -141,7 +139,7 @@ public class RobotContainer {
     configPathPlannerStuff();
     configureBindings();
     autoChooser.setDefaultOption("DO NOTHING!", "NO AUTO");
-    mainTab.add("Auto Chooser", autoChooser).withSize(3, 1).withPosition(4, 2);
+    m_competitionTab.add("Auto Chooser", autoChooser).withSize(2, 1).withPosition(5, 3);
   }
 
   /**

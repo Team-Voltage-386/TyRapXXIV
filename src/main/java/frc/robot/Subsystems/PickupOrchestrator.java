@@ -100,7 +100,7 @@ public class PickupOrchestrator extends SubsystemBase {
         HoldingPieceWidget = IntakeSensors.add("Loaded Piece", false);
 
         m_competitionTab = Shuffleboard.getTab("Competition Tab");
-        m_competitionLoadedPieceEntry = m_competitionTab.add("Loaded Piece", false).withSize(2, 1).withPosition(7, 0);
+        m_competitionLoadedPieceEntry = m_competitionTab.add("Loaded Piece", false).withSize(2, 1).withPosition(5, 3);
         m_competitionIntakeDownEntry = m_competitionTab.add("Intake Down", false).withSize(2, 1).withPosition(7, 1);
     }
 
