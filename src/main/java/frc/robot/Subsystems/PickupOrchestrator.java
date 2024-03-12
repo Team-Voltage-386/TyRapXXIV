@@ -43,6 +43,12 @@ public class PickupOrchestrator extends SubsystemBase {
     SimpleWidget HoldingPieceWidget;
     SimpleWidget rightHoodSensorWidget;
 
+    ShuffleboardTab m_competitionTab;
+    SimpleWidget m_competitionLoadedPieceEntry;
+    SimpleWidget m_competitionIntakeDownEntry;
+
+    private boolean isIntakeDown = false;
+
     public PickupOrchestrator(PneumaticsSubsystem pneumatics, PickupMotorsSubsystem pickupMotors,
             FeederMotorSubsystem feederMotor, RumbleSubsystem driveRumble, LEDSubsystem ledSubsystem) {
         m_LEDSubsystem = ledSubsystem;
@@ -91,17 +97,22 @@ public class PickupOrchestrator extends SubsystemBase {
         leftHoodSensorWidget = IntakeSensors.add("Left Hood Sensors", false);
         rightHoodSensorWidget = IntakeSensors.add("Right Hood Sensors", false);
         HoldingPieceWidget = IntakeSensors.add("Loaded Piece", false);
+
+        m_competitionTab = Shuffleboard.getTab("Competition Tab");
+        m_competitionLoadedPieceEntry = m_competitionTab.add("Loaded Piece", false).withSize(2, 1).withPosition(7, 0);
+        m_competitionIntakeDownEntry = m_competitionTab.add("Intake Down", false).withSize(2, 1).withPosition(7, 1);
     }
 
     public ParallelCommandGroup runIntakeCommand() {
         return new ParallelCommandGroup(Commands.runOnce(() -> Aimlock.setNoteVision(true)),
-                m_pneumatics.enableIntakeSolenoidCommand(),
+                m_pneumatics.enableIntakeSolenoidCommand(), Commands.runOnce(() -> isIntakeDown = true),
                 m_pickupMotors.runMotorsCommand(), m_FeederMotor.runFeederMotorToLoadCommand());
     }
 
     public Command disableIntakeCommand() {
         return new SequentialCommandGroup(Commands.runOnce(() -> Aimlock.setNoteVision(false)),
                 new TimerWaitCommand(0.25), m_pneumatics.disableIntakeSolenoidCommand(),
+                Commands.runOnce(() -> isIntakeDown = false),
                 m_pickupMotors.runMotorsSlowCommand())
                 .withName("DISABLE_INTAKE_COMMAND");
     }
@@ -119,5 +130,8 @@ public class PickupOrchestrator extends SubsystemBase {
         rightHoodSensorWidget.getEntry().setBoolean(rightHoodSensor.get());
         leftHoodSensorWidget.getEntry().setBoolean(leftHoodSensor.get());
         HoldingPieceWidget.getEntry().setBoolean(Flags.pieceState.equals(subsystemsStates.loadedPiece));
+
+        m_competitionLoadedPieceEntry.getEntry().setBoolean(Flags.pieceState.equals(subsystemsStates.loadedPiece));
+        m_competitionIntakeDownEntry.getEntry().setBoolean(isIntakeDown);
     }
 }

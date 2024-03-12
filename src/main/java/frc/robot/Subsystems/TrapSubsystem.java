@@ -52,6 +52,12 @@ public class TrapSubsystem extends SubsystemBase {
     private SimpleWidget m_isLimitTriggeredEntry;
     private SimpleWidget m_trapCounterEntry;
 
+    private ShuffleboardTab m_competitionTab;
+    private SimpleWidget m_competitionTrapHeightEntry;
+
+    private ShuffleboardTab m_competitionTab;
+    private SimpleWidget m_competitionTrapHeightEntry;
+
     public TrapSubsystem(RumbleSubsystem manipRumble) {
         m_manipRumble = manipRumble;
         m_trapExtendMotor = new TalonSRX(kTrapExtendMotorID);
@@ -63,6 +69,10 @@ public class TrapSubsystem extends SubsystemBase {
         m_motorPercentageEntry = m_trapSubsystemTab.add("Extend Motor Current", 0.0);
         m_isLimitTriggeredEntry = m_trapSubsystemTab.add("Is Limit Triggered?", false);
         m_trapCounterEntry = m_trapSubsystemTab.add("Trap Counter", 0);
+
+        m_competitionTab = Shuffleboard.getTab("Competition Tab");
+        m_competitionTrapHeightEntry = m_competitionTab.add("Trap Max Extend", false).withSize(2, 1).withPosition(5,
+                2);
 
         // This trigger handles the logic behind the trapCounter and the tape sensor.
         // Using the trigger allows you to single out of the edge of detection: when you
@@ -149,6 +159,8 @@ public class TrapSubsystem extends SubsystemBase {
         m_motorPercentageEntry.getEntry().setDouble(getExtendMotorCurrent());
         m_isLimitTriggeredEntry.getEntry().setBoolean(isLimitTriggered());
         m_trapCounterEntry.getEntry().setInteger(trapCounter);
+
+        m_competitionTrapHeightEntry.getEntry().setBoolean(trapCounter == 2);
     }
 
 }
