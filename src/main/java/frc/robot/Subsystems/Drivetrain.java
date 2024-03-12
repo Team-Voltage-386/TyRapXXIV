@@ -16,6 +16,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -172,8 +173,16 @@ public class Drivetrain extends SubsystemBase {
         if (Aimlock.hasTarget() && lockTargetInAuto) {
             // Return an optional containing the rotation override (this should be a field
             // relative rotation)
+            Rotation2d rot;
+            if (DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue1)
+                    || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue2)
+                    || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue3)) {
+                rot = Rotation2d.fromRadians(m_aim.getSpeakerAimTargetAngle());
+            } else {
+                rot = Rotation2d.fromRadians(m_aim.getSpeakerAimTargetAngle() - Math.PI);
+            }
             SmartDashboard.putBoolean("yeah we are aimed", true);
-            return Optional.of(Rotation2d.fromRadians(m_aim.getSpeakerAimTargetAngle()));
+            return Optional.of(rot);
         } else {
             SmartDashboard.putBoolean("yeah we are aimed", false);
             // return an empty optional when we don't want to override the path's rotation
@@ -470,11 +479,9 @@ public class Drivetrain extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Chassis Angle",
-                getRoboPose2d().getRotation().getDegrees());
-        SmartDashboard.putNumber("Chassis Angle Gyro",
-                m_gyro.getYaw().getValueAsDouble());
+                m_aim.getGyroYaw());
         SmartDashboard.putNumber("Desired Angle",
-                Math.toDegrees(-m_aim.getSpeakerAimTargetAngle()));
+                Math.toDegrees(m_aim.getSpeakerAimTargetAngle()));
         SmartDashboard.putNumber("Ang to Speak", m_aim.getAngleToSpeaker());
         // SmartDashboard.putNumber("X speed", getChassisSpeeds().vxMetersPerSecond);
         // SmartDashboard.putNumber("Y speed", getChassisSpeeds().vyMetersPerSecond);

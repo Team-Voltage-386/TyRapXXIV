@@ -1,11 +1,13 @@
 package frc.robot.Utils;
 
+import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.PipeLineID;
 import frc.robot.Constants.Shooter;
@@ -190,9 +192,18 @@ public class Aimlock {
      *         negative
      */
     public double getGyroYaw() {
-        return new Rotation2d(Math.cos(m_swerve.getRoboPose2d().getRotation().getRadians()),
-                Math.sin(m_swerve.getRoboPose2d().getRotation().getRadians())).getDegrees();
-        // -m_swerve.getGyroYawRotation2d().getDegrees();
+        // return -m_swerve.getGyroYawRotation2d().getDegrees();
+        // return new
+        // Rotation2d(Math.cos(m_swerve.getRoboPose2d().getRotation().getRadians()),
+        // Math.sin(m_swerve.getRoboPose2d().getRotation().getRadians())).getDegrees();
+        // return m_swerve.getRoboPose2d().getRotation().ge tDegrees();
+        if (DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue1)
+                || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue2)
+                || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue3)) {
+            return MathUtil.inputModulus(m_swerve.getRoboPose2d().getRotation().getDegrees(), -180, 180);
+        } else {
+            return MathUtil.inputModulus(m_swerve.getRoboPose2d().getRotation().getDegrees() + 180, -180, 180);
+        }
     }
 
     /**
