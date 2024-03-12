@@ -71,7 +71,7 @@ public class Robot extends TimedRobot {
         m_containter.getDrivetrain().setFieldRelative(true);
         Aimlock.setDoState(Aimlock.DoState.SPEAKER);
         m_containter.getShooter().setAimToBreakMode();
-        m_containter.setTeleDefaultCommand();   
+        m_containter.setTeleDefaultCommand();
         Flags.buttonMapMode = Flags.buttonMapStates.notEndgameMode;
     }
 
@@ -97,11 +97,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
+        m_containter.getLedSubsystem().getClimbLimitSwitchtriggeredLEDCOmmand().schedule();
     }
 
     @Override
     public void testExit() {
-
+        m_containter.getLedSubsystem().getClimbLimitSwitchtriggeredLEDCOmmand().cancel();
     }
 
 }

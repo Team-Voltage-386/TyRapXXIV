@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Commands.AutoReadyLEDCommand;
+import frc.robot.Commands.ClimbLimitSwitchTriggeredLEDCOmmand;
 import frc.robot.Commands.EndgameModeCommand;
 import frc.robot.Commands.PieceObtainedAndAutoHasTargetLEDCommand;
 import frc.robot.Commands.PieceObtainedAndAutoReadyLEDCommand;
@@ -29,6 +30,7 @@ public class LEDSubsystem extends SubsystemBase {
     private TargetAquiredLEDCommand m_TargetAquiredLEDCommand;
     private PieceObtainedAndAutoHasTargetLEDCommand m_PieceObtainedAndAutoHasTargetLEDCommand;
     private PieceObtainedAndAutoReadyLEDCommand m_PieceObtainedAndAutoReadyLEDCommand;
+    private ClimbLimitSwitchTriggeredLEDCOmmand m_ClimbLimitSwitchTriggeredLEDCOmmand;
 
     public LEDSubsystem() { // Constructor
         m_led.setLength(m_ledBuffer.getLength());
@@ -40,6 +42,7 @@ public class LEDSubsystem extends SubsystemBase {
         m_TargetAquiredLEDCommand = new TargetAquiredLEDCommand(this);
         m_PieceObtainedAndAutoHasTargetLEDCommand = new PieceObtainedAndAutoHasTargetLEDCommand(this);
         m_PieceObtainedAndAutoReadyLEDCommand = new PieceObtainedAndAutoReadyLEDCommand(this);
+        m_ClimbLimitSwitchTriggeredLEDCOmmand = new ClimbLimitSwitchTriggeredLEDCOmmand(this);
     }
 
     public void updateLEDs() { // Updates the LEDs
@@ -112,6 +115,10 @@ public class LEDSubsystem extends SubsystemBase {
 
     public Command getPieceObtainedAndAutoReadyCommand() {
         return this.m_PieceObtainedAndAutoReadyLEDCommand;
+    }
+
+    public Command getClimbLimitSwitchtriggeredLEDCOmmand() {
+        return this.m_ClimbLimitSwitchTriggeredLEDCOmmand;
     }
 
     public void setLedColor(int index, int r, int g, int b) {
