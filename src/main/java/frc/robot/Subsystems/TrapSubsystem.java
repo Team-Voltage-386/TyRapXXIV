@@ -55,9 +55,6 @@ public class TrapSubsystem extends SubsystemBase {
     private ShuffleboardTab m_competitionTab;
     private SimpleWidget m_competitionTrapHeightEntry;
 
-    private ShuffleboardTab m_competitionTab;
-    private SimpleWidget m_competitionTrapHeightEntry;
-
     public TrapSubsystem(RumbleSubsystem manipRumble) {
         m_manipRumble = manipRumble;
         m_trapExtendMotor = new TalonSRX(kTrapExtendMotorID);
