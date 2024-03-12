@@ -139,7 +139,7 @@ public class RobotContainer {
     configPathPlannerStuff();
     configureBindings();
     autoChooser.setDefaultOption("DO NOTHING!", "NO AUTO");
-    m_competitionTab.add("Auto Chooser", autoChooser).withSize(2, 1).withPosition(5, 3);
+    m_competitionTab.add("Auto Chooser", autoChooser).withSize(2, 1).withPosition(7, 0);
   }
 
   /**
