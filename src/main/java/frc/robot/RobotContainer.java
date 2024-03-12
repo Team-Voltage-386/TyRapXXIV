@@ -208,10 +208,10 @@ public class RobotContainer {
         .whileTrue(new TrapManualInCommand(m_trapSubsystem));
 
     Controller.kManipulatorController.rightBumper().and(endgameButtons)
-        .whileTrue(new ElevatorUpCommand(m_elevatorSubsystem, m_manipulatorRumbleSubsystem));
+        .whileTrue(new ElevatorUpCommand(m_elevatorSubsystem, m_manipulatorRumbleSubsystem, m_LedSubsystem));
 
     Controller.kManipulatorController.leftBumper().and(endgameButtons)
-        .whileTrue(new ElevatorDownCommand(m_elevatorSubsystem, m_manipulatorRumbleSubsystem));
+        .whileTrue(new ElevatorDownCommand(m_elevatorSubsystem, m_manipulatorRumbleSubsystem, m_LedSubsystem));
 
     Controller.kManipulatorController.start().and(endgameButtons)
         .onTrue(m_pneumatics.disableLegSolenoidCommand());
