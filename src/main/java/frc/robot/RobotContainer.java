@@ -107,7 +107,7 @@ public class RobotContainer {
     this.m_shooter = new ShooterSubsystem();
     this.m_aim = new Aimlock(m_swerve, m_shooter);
     this.m_trapSubsystem = new TrapSubsystem(m_manipulatorRumbleSubsystem);
-    this.m_elevatorSubsystem = new ElevatorSubsystem();
+    this.m_elevatorSubsystem = new ElevatorSubsystem(m_LedSubsystem, m_manipulatorRumbleSubsystem);
 
     m_swerve.setAim(m_aim);
     m_shooter.setAim(m_aim);
@@ -245,6 +245,8 @@ public class RobotContainer {
         .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.AMP)));
     Controller.kManipulatorController.start().and(endgameButtons.negate())
         .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.SPEAKER)));
+    Controller.kManipulatorController.leftTrigger(0.1).and(endgameButtons.negate())
+        .onTrue(Commands.runOnce(() -> Aimlock.setDoState(Aimlock.DoState.PASS)));
 
     /* OVERRIDE CONTROLS BEGIN */
 
@@ -341,6 +343,7 @@ public class RobotContainer {
     autoChooser.addOption("Shoot & Do Nothing", "shoot and do nothing");
     autoChooser.addOption("Race Auto", "race auto B");
     autoChooser.addOption("4 pce Race Auto", "4pce race auto B");
+    autoChooser.addOption("Robonaut Race", "Robonaut Race");
 
     // auto1.setName("AUTO1");
 

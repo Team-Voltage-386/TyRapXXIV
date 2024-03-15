@@ -20,18 +20,6 @@
         {
           "type": "named",
           "data": {
-            "name": "Dont Shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "I SHOT."
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "Lock Target in Auto"
           }
         },

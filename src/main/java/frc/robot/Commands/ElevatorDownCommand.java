@@ -37,7 +37,7 @@ public class ElevatorDownCommand extends Command {
     public void end(boolean interrupted) {
         m_subsystem.setElevatorMotorsVoltage(-0.15);
         if (m_subsystem.isLowerLimitTriggered()) {
-            (new SinglePulseRumble(m_manipRumble, 0.5, 0.3)).schedule();
+            (new SinglePulseRumble(m_manipRumble, 1, 0.3)).schedule();
             (new ClimbLimitLEDCommand(m_LedSubsystem)).schedule();
         }
         // May need to sometimes leave it at a certain voltage if we aren't planning to

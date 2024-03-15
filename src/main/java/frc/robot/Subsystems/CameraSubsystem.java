@@ -44,8 +44,10 @@ public class CameraSubsystem extends SubsystemBase {
     this.server = CameraServer.getServer();
     this.server.setSource(this.limeLightCamera);
 
-    m_cameraView = m_cameraTab.add(this.limeLightCamera).withWidget(BuiltInWidgets.kCameraStream).withPosition(3, 0)
-        .withSize(6, 4);
+    // m_cameraView =
+    // m_cameraTab.add(this.limeLightCamera).withWidget(BuiltInWidgets.kCameraStream).withPosition(3,
+    // 0)
+    // .withSize(6, 4);
 
     m_competitionCameraView = m_competitionTab.add(this.limeLightCamera).withWidget(BuiltInWidgets.kCameraStream)
         .withPosition(0, 0).withSize(5, 4);

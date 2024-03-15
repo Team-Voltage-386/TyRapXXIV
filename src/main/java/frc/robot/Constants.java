@@ -62,6 +62,7 @@ public class Constants {
 
     public static class Shooter {
         public static final double kShooterSpeed = 18;
+        public static final double kPassingShooterSpeed = 11;
         /** the lower the drag coefficient, the lower the drag */
         public static final double kDragCoefficient = 0.33;
         public static final double kFallingDragCoefficient = 0.0;
@@ -70,6 +71,7 @@ public class Constants {
         public static final double kMaxAngle = 20;
         public static final double kMinAngle = 0;
         public static final double kRollerRPM = 500;
+        public static final double kPassAngle = 9;
     }
 
     public static class DriveTrain {

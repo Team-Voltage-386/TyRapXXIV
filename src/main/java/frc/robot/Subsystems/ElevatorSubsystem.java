@@ -10,6 +10,9 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Commands.ClimbLimitLEDCommand;
+import frc.robot.Commands.DoublePulseRumble;
+import frc.robot.Commands.SinglePulseRumble;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
@@ -18,11 +21,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     private int kElevatorMotor2ID = 21;
     private int kElevatorUpperLimitDIOChannel = 4;
     private int kElevatorLowerLimitDIOChannel = 5;
+    private int kElevatorHandoffLimitDIOChannel = 2;
 
     // magnetic sensor
     private DigitalInput m_elevatorUpperLimit;
     // limit switch
     private DigitalInput m_elevatorLowerLimit;
+    // limit switch for handoff
+    private DigitalInput m_elevatorHandoffLimit;
 
     private CANSparkMax m_elevatorMotor1;
     private CANSparkMax m_elevatorMotor2;
@@ -35,15 +41,23 @@ public class ElevatorSubsystem extends SubsystemBase {
     private ShuffleboardTab m_competitionTab;
     private SimpleWidget m_competitionIsUpperLimitTriggeredEntry;
     private SimpleWidget m_competitionIsLowerLimitTriggeredEntry;
+    private SimpleWidget m_competitionElevatorHandoffTriggeredEntry;
 
     private double lastVoltageSet;
 
-    public ElevatorSubsystem() {
+    LEDSubsystem m_LedSubsystem;
+    RumbleSubsystem m_manipulatorRumble;
+
+    public ElevatorSubsystem(LEDSubsystem ledSubsystem, RumbleSubsystem manipRumble) {
+        m_LedSubsystem = ledSubsystem;
+        m_manipulatorRumble = manipRumble;
+
         m_elevatorMotor1 = new CANSparkMax(kElevatorMotor1ID, MotorType.kBrushless);
         m_elevatorMotor2 = new CANSparkMax(kElevatorMotor2ID, MotorType.kBrushless);
 
         m_elevatorUpperLimit = new DigitalInput(kElevatorUpperLimitDIOChannel);
         m_elevatorLowerLimit = new DigitalInput(kElevatorLowerLimitDIOChannel);
+        m_elevatorHandoffLimit = new DigitalInput(kElevatorHandoffLimitDIOChannel);
 
         m_elevatorMotor1.setInverted(true);
         m_elevatorMotor2.setInverted(false); // It's following Motor1 anyways
@@ -65,6 +79,8 @@ public class ElevatorSubsystem extends SubsystemBase {
                 .withPosition(5, 0);
         m_competitionIsUpperLimitTriggeredEntry = m_competitionTab.add("Elevator Lower Limit", false).withSize(2, 1)
                 .withPosition(5, 1);
+        m_competitionElevatorHandoffTriggeredEntry = m_competitionTab.add("Elevator Handoff", false).withSize(2, 1)
+                .withPosition(5, 2);
     }
 
     public void setElevatorMotorsVoltage(double motorVoltage) {
@@ -80,6 +96,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         return !m_elevatorLowerLimit.get(); // need to reverse becuase DIO returns backwards
     }
 
+    public boolean isHandoffLimitTriggered() {
+        return !m_elevatorHandoffLimit.get();
+    }
+
     public void updateShuffleboardWidgets() {
         m_motorVoltageEntry.getEntry().setDouble(lastVoltageSet);
         m_isUpperLimitTriggeredEntry.getEntry().setBoolean(isUpperLimitTriggered());
@@ -87,11 +107,16 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         m_competitionIsLowerLimitTriggeredEntry.getEntry().setBoolean(isLowerLimitTriggered());
         m_competitionIsLowerLimitTriggeredEntry.getEntry().setBoolean(isUpperLimitTriggered());
+        m_competitionElevatorHandoffTriggeredEntry.getEntry().setBoolean(isHandoffLimitTriggered());
     }
 
     @Override
     public void periodic() {
         updateShuffleboardWidgets();
+        if (isHandoffLimitTriggered()) {
+            (new ClimbLimitLEDCommand(m_LedSubsystem)).schedule();
+            (new DoublePulseRumble((new SinglePulseRumble(m_manipulatorRumble, 1.0, 0.5)), 0.25)).schedule();
+        }
     }
 
 }

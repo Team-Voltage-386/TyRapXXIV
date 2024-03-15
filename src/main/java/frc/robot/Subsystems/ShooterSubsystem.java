@@ -97,7 +97,7 @@ public class ShooterSubsystem extends SubsystemBase {
         bottomShooterMotor.setInverted(true);
         // bottomShooterMotor.follow(topShooterMotor, false);
         m_botShootPID = new ProfiledPIDController(0.0, 0, 0.0, new Constraints(10, 10));
-        m_botShootFF = new SimpleMotorFeedforward(0.0, 0.35);
+        m_botShootFF = new SimpleMotorFeedforward(0.0, 0.4);
 
         m_topShootPID = new ProfiledPIDController(0.0, 0, 0.0, new Constraints(10, 10));
         m_topShootFF = new SimpleMotorFeedforward(0.0, 0.52);
@@ -261,6 +261,18 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     /**
+     * run the shooter with the required velocities to consistently score in the amp
+     */
+    public void runShooterPassMode() {
+        topShooterMotor.setVoltage(
+                m_topShootFF.calculate(Shooter.kPassingShooterSpeed)
+                        + m_topShootPID.calculate(getTopShooterMPS(), Shooter.kPassingShooterSpeed));
+        bottomShooterMotor.setVoltage(
+                m_botShootFF.calculate(Shooter.kPassingShooterSpeed)
+                        + m_botShootPID.calculate(getBottomShooterMPS(), Shooter.kPassingShooterSpeed));
+    }
+
+    /**
      * set motors spinning at their desired rpms
      */
     public void spoolMotors() {
@@ -278,6 +290,15 @@ public class ShooterSubsystem extends SubsystemBase {
                 if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)
                         || DriverStation.isAutonomousEnabled()) {
                     runShooterAmpMode();
+                } else {
+                    topShooterMotor.setVoltage(0);
+                    bottomShooterMotor.setVoltage(0);
+                }
+                break;
+            case PASS:
+                if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece)
+                        || DriverStation.isAutonomousEnabled()) {
+                    runShooterPassMode();
                 } else {
                     topShooterMotor.setVoltage(0);
                     bottomShooterMotor.setVoltage(0);

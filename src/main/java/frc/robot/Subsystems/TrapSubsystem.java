@@ -67,9 +67,9 @@ public class TrapSubsystem extends SubsystemBase {
         m_isLimitTriggeredEntry = m_trapSubsystemTab.add("Is Limit Triggered?", false);
         m_trapCounterEntry = m_trapSubsystemTab.add("Trap Counter", 0);
 
-        m_competitionTab = Shuffleboard.getTab("Competition Tab");
-        m_competitionTrapHeightEntry = m_competitionTab.add("Trap Max Extend", false).withSize(2, 1).withPosition(5,
-                2);
+        // m_competitionTab = Shuffleboard.getTab("Competition Tab");
+        // m_competitionTrapHeightEntry = m_competitionTab.add("Trap Max Extend", false).withSize(2, 1).withPosition(5,
+        //         2);
 
         // This trigger handles the logic behind the trapCounter and the tape sensor.
         // Using the trigger allows you to single out of the edge of detection: when you
@@ -157,7 +157,7 @@ public class TrapSubsystem extends SubsystemBase {
         m_isLimitTriggeredEntry.getEntry().setBoolean(isLimitTriggered());
         m_trapCounterEntry.getEntry().setInteger(trapCounter);
 
-        m_competitionTrapHeightEntry.getEntry().setBoolean(trapCounter == 2);
+        // m_competitionTrapHeightEntry.getEntry().setBoolean(trapCounter == 2);
     }
 
 }

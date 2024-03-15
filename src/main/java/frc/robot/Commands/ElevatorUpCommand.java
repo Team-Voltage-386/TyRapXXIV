@@ -39,7 +39,7 @@ public class ElevatorUpCommand extends Command {
     public void end(boolean interrupted) {
         m_subsystem.setElevatorMotorsVoltage(0.0);
         if (m_subsystem.isUpperLimitTriggered()) {
-            (new SinglePulseRumble(m_manipRumble, 0.5, 0.3)).schedule();
+            (new SinglePulseRumble(m_manipRumble, 1, 0.3)).schedule();
             (new ClimbLimitLEDCommand(m_LedSubsystem)).schedule();
         }
     }

@@ -181,10 +181,10 @@ public class Drivetrain extends SubsystemBase {
             } else {
                 rot = Rotation2d.fromRadians(m_aim.getSpeakerAimTargetAngle() - Math.PI);
             }
-            SmartDashboard.putBoolean("yeah we are aimed", true);
+            SmartDashboard.putBoolean("aimed", true);
             return Optional.of(rot);
         } else {
-            SmartDashboard.putBoolean("yeah we are aimed", false);
+            SmartDashboard.putBoolean("aimed", false);
             // return an empty optional when we don't want to override the path's rotation
             return Optional.empty();
         }

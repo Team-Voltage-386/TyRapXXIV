@@ -43,7 +43,7 @@
   "constraintZones": [
     {
       "name": "shoot zone",
-      "minWaypointRelativePos": 0.25,
+      "minWaypointRelativePos": 0.2,
       "maxWaypointRelativePos": 0.7,
       "constraints": {
         "maxVelocity": 0.8,
@@ -67,7 +67,7 @@
   "eventMarkers": [
     {
       "name": "shoot",
-      "waypointRelativePos": 0.25,
+      "waypointRelativePos": 0.2,
       "command": {
         "type": "parallel",
         "data": {

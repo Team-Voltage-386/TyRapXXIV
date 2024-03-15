@@ -76,6 +76,29 @@
           ]
         }
       }
+    },
+    {
+      "name": "i shot",
+      "waypointRelativePos": 0.5,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Dont Shoot"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "I SHOT."
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "globalConstraints": {
