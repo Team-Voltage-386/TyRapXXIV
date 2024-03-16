@@ -25,7 +25,7 @@ public class ForceShooterUpCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.m_subsystem.aimShooter(20);
+    m_subsystem.driveHoodManually(3);
   }
 
   // Called once the command ends or is interrupted.

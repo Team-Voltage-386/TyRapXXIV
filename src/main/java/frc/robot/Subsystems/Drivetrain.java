@@ -207,15 +207,28 @@ public class Drivetrain extends SubsystemBase {
      * Resets Orientation of the robot
      */
     public void resetGyro() {
+        // if (DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue1)
+        // || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue2)
+        // || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue3)) {
         m_gyro.setYaw(0);
+        // } else {
+        // m_gyro.setYaw(180);
     }
 
     /**
      * Resets robot position on the field
      */
     public void resetOdo() {
-        m_odometry.resetPosition(getGyroYawRotation2d(), getModulePositions(),
-                new Pose2d(new Translation2d(3, 7), new Rotation2d()));
+        if (DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue1)
+                || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue2)
+                || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue3)) {
+            m_odometry.resetPosition(getGyroYawRotation2d(), getModulePositions(),
+                    new Pose2d(new Translation2d(getRoboPose2d().getX(), getRoboPose2d().getY()), new Rotation2d()));
+        } else {
+            m_odometry.resetPosition(getGyroYawRotation2d(), getModulePositions(),
+                    new Pose2d(new Translation2d(getRoboPose2d().getX(), getRoboPose2d().getY()),
+                            new Rotation2d(Math.PI)));
+        }
     }
 
     /**

@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Commands.ClimbLimitLEDCommand;
@@ -48,6 +50,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     LEDSubsystem m_LedSubsystem;
     RumbleSubsystem m_manipulatorRumble;
 
+    Trigger middleMagTrigger;
+
     public ElevatorSubsystem(LEDSubsystem ledSubsystem, RumbleSubsystem manipRumble) {
         m_LedSubsystem = ledSubsystem;
         m_manipulatorRumble = manipRumble;
@@ -81,6 +85,10 @@ public class ElevatorSubsystem extends SubsystemBase {
                 .withPosition(5, 1);
         m_competitionElevatorHandoffTriggeredEntry = m_competitionTab.add("Elevator Handoff", false).withSize(2, 1)
                 .withPosition(5, 2);
+
+        middleMagTrigger = new Trigger(() -> this.isHandoffLimitTriggered());
+        middleMagTrigger.onTrue(
+                new SinglePulseRumble(m_manipulatorRumble, 1.0, 0.5));
     }
 
     public void setElevatorMotorsVoltage(double motorVoltage) {
@@ -113,10 +121,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         updateShuffleboardWidgets();
-        if (isHandoffLimitTriggered()) {
-            (new ClimbLimitLEDCommand(m_LedSubsystem)).schedule();
-            (new DoublePulseRumble((new SinglePulseRumble(m_manipulatorRumble, 1.0, 0.5)), 0.25)).schedule();
-        }
     }
 
 }
