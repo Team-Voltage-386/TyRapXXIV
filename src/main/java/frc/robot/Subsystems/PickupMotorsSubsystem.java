@@ -12,7 +12,7 @@ import frc.robot.Constants.ID;
 
 public class PickupMotorsSubsystem extends SubsystemBase {
 
-    double goalRPM = 600;
+    double goalRPM = 750;
 
     // CANSparkMax frontIntakeMotor;
     CANSparkMax backIntakeMotor;

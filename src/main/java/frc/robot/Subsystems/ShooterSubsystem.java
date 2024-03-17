@@ -112,6 +112,10 @@ public class ShooterSubsystem extends SubsystemBase {
         m_competitionIsShooterOnEntry = m_competitionTab.add("Is Shooter On", false).withSize(2, 1).withPosition(7, 3);
     }
 
+    public CANSparkMax getAimMotor() {
+        return aimMotor;
+    }
+
     /**
      * sets the aim motor to break mode. call this whenever the robot is enabled
      * (autoinit, teleopinit) so the hood stays where it is even while not being

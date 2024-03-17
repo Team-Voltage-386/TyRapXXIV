@@ -84,6 +84,12 @@
               "data": {
                 "name": "Dont Lock Target in Auto"
               }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "I SHOT."
+              }
             }
           ]
         }
