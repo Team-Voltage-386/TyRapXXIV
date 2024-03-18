@@ -17,6 +17,7 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.hal.AllianceStationID;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -240,6 +241,11 @@ public class Drivetrain extends SubsystemBase {
         if (pose != null) {
             m_odometry.resetPosition(getGyroYawRotation2d(), getModulePositions(), pose);
         }
+    }
+
+    public void fixOdo() {
+        resetOdo(new Pose2d(getRoboPose2d().getX(), getRoboPose2d().getY(),
+                Rotation2d.fromDegrees(MathUtil.inputModulus(m_gyro.getYaw().getValueAsDouble(), -180, 180))));
     }
 
     public ChassisSpeeds getChassisSpeeds() {
@@ -492,7 +498,7 @@ public class Drivetrain extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Chassis Angle",
-                m_aim.getGyroYaw());
+                m_aim.getSwerveYaw());
         SmartDashboard.putNumber("Desired Angle",
                 Math.toDegrees(m_aim.getSpeakerAimTargetAngle()));
         SmartDashboard.putNumber("Ang to Speak", m_aim.getAngleToSpeaker());

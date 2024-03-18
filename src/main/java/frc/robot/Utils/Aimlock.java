@@ -183,18 +183,18 @@ public class Aimlock {
      * @return degrees to the target, right is -, left is +
      */
     public double getLLFRAngleToTarget() {
-        double angle = getGyroYaw() - LimelightHelpers.getTX(limelightName);
+        double angle = getSwerveYaw() - LimelightHelpers.getTX(limelightName);
         if (hasTarget())
             return angle;
         else
-            return getGyroYaw();
+            return getSwerveYaw();
     }
 
     /**
      * @return returns rotation like wpi likes it, left is positive right is
      *         negative
      */
-    public double getGyroYaw() {
+    public double getSwerveYaw() {
         // return -m_swerve.getGyroYawRotation2d().getDegrees();
         // return new
         // Rotation2d(Math.cos(m_swerve.getRoboPose2d().getRotation().getRadians()),
@@ -223,8 +223,8 @@ public class Aimlock {
             return -RRaimFF.calculate(Math.toRadians(getLLAngleToTarget()))
                     + RRaimPID.calculate(Math.toRadians(getLLAngleToTarget()));
         } else {
-            return (aimFF.calculate(getSpeakerAimTargetAngle() - Math.toRadians(getGyroYaw()))
-                    + aimPID.calculate(Math.toRadians(getGyroYaw()), getSpeakerAimTargetAngle()))
+            return (aimFF.calculate(getSpeakerAimTargetAngle() - Math.toRadians(getSwerveYaw()))
+                    + aimPID.calculate(Math.toRadians(getSwerveYaw()), getSpeakerAimTargetAngle()))
                     / 3; // if you remove the /3 the earth will explode
         }
     }

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -396,7 +397,9 @@ public class RobotContainer {
 
   public void setTeleDefaultCommand() {
     if (this.m_swerve.getDefaultCommand() == null) {
-      this.m_swerve.setDefaultCommand(driveCommand);
+      this.m_swerve.setDefaultCommand(new ParallelCommandGroup(driveCommand,
+          new RepeatCommand(new SequentialCommandGroup(new TimerWaitCommand(3), Commands.runOnce(m_swerve::fixOdo)))));
+      // every 5 seconds fix the odometry
     }
     if (this.m_shooter.getDefaultCommand() == null) {
       this.m_shooter.setDefaultCommand(new aimShooterCommand(m_shooter));
