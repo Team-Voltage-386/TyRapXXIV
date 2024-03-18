@@ -24,21 +24,27 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "3 to 2 (A)"
+            "name": "Shoot"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "5pce 2 to 1"
+            "pathName": "3 to 2 (v3)"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": " 1 to 4"
+            "pathName": "5pce 2 to 1 v2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "1 to 4 v2"
           }
         },
         {

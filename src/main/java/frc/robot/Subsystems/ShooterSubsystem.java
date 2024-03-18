@@ -317,22 +317,6 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     // time, velo, accel
-    double previousTopMotorData[] = { Timer.getFPGATimestamp(), 0, 0 };
-
-    /**
-     * @return returns acceleration of bottom motor
-     */
-    public void updateTopShooterAcceleration() {
-        double[] now = { Timer.getFPGATimestamp(), getTopShooterMPS(), 0 };
-        if (now[1] != previousTopMotorData[1]) {
-            double accel = (now[1] - previousTopMotorData[1]) / (now[0] -
-                    previousTopMotorData[0]);
-            now[2] = m_slewRateLimiter.calculate(accel);
-            previousTopMotorData = now;
-        }
-    }
-
-    // time, velo, accel
     double previousBottomMotorData[] = { Timer.getFPGATimestamp(), 0, 0 };
 
     /**
@@ -352,7 +336,21 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return returns if we have shot the note
      */
     public boolean hasShotNote() {
-        if (shoot && (previousBottomMotorData[2] < -0.5)) {
+        if (((Aimlock.getDoState().equals(DoState.SPEAKER) && shoot && (previousBottomMotorData[2] < -1))
+                || (Aimlock.getDoState().equals(DoState.AMP) && shoot && (previousBottomMotorData[2] < -0.5)))
+                && !DriverStation.isAutonomousEnabled()) {
+            return true;
+        } else
+            return false;
+    }
+
+    /**
+     * @return returns if we have shot the note
+     */
+    public boolean hasShotNoteInAuto() {
+        if (((Aimlock.getDoState().equals(DoState.SPEAKER) && shoot && (previousBottomMotorData[2] < -1))
+                || (Aimlock.getDoState().equals(DoState.AMP) && shoot && (previousBottomMotorData[2] < -0.5)))
+                && DriverStation.isAutonomousEnabled()) {
             return true;
         } else
             return false;
@@ -417,7 +415,6 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         updateBottomShooterAcceleration();
-        updateTopShooterAcceleration();
         // aimShooter(m_aim.getShooterTargetAngle());
         spoolMotors();
         SmartDashboard.putNumber("Shooter angle (real)", getShooterAngleRelative());
@@ -429,7 +426,6 @@ public class ShooterSubsystem extends SubsystemBase {
         // SmartDashboard.putNumber("volts to hood", aimMotor.getAppliedOutput());
         SmartDashboard.putNumber("target shooter angle",
                 m_aim.getShooterTargetAngle());
-        SmartDashboard.putNumber("Top Shooter Accel", previousTopMotorData[2]);
         SmartDashboard.putNumber("Bottom Shooter Accel", previousBottomMotorData[2]);
         SmartDashboard.putBoolean("has shot?", hasShotNote());
         SmartDashboard.putBoolean("shooting?", shoot);
