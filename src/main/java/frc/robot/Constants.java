@@ -71,7 +71,7 @@ public class Constants {
         public static final double kMaxAngle = 20;
         public static final double kMinAngle = 0;
         public static final double kRollerRPM = 500;
-        public static final double kPassAngle = 9;
+        public static final double kPassAngle = 12;
     }
 
     public static class DriveTrain {
