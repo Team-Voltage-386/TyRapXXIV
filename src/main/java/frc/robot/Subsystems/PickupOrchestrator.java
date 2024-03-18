@@ -37,6 +37,7 @@ public class PickupOrchestrator extends SubsystemBase {
     public Trigger enabledTrigger;
     public Trigger AutoTrigger;
     public Trigger endgameTime;
+    public Trigger alwaysShootingTrigger;
 
     ShuffleboardTab IntakeSensors;
 
@@ -66,9 +67,11 @@ public class PickupOrchestrator extends SubsystemBase {
         endgameTime = new Trigger(() -> Flags.buttonMapMode == Flags.buttonMapStates.endgameMode);
         enabledTrigger = new Trigger(() -> DriverStation.isEnabled());
         AutoTrigger = new Trigger(() -> DriverStation.isAutonomousEnabled());
+        alwaysShootingTrigger = new Trigger(() -> !m_FeederMotor.getRapidFire());
 
         // Automatically puts piece into the loaded position
-        (holdingPieceTrigger.and(endgameTime.negate()).and((leftSensorTrigger.or(rightSensorTrigger))))
+        (holdingPieceTrigger.and(endgameTime.negate()).and((leftSensorTrigger.or(rightSensorTrigger)))
+                .and(alwaysShootingTrigger.negate())) // when im not trying to rapid fire
                 .onTrue(stopLoadingPieceCommand().withName("CHANGE_TO_LOADED_PIECE_S_STOP_LOADING").finallyDo(
                         () -> {
                             if (DriverStation.isEnabled()) {
@@ -78,6 +81,7 @@ public class PickupOrchestrator extends SubsystemBase {
 
         (leftSensorTrigger.negate().or(rightSensorTrigger.negate())).and(endgameTime.negate()).and(noPieceTrigger)
                 .and(enabledTrigger)
+                .and(alwaysShootingTrigger.negate()) // when im not trying to rapid fire
                 .onTrue(new ParallelCommandGroup(
                         new DoublePulseRumble(new SinglePulseRumble(m_driveRumble, 0.75, 0.4), 0.3),
                         new SequentialCommandGroup(
@@ -92,6 +96,12 @@ public class PickupOrchestrator extends SubsystemBase {
                                 })));
 
         AutoTrigger.and(noPieceTrigger).onTrue(runIntakeCommand().alongWith(new IntakeDownLEDCommand(ledSubsystem)));
+
+        AutoTrigger.and(alwaysShootingTrigger) // rapid fire. go dumb and shoot pieces thru the robot, if we touch it,
+                                               // it shoots it. only for auto.
+                .onTrue(runIntakeForRapidFireCommand().alongWith(new IntakeDownLEDCommand(ledSubsystem)));
+
+        alwaysShootingTrigger.onFalse(m_FeederMotor.runFeederMotorToLoadCommand());
 
         IntakeSensors = Shuffleboard.getTab("Intake");
 
@@ -108,6 +118,12 @@ public class PickupOrchestrator extends SubsystemBase {
         return new ParallelCommandGroup(Commands.runOnce(() -> Aimlock.setNoteVision(true)),
                 m_pneumatics.enableIntakeSolenoidCommand(), Commands.runOnce(() -> isIntakeDown = true),
                 m_pickupMotors.runMotorsCommand(), m_FeederMotor.runFeederMotorToLoadCommand());
+    }
+
+    public ParallelCommandGroup runIntakeForRapidFireCommand() {
+        return new ParallelCommandGroup(Commands.runOnce(() -> Aimlock.setNoteVision(true)),
+                m_pneumatics.enableIntakeSolenoidCommand(), Commands.runOnce(() -> isIntakeDown = true),
+                m_pickupMotors.runMotorsCommand(), m_FeederMotor.runFeederMotorToShootCommand());
     }
 
     public Command disableIntakeCommand() {

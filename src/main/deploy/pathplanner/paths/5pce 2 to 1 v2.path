@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.7004772383296536,
-        "y": 6.417538427088266
+        "x": 1.937061752911633,
+        "y": 6.201400223223144
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 6.956236908194216
       },
       "prevControl": {
-        "x": 1.36086297850199,
-        "y": 5.937394128711225
+        "x": 1.7911092550903096,
+        "y": 6.201400223223144
       },
       "nextControl": null,
       "isLocked": false,
@@ -38,23 +38,17 @@
       "waypointRelativePos": 0.15,
       "rotationDegrees": 7.500746807085966,
       "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 0.9,
+      "rotationDegrees": 36.91635497461564,
+      "rotateFast": false
     }
   ],
   "constraintZones": [
     {
-      "name": "shoot zone",
-      "minWaypointRelativePos": 0.2,
-      "maxWaypointRelativePos": 0.7,
-      "constraints": {
-        "maxVelocity": 0.8,
-        "maxAcceleration": 5.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 900.0
-      }
-    },
-    {
       "name": "pickup zone",
-      "minWaypointRelativePos": 0.95,
+      "minWaypointRelativePos": 0.85,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.6,
@@ -67,7 +61,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 2.5,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 900.0
   },

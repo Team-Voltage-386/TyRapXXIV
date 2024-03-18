@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.fasterxml.jackson.core.sym.Name;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
@@ -124,12 +125,14 @@ public class RobotContainer {
     NamedCommands.registerCommand("I SHOT.", Commands.runOnce(() -> Flags.pieceState = Flags.subsystemsStates.noPiece));
     NamedCommands.registerCommand("Shoot", Commands.runOnce(() -> {
       m_shooter.shoot();
-      m_feederMotor.runShootFeederMotorToShoot();
+      m_feederMotor.runFeederMotorToShoot();
     }));
     NamedCommands.registerCommand("Dont Shoot", Commands.runOnce(() -> {
       m_shooter.noShoot();
       m_feederMotor.stopFeederMotor();
     }));
+    NamedCommands.registerCommand("Rapid fire", m_feederMotor.enableRapidFireCommand());
+    NamedCommands.registerCommand("Stop rapid fire", m_feederMotor.disableRapidFireCommand());
     NamedCommands.registerCommand("Intake Down", m_pickup.runIntakeCommand());
     NamedCommands.registerCommand("Intake Up", m_pickup.disableIntakeCommand());
     NamedCommands.registerCommand("Pickup Note", new autoPickupNote(m_swerve));
@@ -229,7 +232,7 @@ public class RobotContainer {
         .and(() -> Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece))
         .onTrue(Commands.runOnce(() -> {
           m_shooter.shoot();
-          m_feederMotor.runShootFeederMotorToShoot();
+          m_feederMotor.runFeederMotorToShoot();
         }));
 
     new Trigger(() -> m_shooter.hasShotNote()).onTrue(Commands.runOnce(() -> System.out.println("Shot Note.")))
@@ -338,7 +341,7 @@ public class RobotContainer {
 
     autoChooser.addOption("4 Piece B", "4 piece B");
     autoChooser.addOption("4.5 Piece B", "4.5 piece B");
-    autoChooser.addOption("5 Piece (B4)", "5 piece (B4)");
+    autoChooser.addOption("5 Piece (B4)", "5 piece (B4) v2");
     autoChooser.addOption("Shoot & Pickup", "shoot and backup");
     autoChooser.addOption("Shoot & Do Nothing", "shoot and do nothing");
     autoChooser.addOption("Race Auto", "race auto B");

@@ -14,19 +14,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "B to 3 (orl)"
+            "pathName": "B to 3 (v3)"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Lock Target in Auto"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
           }
         },
         {
