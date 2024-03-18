@@ -379,6 +379,10 @@ public class RobotContainer {
     return m_LedSubsystem;
   }
 
+  public FeederMotorSubsystem getFeederMotor() {
+      return m_feederMotor;
+  }
+
   public void print() {
     this.m_swerve.print();
   }

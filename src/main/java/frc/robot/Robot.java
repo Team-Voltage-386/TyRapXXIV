@@ -71,6 +71,7 @@ public class Robot extends TimedRobot {
         m_containter.getDrivetrain().setFieldRelative(true);
         Aimlock.setDoState(Aimlock.DoState.SPEAKER);
         m_containter.getShooter().setAimToBreakMode();
+        m_containter.getFeederMotor().disableRapidFire();
         m_containter.setTeleDefaultCommand();
         Flags.buttonMapMode = Flags.buttonMapStates.notEndgameMode;
     }
