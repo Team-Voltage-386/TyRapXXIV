@@ -6,29 +6,33 @@ package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotContainer;
 import frc.robot.Subsystems.LEDSubsystem;
+import frc.robot.Subsystems.PickupOrchestrator;
 import frc.robot.Utils.Flags;
 import frc.robot.Utils.LimelightHelpers;
 
-public class PieceObtainedAndAutoReadyLEDCommand extends Command {
+public class IntakeDownAndTargetLockLEDCommand extends Command {
+  /** Creates a new PieceObtainedLEDCommand. */
 
   private LEDSubsystem m_LedSubsystem;
-  private Timer m_timer;
   private boolean m_shouldBeOn;
+  private Timer m_timer;
 
-  /** Creates a new PieceObtainedAndAutoReadyLEDCommand. */
-  public PieceObtainedAndAutoReadyLEDCommand(LEDSubsystem LedSubsystem) {
-    this.m_LedSubsystem = LedSubsystem;
-    m_timer = new Timer();
+  public IntakeDownAndTargetLockLEDCommand(LEDSubsystem ledSubsystem) {
+    this.m_LedSubsystem = ledSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(this.m_LedSubsystem);
+    m_timer = new Timer();
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_LedSubsystem.setInteriorSegmant(255, 0, 0);
-    m_shouldBeOn = false;
-    m_timer.start();
+    m_LedSubsystem.setInteriorSegmant(255, 255, 0);
+    m_LedSubsystem.setExteriorSegmants(0, 0, 255);
+    m_LedSubsystem.updateLEDs();
+    m_shouldBeOn = true;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -49,13 +53,14 @@ public class PieceObtainedAndAutoReadyLEDCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece) && LimelightHelpers.getTV("limelight-b")) {
-      (new PieceObtainedAndAutoHasTargetLEDCommand(m_LedSubsystem)).schedule();
+    if (PickupOrchestrator.isIntakeDown && LimelightHelpers.getTV("limelight-b")) {
+      (new IntakeDownAndTargetSeenLEDCommand(m_LedSubsystem)).schedule();
     } else {
-      if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece) && !LimelightHelpers.getTV("limelight-b")) {
-        (new PieceObtainedLEDCommand(m_LedSubsystem)).schedule();
+      if (PickupOrchestrator.isIntakeDown) {
+        (new IntakeDownLEDCommand(m_LedSubsystem)).schedule();
       } else {
-        m_LedSubsystem.clearLEDs();
+        m_LedSubsystem.clearInteriorSegmant();
+        m_LedSubsystem.updateLEDs();
       }
     }
   }
@@ -63,6 +68,7 @@ public class PieceObtainedAndAutoReadyLEDCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return (!Flags.pieceState.equals(Flags.subsystemsStates.noPiece)
+        || RobotContainer.aimWithingErrorBounds.getAsBoolean());
   }
 }

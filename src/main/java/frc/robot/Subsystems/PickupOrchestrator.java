@@ -11,7 +11,10 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.RobotContainer;
 import frc.robot.Commands.DoublePulseRumble;
+import frc.robot.Commands.IntakeDownAndTargetLockLEDCommand;
+import frc.robot.Commands.IntakeDownAndTargetSeenLEDCommand;
 import frc.robot.Commands.IntakeDownLEDCommand;
 import frc.robot.Commands.PieceObtainedLEDCommand;
 import frc.robot.Commands.SinglePulseRumble;
@@ -49,7 +52,7 @@ public class PickupOrchestrator extends SubsystemBase {
     SimpleWidget m_competitionLoadedPieceEntry;
     SimpleWidget m_competitionIntakeDownEntry;
 
-    private boolean isIntakeDown = false;
+    public static boolean isIntakeDown = false;
 
     public PickupOrchestrator(PneumaticsSubsystem pneumatics, PickupMotorsSubsystem pickupMotors,
             FeederMotorSubsystem feederMotor, RumbleSubsystem driveRumble, LEDSubsystem ledSubsystem) {
@@ -96,6 +99,12 @@ public class PickupOrchestrator extends SubsystemBase {
                                 })));
 
         AutoTrigger.and(noPieceTrigger).onTrue(runIntakeCommand().alongWith(new IntakeDownLEDCommand(ledSubsystem)));
+
+        RobotContainer.aimWithingErrorBounds.and(new Trigger(() -> isIntakeDown))
+                .onTrue(new IntakeDownAndTargetLockLEDCommand(ledSubsystem));
+
+        RobotContainer.validLimelightTrigger
+                .and((new Trigger(() -> isIntakeDown)).onTrue(new IntakeDownAndTargetSeenLEDCommand(ledSubsystem)));
 
         AutoTrigger.and(alwaysShootingTrigger) // rapid fire. go dumb and shoot pieces thru the robot, if we touch it,
                                                // it shoots it. only for auto.
