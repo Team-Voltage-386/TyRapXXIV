@@ -131,10 +131,17 @@ public class Aimlock {
     }
 
     /**
-     * get field relative angle to speaker
+     * returns field relative angle thats compliant with WPI cause WPI has rotation
+     * backwards
+     * 
+     * @return degrees to the target, right is -, left is +
      */
     public double getAngleToSpeaker() {
-        return getLLFRAngleToTarget();
+        double angle = getSwerveYaw() - LimelightHelpers.getTX(limelightName);
+        if (hasTarget())
+            return angle;
+        else
+            return getSwerveYaw();
     }
 
     /**
@@ -152,10 +159,10 @@ public class Aimlock {
             Vx = m_swerve.getChassisSpeeds().vxMetersPerSecond
                     + getShooterSpeedwDrag() * Math.cos(Math.toRadians(getAngleToSpeaker() + 180));
         } else {
-            Vy = m_swerve.getChassisSpeeds().vyMetersPerSecond
-                    + getShooterSpeedwDrag() * Math.sin(Math.toRadians(getAngleToSpeaker()));
-            Vx = m_swerve.getChassisSpeeds().vxMetersPerSecond
-                    + getShooterSpeedwDrag() * Math.cos(Math.toRadians(getAngleToSpeaker()));
+            Vy = -m_swerve.getChassisSpeeds().vyMetersPerSecond
+                    + getShooterSpeedwDrag() * Math.sin(Math.toRadians(getAngleToSpeaker() + 180));
+            Vx = -m_swerve.getChassisSpeeds().vxMetersPerSecond
+                    + getShooterSpeedwDrag() * Math.cos(Math.toRadians(getAngleToSpeaker() + 180));
         }
         return 2 * Math.toRadians(getAngleToSpeaker()) - Math.atan(Vy / Vx);
         // consider using gyro and not swerve odo
@@ -184,20 +191,6 @@ public class Aimlock {
             return LimelightHelpers.getTX("limelight-c");
         } else
             return 0;
-    }
-
-    /**
-     * returns field relative angle thats compliant with WPI cause WPI has rotation
-     * backwards
-     * 
-     * @return degrees to the target, right is -, left is +
-     */
-    public double getLLFRAngleToTarget() {
-        double angle = getSwerveYaw() - LimelightHelpers.getTX(limelightName);
-        if (hasTarget())
-            return angle;
-        else
-            return getSwerveYaw();
     }
 
     /**
