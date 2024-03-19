@@ -202,14 +202,10 @@ public class Aimlock {
 
     /**
      * @return returns rotation like wpi likes it, left is positive right is
-     *         negative
+     *         negative, side centric, away from the DS is 0
      */
     public double getSwerveYaw() {
-        // return -m_swerve.getGyroYawRotation2d().getDegrees();
-        // return new
-        // Rotation2d(Math.cos(m_swerve.getRoboPose2d().getRotation().getRadians()),
-        // Math.sin(m_swerve.getRoboPose2d().getRotation().getRadians())).getDegrees();
-        // return m_swerve.getRoboPose2d().getRotation().ge tDegrees();
+        // return m_swerve.getRoboPose2d().getRotation().getDegrees();
         if (DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue1)
                 || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue2)
                 || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue3)) {
