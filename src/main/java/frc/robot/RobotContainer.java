@@ -404,10 +404,7 @@ public class RobotContainer {
 
   public void setTeleDefaultCommand() {
     if (this.m_swerve.getDefaultCommand() == null) {
-      this.m_swerve.setDefaultCommand(new ParallelCommandGroup(driveCommand,
-          new RepeatCommand(new SequentialCommandGroup(new TimerWaitCommand(3),
-              Commands.runOnce(m_swerve::fixOdo)))));
-      // this.m_swerve.setDefaultCommand(driveCommand);
+      this.m_swerve.setDefaultCommand(driveCommand);
       // every 5 seconds fix the odometry
     }
     if (this.m_shooter.getDefaultCommand() == null) {

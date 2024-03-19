@@ -42,8 +42,8 @@ public class Aimlock {
     }
 
     // PID/FF for chassis rotation speed
-    private SimpleMotorFeedforward aimFF = new SimpleMotorFeedforward(0.0, 12);
-    private ProfiledPIDController aimPID = new ProfiledPIDController(3.0, 0.35, 0.4,
+    private SimpleMotorFeedforward aimFF = new SimpleMotorFeedforward(0.0, 14.2);
+    private ProfiledPIDController aimPID = new ProfiledPIDController(4.4, 0.5, 0.4,
             new Constraints(Math.toRadians(180), Math.toRadians(180)));
 
     private SimpleMotorFeedforward RRaimFF = new SimpleMotorFeedforward(0.0, 0.0);
@@ -150,20 +150,10 @@ public class Aimlock {
      * @return radians
      */
     public double getSpeakerAimTargetAngle() {
-        double Vy, Vx;
-        if (DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue1)
-                || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue2)
-                || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue3)) {
-            Vy = m_swerve.getChassisSpeeds().vyMetersPerSecond
-                    + getShooterSpeedwDrag() * Math.sin(Math.toRadians(getAngleToSpeaker() + 180));
-            Vx = m_swerve.getChassisSpeeds().vxMetersPerSecond
-                    + getShooterSpeedwDrag() * Math.cos(Math.toRadians(getAngleToSpeaker() + 180));
-        } else {
-            Vy = -m_swerve.getChassisSpeeds().vyMetersPerSecond
-                    + getShooterSpeedwDrag() * Math.sin(Math.toRadians(getAngleToSpeaker() + 180));
-            Vx = -m_swerve.getChassisSpeeds().vxMetersPerSecond
-                    + getShooterSpeedwDrag() * Math.cos(Math.toRadians(getAngleToSpeaker() + 180));
-        }
+        double Vy = m_swerve.getChassisSpeeds().vyMetersPerSecond
+                + getShooterSpeedwDrag() * Math.sin(Math.toRadians(getAngleToSpeaker() + 180));
+        double Vx = m_swerve.getChassisSpeeds().vxMetersPerSecond
+                + getShooterSpeedwDrag() * Math.cos(Math.toRadians(getAngleToSpeaker() + 180));
         return 2 * Math.toRadians(getAngleToSpeaker()) - Math.atan(Vy / Vx);
         // consider using gyro and not swerve odo
     }

@@ -257,19 +257,6 @@ public class Drivetrain extends SubsystemBase {
     // }
     // }
 
-    public void fixOdo() {
-        if (DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue1)
-                || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue2)
-                || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue3)) {
-            resetOdo(new Pose2d(getRoboPose2d().getX(), getRoboPose2d().getY(),
-                    Rotation2d.fromDegrees(MathUtil.inputModulus(-m_gyro.getYaw().getValueAsDouble(), -180, 180))));
-        } else {
-            resetOdo(new Pose2d(getRoboPose2d().getX(), getRoboPose2d().getY(),
-                    Rotation2d
-                            .fromDegrees(MathUtil.inputModulus(180 - m_gyro.getYaw().getValueAsDouble(), -180, 180))));
-        }
-    }
-
     public ChassisSpeeds getChassisSpeeds() {
         return m_chassisSpeeds;
     }
@@ -519,8 +506,9 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Chassis Angle",
+        SmartDashboard.putNumber("Swerve Angle",
                 m_aim.getSwerveYaw());
+        SmartDashboard.putNumber("Gyro Angle", MathUtil.inputModulus(m_gyro.getYaw().getValueAsDouble(), -180, 180));
         SmartDashboard.putNumber("Desired Angle",
                 Math.toDegrees(m_aim.getSpeakerAimTargetAngle()));
         SmartDashboard.putNumber("Ang to Speak", m_aim.getAngleToSpeaker());
