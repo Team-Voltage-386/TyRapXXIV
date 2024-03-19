@@ -42,14 +42,6 @@ public class FeederMotorSubsystem extends SubsystemBase {
         return rapidFire;
     }
 
-    public Command enableRapidFireCommand() {
-        return runOnce(this::enableRapidFire);
-    }
-
-    public Command disableRapidFireCommand() {
-        return runOnce(this::disableRapidFire);
-    }
-
     public Command stopFeederMotorCommand() {
         return runOnce(this::stopFeederMotor);
     }

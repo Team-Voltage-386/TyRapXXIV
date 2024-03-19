@@ -386,7 +386,7 @@ public class ShooterSubsystem extends SubsystemBase {
         }
 
         // cap the voltage
-        volts = MathUtil.clamp(volts, -5.25, 5.25);
+        volts = Aimlock.hasTarget() ? MathUtil.clamp(volts, -5.25, 5.25) : MathUtil.clamp(volts, -2.5, 2.5);
 
         aimMotor.setVoltage(volts);
     }

@@ -132,8 +132,8 @@ public class RobotContainer {
       m_shooter.noShoot();
       m_feederMotor.stopFeederMotor();
     }));
-    NamedCommands.registerCommand("Rapid fire", m_feederMotor.enableRapidFireCommand());
-    NamedCommands.registerCommand("Stop rapid fire", m_feederMotor.disableRapidFireCommand());
+    NamedCommands.registerCommand("rapidfire", Commands.runOnce(m_feederMotor::enableRapidFire));
+    NamedCommands.registerCommand("norapidfire", Commands.runOnce(m_feederMotor::disableRapidFire));
     NamedCommands.registerCommand("Intake Down", m_pickup.runIntakeCommand());
     NamedCommands.registerCommand("Intake Up", m_pickup.disableIntakeCommand());
     NamedCommands.registerCommand("Pickup Note", new autoPickupNote(m_swerve));
@@ -241,7 +241,8 @@ public class RobotContainer {
             new TimerWaitCommand(0.25),
             Commands.runOnce(() -> {
               m_shooter.noShoot();
-            })).finallyDo(() -> {
+            }),
+            m_feederMotor.stopFeederMotorCommand()).finallyDo(() -> {
               Flags.pieceState = Flags.subsystemsStates.noPiece;
             }));
 
@@ -342,12 +343,14 @@ public class RobotContainer {
 
     autoChooser.addOption("4 Piece B", "4 piece B");
     autoChooser.addOption("4.5 Piece B", "4.5 piece B");
-    autoChooser.addOption("5 Piece (B4)", "5 piece (B4) v2");
+    autoChooser.addOption("5 Piece (B4)", "5 piece (B4)");
+    autoChooser.addOption("5 Piece (B4) v2", "5 piece (B4) v2");
     autoChooser.addOption("Shoot & Pickup", "shoot and backup");
     autoChooser.addOption("Shoot & Do Nothing", "shoot and do nothing");
     autoChooser.addOption("Race Auto", "race auto B");
     autoChooser.addOption("4 pce Race Auto", "4pce race auto B");
     autoChooser.addOption("Robonaut Race", "Robonaut Race");
+    autoChooser.addOption("bugtest", "bugtestauto");
 
     // auto1.setName("AUTO1");
 
@@ -380,7 +383,7 @@ public class RobotContainer {
   }
 
   public FeederMotorSubsystem getFeederMotor() {
-      return m_feederMotor;
+    return m_feederMotor;
   }
 
   public void print() {
@@ -402,7 +405,9 @@ public class RobotContainer {
   public void setTeleDefaultCommand() {
     if (this.m_swerve.getDefaultCommand() == null) {
       this.m_swerve.setDefaultCommand(new ParallelCommandGroup(driveCommand,
-          new RepeatCommand(new SequentialCommandGroup(new TimerWaitCommand(3), Commands.runOnce(m_swerve::fixOdo)))));
+          new RepeatCommand(new SequentialCommandGroup(new TimerWaitCommand(3),
+              Commands.runOnce(m_swerve::fixOdo)))));
+      // this.m_swerve.setDefaultCommand(driveCommand);
       // every 5 seconds fix the odometry
     }
     if (this.m_shooter.getDefaultCommand() == null) {

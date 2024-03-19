@@ -50,7 +50,7 @@
   ],
   "eventMarkers": [
     {
-      "name": "stop rapid fire",
+      "name": "New Event Marker",
       "waypointRelativePos": 0.3,
       "command": {
         "type": "parallel",
@@ -59,7 +59,7 @@
             {
               "type": "named",
               "data": {
-                "name": "Stop rapid fire"
+                "name": "norapidfire"
               }
             }
           ]

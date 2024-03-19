@@ -67,7 +67,7 @@ public class PickupOrchestrator extends SubsystemBase {
         endgameTime = new Trigger(() -> Flags.buttonMapMode == Flags.buttonMapStates.endgameMode);
         enabledTrigger = new Trigger(() -> DriverStation.isEnabled());
         AutoTrigger = new Trigger(() -> DriverStation.isAutonomousEnabled());
-        alwaysShootingTrigger = new Trigger(() -> !m_FeederMotor.getRapidFire());
+        alwaysShootingTrigger = new Trigger(() -> m_FeederMotor.getRapidFire());
 
         // Automatically puts piece into the loaded position
         (holdingPieceTrigger.and(endgameTime.negate()).and((leftSensorTrigger.or(rightSensorTrigger)))

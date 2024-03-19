@@ -147,7 +147,7 @@ public class Drivetrain extends SubsystemBase {
                 new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your
                                                  // Constants class
                         new PIDConstants(4, 0.1, 0.0), // Translation PID constants p used to be 7
-                        new PIDConstants(4.4, 0.01, 0.0), // Rotation PID constants
+                        new PIDConstants(4, 0.01, 0.0), // Rotation PID constants
                         kMaxPossibleSpeed, // Max module speed, in m/s
                         DriveTrain.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to
                                                      // furthest module.
@@ -243,9 +243,36 @@ public class Drivetrain extends SubsystemBase {
         }
     }
 
+    // /**
+    // * Resets Odometry using a specific Pose2d
+    // *
+    // * @param pose
+    // */
+    // public void resetOdoAuto(Pose2d pose) {
+    // if (pose != null) {
+    // m_odometry.resetPosition(getGyroYawRotation2d(), getModulePositions(), pose);
+    // if (DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue1)
+    // || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue2)
+    // || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue3)) {
+    // m_gyro.setYaw(-pose.getRotation().getDegrees());
+    // } else {
+    // m_gyro.setYaw(MathUtil.inputModulus(180 - pose.getRotation().getDegrees(),
+    // -180, 180));
+    // }
+    // }
+    // }
+
     public void fixOdo() {
-        resetOdo(new Pose2d(getRoboPose2d().getX(), getRoboPose2d().getY(),
-                Rotation2d.fromDegrees(MathUtil.inputModulus(m_gyro.getYaw().getValueAsDouble(), -180, 180))));
+        if (DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue1)
+                || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue2)
+                || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue3)) {
+            resetOdo(new Pose2d(getRoboPose2d().getX(), getRoboPose2d().getY(),
+                    Rotation2d.fromDegrees(MathUtil.inputModulus(-m_gyro.getYaw().getValueAsDouble(), -180, 180))));
+        } else {
+            resetOdo(new Pose2d(getRoboPose2d().getX(), getRoboPose2d().getY(),
+                    Rotation2d
+                            .fromDegrees(MathUtil.inputModulus(180 - m_gyro.getYaw().getValueAsDouble(), -180, 180))));
+        }
     }
 
     public ChassisSpeeds getChassisSpeeds() {

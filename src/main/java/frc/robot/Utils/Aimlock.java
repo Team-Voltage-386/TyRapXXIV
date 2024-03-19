@@ -147,7 +147,14 @@ public class Aimlock {
                 + getShooterSpeedwDrag() * Math.sin(Math.toRadians(getAngleToSpeaker() + 180));
         double Vx = m_swerve.getChassisSpeeds().vxMetersPerSecond
                 + getShooterSpeedwDrag() * Math.cos(Math.toRadians(getAngleToSpeaker() + 180));
-        return 2 * Math.toRadians(getAngleToSpeaker()) - Math.atan(Vy / Vx);
+
+        if (DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue1)
+                || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue2)
+                || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue3)) {
+            return 2 * Math.toRadians(getAngleToSpeaker()) - Math.atan(Vy / Vx);
+        } else {
+            return Math.atan(Vy / Vx);
+        }
         // consider using gyro and not swerve odo
     }
 
@@ -252,8 +259,6 @@ public class Aimlock {
         return Math.atan(speakerHeight / getDistToTag());
     }
 
-    double lastKnownTargetAngle = 10;
-
     /**
      * @return the angle the shooter must be at in order to score in the speaker
      *         (accounting
@@ -261,7 +266,7 @@ public class Aimlock {
      */
     public double getShooterTargetAngleSPEAKER() {
         if (!hasTarget()) {
-            return lastKnownTargetAngle; // remain stationary if you cant see
+            return 10; // remain stationary if you cant see
         }
 
         double Vy = getShooterSpeedwDrag() * Math.sin(getVerticalAngleToSpeaker()); // vertical vector of note
@@ -295,7 +300,6 @@ public class Aimlock {
         // 32 is the bottom of the shooter angle IRL
         // 3 is just a guestimate of from where we measure to where the note actually
         // comes out
-        lastKnownTargetAngle = MathUtil.clamp(angleWithDrop - 32.0, Shooter.kMinAngle, Shooter.kMaxAngle);
         return MathUtil.clamp(angleWithDrop - 32.0, Shooter.kMinAngle, Shooter.kMaxAngle);
     }
 
