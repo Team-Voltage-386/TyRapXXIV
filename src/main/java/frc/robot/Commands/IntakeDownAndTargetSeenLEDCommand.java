@@ -7,59 +7,48 @@ package frc.robot.Commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.LEDSubsystem;
+import frc.robot.Subsystems.PickupOrchestrator;
+import frc.robot.Utils.Flags;
 import frc.robot.Utils.LimelightHelpers;
 
-public class AutoReadyLEDCommand extends Command {
+public class IntakeDownAndTargetSeenLEDCommand extends Command {
+  /** Creates a new PieceObtainedLEDCommand. */
 
   private LEDSubsystem m_LedSubsystem;
-  private Timer m_timer;
-  private boolean m_shouldBeOn = false;
 
-  /** Creates a new AutoReadyCommand. */
-  public AutoReadyLEDCommand(LEDSubsystem LedSubsystem) {
+  public IntakeDownAndTargetSeenLEDCommand(LEDSubsystem ledSubsystem) {
+    this.m_LedSubsystem = ledSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    this.m_LedSubsystem = LedSubsystem;
     addRequirements(this.m_LedSubsystem);
-    this.m_timer = new Timer();
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_LedSubsystem.clearExteriorSegmants();
-    m_timer.start();
+    m_LedSubsystem.setInteriorSegmant(255, 255, 0);
+    m_LedSubsystem.setExteriorSegmants(0, 0, 255);
     m_LedSubsystem.updateLEDs();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_timer.hasElapsed(0.1)) {
-      // Determine whether the lights should be on or off
-      m_shouldBeOn = !m_shouldBeOn;
-      m_timer.reset();
-    }
-    if (m_shouldBeOn) {
-      // Changes the state of the lights to on
-      m_LedSubsystem.setExteriorSegmants(241, 245, 7);
-    } else {
-      // Changes the state of the lights to off
-      m_LedSubsystem.clearExteriorSegmants();
-    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_LedSubsystem.clearExteriorSegmants();
-    if (LimelightHelpers.getTV("limelight-b")) {
-      (new TargetAquiredLEDCommand(m_LedSubsystem)).schedule();
+    if (PickupOrchestrator.isIntakeDown) {
+      (new IntakeDownLEDCommand(m_LedSubsystem)).schedule();
+    } else {
+      m_LedSubsystem.clearInteriorSegmant();
+      m_LedSubsystem.updateLEDs();
     }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return (!Flags.pieceState.equals(Flags.subsystemsStates.noPiece) || !LimelightHelpers.getTV("limelight-b"));
   }
 }
