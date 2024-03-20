@@ -29,6 +29,7 @@ public class TargetAquiredLEDCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     m_LedSubsystem.clearLEDs();
+    m_LedSubsystem.updateLEDs();
   }
 
   // Returns true when the command should end.
