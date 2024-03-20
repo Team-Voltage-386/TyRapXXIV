@@ -41,7 +41,6 @@ public class PickupOrchestrator extends SubsystemBase {
     public Trigger AutoTrigger;
     public Trigger endgameTime;
     public Trigger alwaysShootingTrigger;
-    public Trigger aimWithingErrorBounds;
 
     ShuffleboardTab IntakeSensors;
 
@@ -56,8 +55,7 @@ public class PickupOrchestrator extends SubsystemBase {
     public static boolean isIntakeDown = false;
 
     public PickupOrchestrator(PneumaticsSubsystem pneumatics, PickupMotorsSubsystem pickupMotors,
-            FeederMotorSubsystem feederMotor, RumbleSubsystem driveRumble, LEDSubsystem ledSubsystem,
-            Trigger aimWithingErrorBounds) {
+            FeederMotorSubsystem feederMotor, RumbleSubsystem driveRumble, LEDSubsystem ledSubsystem) {
         m_LEDSubsystem = ledSubsystem;
         m_pickupMotors = pickupMotors;
         m_pneumatics = pneumatics;
@@ -69,12 +67,10 @@ public class PickupOrchestrator extends SubsystemBase {
         Trigger rightSensorTrigger = new Trigger(rightHoodSensor::get);
         noPieceTrigger = new Trigger(() -> Flags.pieceState.equals(subsystemsStates.noPiece));
         holdingPieceTrigger = new Trigger(() -> Flags.pieceState.equals(subsystemsStates.holdingPiece));
-        loadedPieceTrigger = new Trigger(() -> Flags.pieceState.equals(subsystemsStates.loadedPiece));
         endgameTime = new Trigger(() -> Flags.buttonMapMode == Flags.buttonMapStates.endgameMode);
         enabledTrigger = new Trigger(() -> DriverStation.isEnabled());
         AutoTrigger = new Trigger(() -> DriverStation.isAutonomousEnabled());
         alwaysShootingTrigger = new Trigger(() -> m_FeederMotor.getRapidFire());
-        this.aimWithingErrorBounds = aimWithingErrorBounds;
 
         // Automatically puts piece into the loaded position
         (holdingPieceTrigger.and(endgameTime.negate()).and((leftSensorTrigger.or(rightSensorTrigger)))
@@ -104,8 +100,8 @@ public class PickupOrchestrator extends SubsystemBase {
 
         AutoTrigger.and(noPieceTrigger).onTrue(runIntakeCommand().alongWith(new IntakeDownLEDCommand(ledSubsystem)));
 
-        aimWithingErrorBounds.and(new Trigger(() -> isIntakeDown))
-                .onTrue(new IntakeDownAndTargetLockLEDCommand(ledSubsystem, this.aimWithingErrorBounds));
+        RobotContainer.aimWithingErrorBounds.and(new Trigger(() -> isIntakeDown))
+                .onTrue(new IntakeDownAndTargetLockLEDCommand(ledSubsystem));
 
         RobotContainer.validLimelightTrigger
                 .and((new Trigger(() -> isIntakeDown)).onTrue(new IntakeDownAndTargetSeenLEDCommand(ledSubsystem)));
