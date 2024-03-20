@@ -20,12 +20,6 @@
         {
           "type": "named",
           "data": {
-            "name": "Lock Target in Auto"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "rapidfire"
           }
         },

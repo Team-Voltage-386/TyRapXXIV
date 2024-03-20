@@ -40,7 +40,7 @@
       "rotateFast": false
     },
     {
-      "waypointRelativePos": 0.9,
+      "waypointRelativePos": 0.85,
       "rotationDegrees": 36.91635497461564,
       "rotateFast": false
     }
@@ -51,7 +51,7 @@
       "minWaypointRelativePos": 0.85,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 0.6,
+        "maxVelocity": 0.7,
         "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 900.0
@@ -61,7 +61,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 2.5,
-    "maxAcceleration": 2.0,
+    "maxAcceleration": 2.65,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 900.0
   },

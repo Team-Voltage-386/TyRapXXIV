@@ -1,0 +1,128 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.44283883432246,
+        "y": 5.515804013063089
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.0752240077946618,
+        "y": 4.684334618312604
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.754452527449989,
+        "y": 4.19247948338978
+      },
+      "prevControl": {
+        "x": 2.2157540463440393,
+        "y": 4.602358762492133
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.35,
+      "rotationDegrees": -27.64254974366706,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "shoot zone",
+      "minWaypointRelativePos": 0.15,
+      "maxWaypointRelativePos": 0.3,
+      "constraints": {
+        "maxVelocity": 0.81,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 900.0
+      }
+    },
+    {
+      "name": "pickup zone",
+      "minWaypointRelativePos": 0.8,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 0.7,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 900.0
+      }
+    }
+  ],
+  "eventMarkers": [
+    {
+      "name": "shoot",
+      "waypointRelativePos": 0.15,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Shoot"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "i shot",
+      "waypointRelativePos": 0.5,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Dont Shoot"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "I SHOT."
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "Lock Target in Auto"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 2.7,
+    "maxAcceleration": 2.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 900.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -30.4655449194599,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "4 note B",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}
