@@ -147,7 +147,7 @@ public class Drivetrain extends SubsystemBase {
                 new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your
                                                  // Constants class
                         new PIDConstants(4, 0.1, 0.0), // Translation PID constants p used to be 7
-                        new PIDConstants(4, 0.01, 0.0), // Rotation PID constants
+                        new PIDConstants(4.25, 0.05, 0.15), // Rotation PID constants
                         kMaxPossibleSpeed, // Max module speed, in m/s
                         DriveTrain.kDriveBaseRadius, // Drive base radius in meters. Distance from robot center to
                                                      // furthest module.
