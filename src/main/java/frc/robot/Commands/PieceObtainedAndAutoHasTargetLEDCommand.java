@@ -53,6 +53,6 @@ public class PieceObtainedAndAutoHasTargetLEDCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (!LimelightHelpers.getTV("limelight-b") || !Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece));
+    return (LimelightHelpers.getTV("limelight-b") && Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece));
   }
 }

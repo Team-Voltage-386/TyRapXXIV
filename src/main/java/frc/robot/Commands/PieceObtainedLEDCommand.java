@@ -26,7 +26,7 @@ public class PieceObtainedLEDCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_LedSubsystem.setAllLedColor(0, 0, 255);
+    m_LedSubsystem.setInteriorSegmant(255, 0, 0);
     m_LedSubsystem.updateLEDs();
   }
 
