@@ -104,9 +104,6 @@ public class PickupOrchestrator extends SubsystemBase {
 
         AutoTrigger.and(noPieceTrigger).onTrue(runIntakeCommand().alongWith(new IntakeDownLEDCommand(ledSubsystem)));
 
-        aimWithingErrorBounds.and(new Trigger(() -> isIntakeDown))
-                .whileTrue(new IntakeDownAndTargetLockLEDCommand(ledSubsystem, this.aimWithingErrorBounds));
-
         RobotContainer.validLimelightTrigger
                 .and((new Trigger(() -> isIntakeDown)).whileTrue(new IntakeDownAndTargetSeenLEDCommand(ledSubsystem)));
 
