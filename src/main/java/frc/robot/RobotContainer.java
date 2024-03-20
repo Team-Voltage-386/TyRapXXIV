@@ -85,9 +85,10 @@ public class RobotContainer {
   private final RumbleSubsystem m_manipulatorRumbleSubsystem;
   private final RumbleSubsystem m_driverRumbleSubsystem;
   public final LEDSubsystem m_LedSubsystem;
+  public Trigger aimWithingErrorBounds;
   private final PickupOrchestrator m_pickup;
-  public static Trigger aimWithingErrorBounds;
-  public static Trigger validLimelightTrigger;
+
+  public static Trigger validLimelightTrigger = new Trigger(() -> LimelightHelpers.getTV("limelight-b"));
 
   private ShuffleboardTab m_competitionTab = Shuffleboard.getTab("Competition Tab");
 
@@ -106,10 +107,20 @@ public class RobotContainer {
     this.m_pickupMotors = new PickupMotorsSubsystem();
     this.m_pneumatics = new PneumaticsSubsystem();
     this.m_feederMotor = new FeederMotorSubsystem();
-    this.m_pickup = new PickupOrchestrator(m_pneumatics, m_pickupMotors, m_feederMotor, m_driverRumbleSubsystem,
-        m_LedSubsystem);
     this.m_shooter = new ShooterSubsystem();
     this.m_aim = new Aimlock(m_swerve, m_shooter);
+    this.aimWithingErrorBounds = new Trigger(
+        () -> {
+          double gyroAsRadians = Math.toRadians(m_gyro.getYaw().getValueAsDouble());
+          double absGyroAsRadians = Math.abs(gyroAsRadians);
+          double aim = m_aim.getSpeakerAimTargetAngle();
+          double absAim = Math.abs(aim);
+          double absDiff = Math.abs(
+              absGyroAsRadians - absAim);
+          return absDiff < Math.toRadians(10);
+        });
+    this.m_pickup = new PickupOrchestrator(m_pneumatics, m_pickupMotors, m_feederMotor, m_driverRumbleSubsystem,
+        m_LedSubsystem, this.aimWithingErrorBounds);
     this.m_trapSubsystem = new TrapSubsystem(m_manipulatorRumbleSubsystem);
     this.m_elevatorSubsystem = new ElevatorSubsystem(m_LedSubsystem, m_manipulatorRumbleSubsystem);
 

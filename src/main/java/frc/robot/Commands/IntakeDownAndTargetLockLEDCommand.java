@@ -6,6 +6,7 @@ package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.RobotContainer;
 import frc.robot.Subsystems.LEDSubsystem;
 import frc.robot.Subsystems.PickupOrchestrator;
@@ -18,9 +19,11 @@ public class IntakeDownAndTargetLockLEDCommand extends Command {
   private LEDSubsystem m_LedSubsystem;
   private boolean m_shouldBeOn;
   private Timer m_timer;
+  private Trigger m_aimWithingErrorBounds;
 
-  public IntakeDownAndTargetLockLEDCommand(LEDSubsystem ledSubsystem) {
+  public IntakeDownAndTargetLockLEDCommand(LEDSubsystem ledSubsystem, Trigger aimWithingErrorBounds) {
     this.m_LedSubsystem = ledSubsystem;
+    this.m_aimWithingErrorBounds = aimWithingErrorBounds;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(this.m_LedSubsystem);
     m_timer = new Timer();
@@ -69,6 +72,6 @@ public class IntakeDownAndTargetLockLEDCommand extends Command {
   @Override
   public boolean isFinished() {
     return (!Flags.pieceState.equals(Flags.subsystemsStates.noPiece)
-        || RobotContainer.aimWithingErrorBounds.getAsBoolean());
+        || this.m_aimWithingErrorBounds.getAsBoolean());
   }
 }
