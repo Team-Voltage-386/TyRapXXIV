@@ -298,7 +298,8 @@ public class RobotContainer {
     /* OVERRIDE CONTROLS END */
 
     Controller.kDriveController.rightTrigger(0.1).and(m_pickup.noPieceTrigger).and(endgameButtons.negate())
-        .whileTrue(new ParallelCommandGroup(m_pickup.runIntakeCommand(), new IntakeDownLEDCommand(m_LedSubsystem)))
+        .whileTrue(
+            new ParallelCommandGroup(m_pickup.runIntakeCommand() /* , new IntakeDownLEDCommand(m_LedSubsystem) */))
         .onFalse(m_pickup.disableIntakeCommand());
 
     // while the intake is down and we hold the left trigger, autoPickupNote
