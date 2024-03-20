@@ -72,6 +72,6 @@ public class IntakeDownAndTargetLockLEDCommand extends Command {
   @Override
   public boolean isFinished() {
     return (!Flags.pieceState.equals(Flags.subsystemsStates.noPiece)
-        || this.m_aimWithingErrorBounds.getAsBoolean() || !PickupOrchestrator.isIntakeDown);
+        || this.m_aimWithingErrorBounds.getAsBoolean());
   }
 }
