@@ -35,6 +35,6 @@ public class TargetAquiredLEDCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return LimelightHelpers.getTV("limelight-b");
+    return !LimelightHelpers.getTV("limelight-b");
   }
 }
