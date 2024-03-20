@@ -238,25 +238,6 @@ public class Drivetrain extends SubsystemBase {
         }
     }
 
-    // /**
-    // * Resets Odometry using a specific Pose2d
-    // *
-    // * @param pose
-    // */
-    // public void resetOdoAuto(Pose2d pose) {
-    // if (pose != null) {
-    // m_odometry.resetPosition(getGyroYawRotation2d(), getModulePositions(), pose);
-    // if (DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue1)
-    // || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue2)
-    // || DriverStation.getRawAllianceStation().equals(AllianceStationID.Blue3)) {
-    // m_gyro.setYaw(-pose.getRotation().getDegrees());
-    // } else {
-    // m_gyro.setYaw(MathUtil.inputModulus(180 - pose.getRotation().getDegrees(),
-    // -180, 180));
-    // }
-    // }
-    // }
-
     public ChassisSpeeds getChassisSpeeds() {
         return m_chassisSpeeds;
     }
