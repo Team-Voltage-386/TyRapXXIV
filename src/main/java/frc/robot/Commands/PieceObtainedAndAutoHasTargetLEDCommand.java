@@ -42,13 +42,17 @@ public class PieceObtainedAndAutoHasTargetLEDCommand extends Command {
     if (Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece) && !LimelightHelpers.getTV("limelight-b")) {
       (new PieceObtainedLEDCommand(m_LedSubsystem)).schedule();
     } else {
-      m_LedSubsystem.clearLEDs();
+      if (LimelightHelpers.getTV("limelight-b")) {
+        (new TargetAquiredLEDCommand(m_LedSubsystem)).schedule();
+      } else {
+        m_LedSubsystem.clearLEDs();
+      }
     }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (false);
+    return (LimelightHelpers.getTV("limelight-b") && Flags.pieceState.equals(Flags.subsystemsStates.loadedPiece));
   }
 }

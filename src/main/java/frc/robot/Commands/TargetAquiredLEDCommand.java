@@ -6,6 +6,7 @@ package frc.robot.Commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.LEDSubsystem;
+import frc.robot.Utils.LimelightHelpers;
 
 public class TargetAquiredLEDCommand extends Command {
   /** Creates a new TargetAquiredLEDCommand. */
@@ -33,6 +34,6 @@ public class TargetAquiredLEDCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return LimelightHelpers.getTV("limelight-b");
   }
 }
