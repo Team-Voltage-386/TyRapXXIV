@@ -7,7 +7,6 @@ package frc.robot.Commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.LEDSubsystem;
-import frc.robot.Utils.LimelightHelpers;
 
 public class AutoReadyLEDCommand extends Command {
 
@@ -52,9 +51,6 @@ public class AutoReadyLEDCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     m_LedSubsystem.clearExteriorSegmants();
-    if (LimelightHelpers.getTV("limelight-b")) {
-      (new TargetAquiredLEDCommand(m_LedSubsystem)).schedule();
-    }
   }
 
   // Returns true when the command should end.

@@ -86,8 +86,6 @@ public class RobotContainer {
   private final RumbleSubsystem m_driverRumbleSubsystem;
   public final LEDSubsystem m_LedSubsystem;
   private final PickupOrchestrator m_pickup;
-  public static Trigger aimWithingErrorBounds;
-  public static Trigger validLimelightTrigger;
 
   private ShuffleboardTab m_competitionTab = Shuffleboard.getTab("Competition Tab");
 
@@ -166,9 +164,9 @@ public class RobotContainer {
     // New Triggers
     Trigger endgameButtons = new Trigger(() -> Flags.buttonMapMode == Flags.buttonMapStates.endgameMode);
 
-    validLimelightTrigger = new Trigger(() -> LimelightHelpers.getTV("limelight-b"));
+    Trigger validLimelightTrigger = new Trigger(() -> LimelightHelpers.getTV("limelight-b"));
 
-    aimWithingErrorBounds = new Trigger(
+    Trigger aimWithingErrorBounds = new Trigger(
         () -> Math.abs(Math.abs(Math.toRadians(m_gyro.getYaw().getValueAsDouble()))
             - Math.abs(m_aim.getSpeakerAimTargetAngle())) < Math
                 .toRadians(10));
@@ -178,10 +176,10 @@ public class RobotContainer {
 
     aimWithingErrorBounds.and(m_pickup.noPieceTrigger).whileTrue(new AutoReadyLEDCommand(m_LedSubsystem));
 
-    validLimelightTrigger.and(m_pickup.loadedPieceTrigger)
+    validLimelightTrigger.and(m_pickup.holdingPieceTrigger)
         .whileTrue(new TargetAquiredLEDCommand(m_LedSubsystem));
 
-    validLimelightTrigger.and(m_pickup.noPieceTrigger.negate())
+    validLimelightTrigger.and(m_pickup.holdingPieceTrigger.negate())
         .whileTrue(new PieceObtainedAndAutoHasTargetLEDCommand(m_LedSubsystem));
 
     Controller.kManipulatorController.leftStick().and(endgameButtons.negate())

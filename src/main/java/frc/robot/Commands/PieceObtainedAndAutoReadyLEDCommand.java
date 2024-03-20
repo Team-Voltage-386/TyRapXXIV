@@ -39,7 +39,7 @@ public class PieceObtainedAndAutoReadyLEDCommand extends Command {
       m_timer.reset();
     }
     if (m_shouldBeOn) {
-      m_LedSubsystem.setExteriorSegmants(241, 245, 7);
+      m_LedSubsystem.setExteriorSegmants(0, 255, 0);
     } else {
       m_LedSubsystem.clearExteriorSegmants();
     }
