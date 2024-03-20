@@ -7,6 +7,7 @@ package frc.robot.Commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.LEDSubsystem;
+import frc.robot.Subsystems.PickupOrchestrator;
 import frc.robot.Utils.Flags;
 
 public class IntakeDownLEDCommand extends Command {
@@ -42,6 +43,6 @@ public class IntakeDownLEDCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (!Flags.pieceState.equals(Flags.subsystemsStates.noPiece));
+    return (!Flags.pieceState.equals(Flags.subsystemsStates.noPiece) || !PickupOrchestrator.isIntakeDown);
   }
 }
