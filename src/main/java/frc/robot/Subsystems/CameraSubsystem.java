@@ -38,7 +38,7 @@ public class CameraSubsystem extends SubsystemBase {
 
   public CameraSubsystem() {
     // Creates UsbCamera and MjpegServer [1] and connects them\
-    this.limeLightCamera = new HttpCamera(pickupLimeLightName, pickupLimeLightHttp + ":5800/stream.mjpg",
+    this.limeLightCamera = new HttpCamera(shooterLimeLightName, shooterLimeLightHttp + ":5800/stream.mjpg",
         HttpCameraKind.kMJPGStreamer);
     CameraServer.startAutomaticCapture(this.limeLightCamera);
     this.server = CameraServer.getServer();

@@ -20,8 +20,8 @@
         "y": 6.314843398917567
       },
       "prevControl": {
-        "x": 5.007549916339823,
-        "y": 6.72472267801992
+        "x": 4.214943045270707,
+        "y": 6.561516969187785
       },
       "nextControl": null,
       "isLocked": false,
@@ -38,7 +38,7 @@
   "constraintZones": [
     {
       "name": "New Constraints Zone",
-      "minWaypointRelativePos": 0.95,
+      "minWaypointRelativePos": 0.9,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.75,
