@@ -96,10 +96,10 @@ public class ShooterSubsystem extends SubsystemBase {
         bottomShooterMotor.setIdleMode(IdleMode.kCoast);
         bottomShooterMotor.setInverted(true);
         // bottomShooterMotor.follow(topShooterMotor, false);
-        m_botShootPID = new ProfiledPIDController(0.8, 0.0, 0.0, new Constraints(10, 10));
+        m_botShootPID = new ProfiledPIDController(0.04, 0.0, 0.0, new Constraints(40, 150));
         m_botShootFF = new SimpleMotorFeedforward(0.0, 0.395);
 
-        m_topShootPID = new ProfiledPIDController(0.8, 0.0, 0.0, new Constraints(10, 10));
+        m_topShootPID = new ProfiledPIDController(0.04, 0.0, 0.0, new Constraints(40, 150));
         m_topShootFF = new SimpleMotorFeedforward(0.0, 0.407);
 
         // get shooter speed
@@ -247,10 +247,10 @@ public class ShooterSubsystem extends SubsystemBase {
     public void runShooterSpeakMode() {
         topShooterMotor.setVoltage(
                 m_topShootPID.calculate(getTopShooterMPS(), shootSpeed)
-                        + m_topShootFF.calculate(m_topShootPID.getSetpoint().velocity));
+                        + m_topShootFF.calculate(shootSpeed));
         bottomShooterMotor.setVoltage(
                 m_botShootPID.calculate(getBottomShooterMPS(), shootSpeed)
-                        + m_botShootFF.calculate(m_botShootPID.getSetpoint().velocity));
+                        + m_botShootFF.calculate(shootSpeed));
     }
 
     /**
@@ -259,10 +259,10 @@ public class ShooterSubsystem extends SubsystemBase {
     public void runShooterAmpMode() {
         topShooterMotor.setVoltage(
                 m_topShootPID.calculate(getTopShooterMPS(), Shooter.kTopAmpShooterSpeed)
-                        + m_topShootFF.calculate(m_topShootPID.getSetpoint().velocity));
+                        + m_topShootFF.calculate(Shooter.kTopAmpShooterSpeed));
         bottomShooterMotor.setVoltage(
                 m_botShootPID.calculate(getBottomShooterMPS(), Shooter.kBottomAmpShooterSpeed)
-                        + m_botShootFF.calculate(m_botShootPID.getSetpoint().velocity));
+                        + m_botShootFF.calculate(Shooter.kBottomAmpShooterSpeed));
     }
 
     /**
@@ -271,10 +271,10 @@ public class ShooterSubsystem extends SubsystemBase {
     public void runShooterPassMode() {
         topShooterMotor.setVoltage(
                 m_topShootPID.calculate(getTopShooterMPS(), Shooter.kPassingShooterSpeed)
-                        + m_topShootFF.calculate(m_topShootPID.getSetpoint().velocity));
+                        + m_topShootFF.calculate(Shooter.kPassingShooterSpeed));
         bottomShooterMotor.setVoltage(
                 m_botShootPID.calculate(getBottomShooterMPS(), Shooter.kPassingShooterSpeed)
-                        + m_botShootFF.calculate(m_botShootPID.getSetpoint().velocity));
+                        + m_botShootFF.calculate(Shooter.kPassingShooterSpeed));
     }
 
     /**
