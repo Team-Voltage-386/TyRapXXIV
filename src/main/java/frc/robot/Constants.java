@@ -61,7 +61,7 @@ public class Constants {
     }
 
     public static class Shooter {
-        public static final double kShooterSpeed = 18;
+        public static final double kShooterSpeed = 23;
         public static final double kPassingShooterSpeed = 14;
         /** the lower the drag coefficient, the lower the drag */
         public static final double kDragCoefficient = 0.33;
