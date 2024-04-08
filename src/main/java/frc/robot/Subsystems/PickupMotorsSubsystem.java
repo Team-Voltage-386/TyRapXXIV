@@ -1,6 +1,7 @@
 package frc.robot.Subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -23,6 +24,7 @@ public class PickupMotorsSubsystem extends SubsystemBase {
     public PickupMotorsSubsystem() {
         // holdingPieceDetector = new DigitalInput(ID.kPieceDetector);
         backIntakeMotor = new CANSparkMax(ID.kBackPickup, MotorType.kBrushless);
+        backIntakeMotor.setIdleMode(IdleMode.kCoast);
     }
 
     /**
@@ -39,7 +41,7 @@ public class PickupMotorsSubsystem extends SubsystemBase {
     }
 
     public void runMotorsSlow() {
-        backIntakeMotor.setVoltage(pickupPID.calculate(getBackRealIntakeRPM(), 80) + pickupFF.calculate(80));
+        backIntakeMotor.setVoltage(pickupPID.calculate(getBackRealIntakeRPM(), -50) + pickupFF.calculate(-50));
     }
 
     public void runMotorsReverse() {

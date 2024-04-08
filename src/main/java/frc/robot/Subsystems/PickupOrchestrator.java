@@ -95,7 +95,9 @@ public class PickupOrchestrator extends SubsystemBase {
                                     }
                                 })));
 
-        AutoTrigger.and(noPieceTrigger).onTrue(runIntakeCommand()/*.alongWith(new IntakeDownLEDCommand(ledSubsystem))*/);
+        AutoTrigger.and(noPieceTrigger).onTrue(runIntakeCommand()/*
+                                                                  * .alongWith(new IntakeDownLEDCommand(ledSubsystem))
+                                                                  */);
 
         AutoTrigger.and(alwaysShootingTrigger) // rapid fire. go dumb and shoot pieces thru the robot, if we touch it,
                                                // it shoots it. only for auto.

@@ -1,0 +1,68 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.56,
+        "y": 4.98
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.984564584514453,
+        "y": 5.120943318811408
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.941658037162897,
+        "y": 4.371055665189947
+      },
+      "prevControl": {
+        "x": 4.327952465719035,
+        "y": 4.526593551594175
+      },
+      "nextControl": {
+        "x": 6.760614290460018,
+        "y": 4.292120122703477
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.7867763427841235,
+        "y": 5.081475547568173
+      },
+      "prevControl": {
+        "x": 7.234227545378835,
+        "y": 4.568394521406122
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.375,
+    "maxAcceleration": 5.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 900.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 53.39292518739276,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "race auto",
+  "previewStartingState": {
+    "rotation": -17.797300804802806,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

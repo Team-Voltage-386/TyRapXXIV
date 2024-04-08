@@ -8,8 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8027181134248131,
-        "y": 4.756310474133074
+        "x": 2.1806215367066955,
+        "y": 4.637491272129477
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.8995614596079393,
+        "y": 5.246454772510115
+      },
+      "prevControl": {
+        "x": 1.9229831326995024,
+        "y": 5.023948878140267
+      },
+      "nextControl": {
+        "x": 1.8635052942733084,
+        "y": 5.588988343189109
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +36,8 @@
         "y": 5.55
       },
       "prevControl": {
-        "x": 1.6100701432172113,
-        "y": 5.653758230593384
+        "x": 2.3591757194356027,
+        "y": 5.526578326908439
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,33 +47,39 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.5,
-      "rotationDegrees": -12.715062932281667,
-      "rotateFast": false
-    },
-    {
-      "waypointRelativePos": 0.75,
-      "rotationDegrees": 0,
+      "rotationDegrees": -0.5239589221676808,
       "rotateFast": false
     }
   ],
   "constraintZones": [
     {
       "name": "slow",
-      "minWaypointRelativePos": 0.65,
-      "maxWaypointRelativePos": 0.9,
+      "minWaypointRelativePos": 0.5,
+      "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 1.5,
-        "maxAcceleration": 3.0,
+        "maxVelocity": 1.2,
+        "maxAcceleration": 2.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 900.0
       }
     },
     {
       "name": "pickup",
-      "minWaypointRelativePos": 0.9,
-      "maxWaypointRelativePos": 1.0,
+      "minWaypointRelativePos": 1.75,
+      "maxWaypointRelativePos": 2.0,
       "constraints": {
-        "maxVelocity": 0.7,
+        "maxVelocity": 0.8,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 900.0
+      }
+    },
+    {
+      "name": "corner",
+      "minWaypointRelativePos": 1.0,
+      "maxWaypointRelativePos": 1.25,
+      "constraints": {
+        "maxVelocity": 0.65,
         "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 900.0

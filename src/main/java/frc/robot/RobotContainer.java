@@ -351,6 +351,7 @@ public class RobotContainer {
     autoChooser.addOption("Race Auto", "race auto B");
     autoChooser.addOption("4 pce Race Auto", "4pce race auto B");
     autoChooser.addOption("Robonaut Race", "Robonaut Race");
+    autoChooser.addOption("LED Race", "LED Race");
     autoChooser.addOption("bugtest", "bugtestauto");
 
     // auto1.setName("AUTO1");

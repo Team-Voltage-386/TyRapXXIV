@@ -3,45 +3,39 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.84,
-        "y": 6.96
+        "x": 8.14198628397257,
+        "y": 4.09478126648561
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.054355384031737,
-        "y": 7.120188619835157
+        "x": 5.026354817331602,
+        "y": 3.993395262111494
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.216281251392744,
-        "y": 7.37782702384235
+        "x": 3.667897778020947,
+        "y": 4.918551349228233
       },
       "prevControl": {
-        "x": 5.923711743176806,
-        "y": 7.200222053247794
+        "x": 5.471366606071299,
+        "y": 4.262744502664469
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 6.632514615138512,
-      "rotateFast": false
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [
     {
-      "name": "shoot",
-      "minWaypointRelativePos": 0,
-      "maxWaypointRelativePos": 0.1,
+      "name": "New Constraints Zone",
+      "minWaypointRelativePos": 0.9,
+      "maxWaypointRelativePos": 1.0,
       "constraints": {
-        "maxVelocity": 0.65,
+        "maxVelocity": 0.7,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 900.0
@@ -50,8 +44,8 @@
   ],
   "eventMarkers": [
     {
-      "name": "New Event Marker",
-      "waypointRelativePos": 0.3,
+      "name": "aim",
+      "waypointRelativePos": 0.45,
       "command": {
         "type": "parallel",
         "data": {
@@ -59,25 +53,24 @@
             {
               "type": "named",
               "data": {
-                "name": "norapidfire"
+                "name": "Lock Target in Auto"
               }
-            },
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "shoot",
+      "waypointRelativePos": 0.95,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
             {
               "type": "named",
               "data": {
-                "name": "Dont Shoot"
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "I SHOT."
-              }
-            },
-            {
-              "type": "named",
-              "data": {
-                "name": "Dont Lock Target in Auto"
+                "name": "Shoot"
               }
             }
           ]
@@ -92,14 +85,14 @@
     "maxAngularAcceleration": 900.0
   },
   "goalEndState": {
-    "velocity": 1.5,
-    "rotation": 2.792702365713391,
+    "velocity": 0,
+    "rotation": -14.420773127510941,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "4 note B",
+  "folder": "race auto",
   "previewStartingState": {
-    "rotation": 33.69006752597982,
+    "rotation": 0,
     "velocity": 0
   },
   "useDefaultConstraints": true

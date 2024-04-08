@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.142885055000881,
-        "y": 4.499325921728767
+        "x": 2.0400914981573175,
+        "y": 4.684334618312604
       },
       "isLocked": false,
       "linkedName": null
@@ -30,8 +30,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.35,
-      "rotationDegrees": -27.64254974366706,
+      "waypointRelativePos": 0.45,
+      "rotationDegrees": -26.231723225245425,
       "rotateFast": false
     }
   ],
@@ -39,9 +39,9 @@
     {
       "name": "shoot zone",
       "minWaypointRelativePos": 0.15,
-      "maxWaypointRelativePos": 0.3,
+      "maxWaypointRelativePos": 0.35,
       "constraints": {
-        "maxVelocity": 0.81,
+        "maxVelocity": 0.5,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 900.0
@@ -79,7 +79,7 @@
     },
     {
       "name": "i shot",
-      "waypointRelativePos": 0.65,
+      "waypointRelativePos": 0.5,
       "command": {
         "type": "parallel",
         "data": {

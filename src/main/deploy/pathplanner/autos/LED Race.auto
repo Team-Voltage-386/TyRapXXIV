@@ -26,7 +26,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "7 to DS"
+            "pathName": "Copy of 7 to DS"
           }
         },
         {
@@ -38,7 +38,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DS to 6"
+            "pathName": "Copy of DS to 6"
           }
         },
         {
@@ -50,13 +50,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "6 to BS"
+            "pathName": "Copy of 6 to BS"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Dont Lock Target in Auto"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "to 5"
+            "pathName": "Copy of to 5"
           }
         },
         {
