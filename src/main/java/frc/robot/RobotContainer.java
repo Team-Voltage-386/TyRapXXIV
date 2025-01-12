@@ -7,10 +7,6 @@ package frc.robot;
 import com.ctre.phoenix6.configs.MountPoseConfigs;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.fasterxml.jackson.core.sym.Name;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -117,30 +113,8 @@ public class RobotContainer {
     // Xbox controllers return negative values when we push forward.
     driveCommand = new Drive(m_swerve);
 
-    // Register named commands
-    NamedCommands.registerCommand("StopDrive", new StopDrive(m_swerve)); // dont need anymore (?)
-    NamedCommands.registerCommand("Lock Target in Auto",
-        Commands.runOnce(() -> m_swerve.setLockTargetInAuto(true)));
-    NamedCommands.registerCommand("Dont Lock Target in Auto",
-        Commands.runOnce(() -> m_swerve.setLockTargetInAuto(false)));
-    NamedCommands.registerCommand("I SHOT.", Commands.runOnce(() -> Flags.pieceState = Flags.subsystemsStates.noPiece));
-    NamedCommands.registerCommand("Shoot", Commands.runOnce(() -> {
-      m_shooter.shoot();
-      m_feederMotor.runFeederMotorToShoot();
-    }));
-    NamedCommands.registerCommand("Dont Shoot", Commands.runOnce(() -> {
-      m_shooter.noShoot();
-      m_feederMotor.stopFeederMotor();
-    }));
-    NamedCommands.registerCommand("rapidfire", Commands.runOnce(m_feederMotor::enableRapidFire));
-    NamedCommands.registerCommand("norapidfire", Commands.runOnce(m_feederMotor::disableRapidFire));
-    NamedCommands.registerCommand("Intake Down", m_pickup.runIntakeCommand());
-    NamedCommands.registerCommand("Intake Up", m_pickup.disableIntakeCommand());
-    NamedCommands.registerCommand("Pickup Note", new autoPickupNote(m_swerve));
-
     autoChooser = new SendableChooser<>(); // Default auto will be `Commands.none()'
     // Create choices for autonomous functions in the Smart Dashboard
-    configPathPlannerStuff();
     configureBindings();
     autoChooser.setDefaultOption("DO NOTHING!", "NO AUTO");
     m_competitionTab.add("Auto Chooser", autoChooser).withSize(2, 1).withPosition(7, 0);
@@ -335,43 +309,6 @@ public class RobotContainer {
 
   Command pathfindAmp;
 
-  private void configPathPlannerStuff() {
-    // Add a button to run the example auto to SmartDashboard, this will also be in
-    // the auto chooser built above
-    // SmartDashboard.putData("Example Auto", AutoBuilder.buildAuto("Example
-    // Auto"));
-    // Add a button to run a simple example path
-
-    autoChooser.addOption("4 Piece B", "4 piece B");
-    autoChooser.addOption("4.5 Piece B", "4.5 piece B");
-    autoChooser.addOption("5 Piece (B4)", "5 piece (B4)");
-    autoChooser.addOption("5 Piece (B4) v2", "5 piece (B4) v2");
-    autoChooser.addOption("Shoot & Pickup", "shoot and backup");
-    autoChooser.addOption("Shoot & Do Nothing", "shoot and do nothing");
-    autoChooser.addOption("Race Auto", "race auto B");
-    autoChooser.addOption("4 pce Race Auto", "4pce race auto B");
-    autoChooser.addOption("Robonaut Race", "Robonaut Race");
-    autoChooser.addOption("LED Race", "LED Race");
-    autoChooser.addOption("bugtest", "bugtestauto");
-
-    // auto1.setName("AUTO1");
-
-    // Load the path we want to pathfind to and follow
-    PathPlannerPath path = PathPlannerPath.fromPathFile("Score Amp");
-    // Create the constraints to use while pathfinding. The constraints defined in
-    // the path will only be used for the path.
-    PathConstraints constraints = new PathConstraints(
-        1, 3.0,
-        Units.degreesToRadians(540), Units.degreesToRadians(720));
-    // Since AutoBuilder is configured, we can use it to build pathfinding commands
-    pathfindAmp = AutoBuilder.pathfindThenFollowPath(
-        path,
-        constraints,
-        0.0 // Rotation delay distance in meters. This is how far the robot should travel
-            // before attempting to rotate.
-    );
-  }
-
   public Drivetrain getDrivetrain() {
     return m_swerve;
   }
@@ -401,7 +338,7 @@ public class RobotContainer {
     if (autoChooser.getSelected().equals("NO AUTO")) {
       return Commands.none();
     }
-    return AutoBuilder.buildAuto(autoChooser.getSelected());
+    return Commands.none();
   }
 
   public void setTeleDefaultCommand() {
