@@ -59,8 +59,8 @@ public class lockTarget extends Command {
         @Override
         public void execute() {
                 readControllers();
-                dt.lockTarget(xSpeed, ySpeed, rotSpeed, !Controller.kDriveController.getHID().getAButton(),
-                                false);
+                /*dt.lockTarget(xSpeed, ySpeed, rotSpeed, !Controller.kDriveController.getHID().getAButton(),
+                                false);*/
         }
 
         @Override

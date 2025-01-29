@@ -35,7 +35,7 @@ public class autoPickupNote extends Command {
     @Override
     public void execute() {
         getSpeeds();
-        dt.lockTarget(xSpeed, 0, 0, true, true);
+        /*dt.lockTarget(xSpeed, 0, 0, true, true);*/
     }
 
     @Override

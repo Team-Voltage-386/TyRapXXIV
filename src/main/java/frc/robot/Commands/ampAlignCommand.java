@@ -51,8 +51,8 @@ public class ampAlignCommand extends Command {
     @Override
     public void execute() {
         getSpeeds();
-        dt.lockTarget(xSpeed, ySpeed, 0, true,
-                false);
+        /*dt.lockTarget(xSpeed, ySpeed, 0, true,
+                false);*/
     }
 
     @Override

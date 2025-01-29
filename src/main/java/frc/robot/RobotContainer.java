@@ -107,7 +107,7 @@ public class RobotContainer {
     this.m_gyro.getConfigurator().apply(new MountPoseConfigs().withMountPoseYaw(-90));
     this.m_cameraSubsystem = new CameraSubsystem();
     this.m_LedSubsystem = new LEDSubsystem();
-    this.m_swerve = new Drivetrain(m_gyro, m_cameraSubsystem);
+    this.m_swerve = new Drivetrain(m_gyro);
     this.m_pickupMotors = new PickupMotorsSubsystem();
     this.m_pneumatics = new PneumaticsSubsystem();
     this.m_feederMotor = new FeederMotorSubsystem();
@@ -124,7 +124,7 @@ public class RobotContainer {
     new SwerveModuleSB("BL", m_swerve.getBackLeftSwerveModule(), m_competitionTab)};
     mSwerveModuleTelem = swerveModuleTelem;
 
-    m_swerve.setAim(m_aim);
+    //m_swerve.setAim(m_aim);
     m_shooter.setAim(m_aim);
 
     autoChooser = new SendableChooser<>(); // Default auto will be 'Commands.none()'
@@ -345,7 +345,7 @@ public class RobotContainer {
   }
 
   public void print() {
-    this.m_swerve.print();
+    //this.m_swerve.print();
   }
 
   /**
