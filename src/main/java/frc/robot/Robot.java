@@ -53,9 +53,8 @@ public class Robot extends TimedRobot {
         Aimlock.setDoState(Aimlock.DoState.SPEAKER);
         m_containter.clearDefaultCommand();
         m_containter.setAutoDefaultCommand();
-        m_containter.getShooter().setAimToBreakMode();
+        m_containter.getShooter().setAimToBrakeMode();
         Flags.pieceState = subsystemsStates.loadedPiece; // todo
-        m_containter.getAutonomousCommand().schedule();
         Flags.buttonMapMode = Flags.buttonMapStates.notEndgameMode;
 
     }
@@ -70,7 +69,7 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         m_containter.getDrivetrain().setFieldRelative(true);
         Aimlock.setDoState(Aimlock.DoState.SPEAKER);
-        m_containter.getShooter().setAimToBreakMode();
+        m_containter.getShooter().setAimToBrakeMode();
         m_containter.getFeederMotor().disableRapidFire();
         m_containter.setTeleDefaultCommand();
         Flags.buttonMapMode = Flags.buttonMapStates.notEndgameMode;
@@ -87,6 +86,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+        m_containter.reportTelemetry();
     }
 
     @Override

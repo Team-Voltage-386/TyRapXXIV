@@ -1,9 +1,11 @@
 package frc.robot.Subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -30,10 +32,12 @@ import frc.robot.Utils.Aimlock.DoState;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-    private CANSparkMax aimMotor;
-    private CANSparkMax topShooterMotor;
-    private CANSparkMax bottomShooterMotor;
-    private RelativeEncoder relativeEncoder;
+    private SparkMax aimMotor;
+    private SparkMaxConfig aimMotorConfig;
+    private SparkMax topShooterMotor;
+    private SparkMaxConfig topShooterMotorConfig;
+    private SparkMax bottomShooterMotor;
+    private SparkMaxConfig bottomShooterMotorConfig;
 
     DigitalInput topLimit;
     DigitalInput bottomLimit;
@@ -74,10 +78,12 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public ShooterSubsystem() {
         // init aim motor
-        aimMotor = new CANSparkMax(ID.kShooterAimMotorID, MotorType.kBrushless);
-        aimMotor.setIdleMode(IdleMode.kBrake); // todo change to brake after testing
-        relativeEncoder = aimMotor.getEncoder();
-        relativeEncoder.setPositionConversionFactor(20.0 / 23.142);
+        aimMotor = new SparkMax(ID.kShooterAimMotorID, MotorType.kBrushless);
+        aimMotorConfig = new SparkMaxConfig();
+        aimMotorConfig.idleMode(IdleMode.kBrake); // todo change to brake after testing
+        aimMotorConfig.alternateEncoder.positionConversionFactor(20.0 / 23.142);
+        aimMotor.configure(aimMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
 
         topLimit = new DigitalInput(8);
         bottomLimit = new DigitalInput(9);
@@ -89,13 +95,19 @@ public class ShooterSubsystem extends SubsystemBase {
         // m_aimFF = new ArmFeedforward(0.0, 0.0, 0.0);
 
         // init shooter motors
-        topShooterMotor = new CANSparkMax(ID.kTopShooterMotorID, MotorType.kBrushless);
-        topShooterMotor.setIdleMode(IdleMode.kCoast);
-        topShooterMotor.setInverted(true);
-        bottomShooterMotor = new CANSparkMax(ID.kBottomShooterMotorID, MotorType.kBrushless);
-        bottomShooterMotor.setIdleMode(IdleMode.kCoast);
-        bottomShooterMotor.setInverted(true);
-        // bottomShooterMotor.follow(topShooterMotor, false);
+        topShooterMotor = new SparkMax(ID.kTopShooterMotorID, MotorType.kBrushless);
+        topShooterMotorConfig = new SparkMaxConfig();
+        topShooterMotorConfig.idleMode(IdleMode.kCoast);
+        topShooterMotorConfig.inverted(true);
+        topShooterMotor.configure(topShooterMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        bottomShooterMotor = new SparkMax(ID.kBottomShooterMotorID, MotorType.kBrushless);
+        bottomShooterMotorConfig = new SparkMaxConfig();
+        bottomShooterMotorConfig.idleMode(IdleMode.kCoast);
+        bottomShooterMotorConfig.inverted(true);
+        // bottomShooterMotorConfig.follow(topShooterMotor, false);
+        bottomShooterMotor.configure(bottomShooterMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
         m_botShootPID = new ProfiledPIDController(0.04, 0.0, 0.0, new Constraints(40, 150));
         m_botShootFF = new SimpleMotorFeedforward(0.0, 0.395);
 
@@ -112,17 +124,18 @@ public class ShooterSubsystem extends SubsystemBase {
         m_competitionIsShooterOnEntry = m_competitionTab.add("Is Shooter On", false).withSize(2, 1).withPosition(7, 3);
     }
 
-    public CANSparkMax getAimMotor() {
+    public SparkMax getAimMotor() {
         return aimMotor;
     }
 
     /**
-     * sets the aim motor to break mode. call this whenever the robot is enabled
+     * sets the aim motor to brake mode. call this whenever the robot is enabled
      * (autoinit, teleopinit) so the hood stays where it is even while not being
      * powered
      */
-    public void setAimToBreakMode() {
-        aimMotor.setIdleMode(IdleMode.kBrake);
+    public void setAimToBrakeMode() {
+        aimMotorConfig.idleMode(IdleMode.kBrake);
+        aimMotor.configure(aimMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     /**
@@ -130,21 +143,22 @@ public class ShooterSubsystem extends SubsystemBase {
      * coasts down to the starting pose
      */
     public void setAimToCoastMode() {
-        aimMotor.setIdleMode(IdleMode.kCoast);
-    }
+        aimMotorConfig.idleMode(IdleMode.kCoast);
+        aimMotor.configure(aimMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+     }
 
     /**
      * tell the hood where it is
      */
     public void setRelativeShooterEncoder(double set) {
-        relativeEncoder.setPosition(set);
+        aimMotor.getAlternateEncoder().setPosition(set);
     }
 
     /**
      * @return the angle the shooter is at in degrees
      */
     public double getShooterAngleRelative() {
-        return relativeEncoder.getPosition();
+        return aimMotor.getAlternateEncoder().getPosition();
     }
 
     /**

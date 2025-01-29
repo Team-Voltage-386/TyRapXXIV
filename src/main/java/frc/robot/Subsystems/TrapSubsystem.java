@@ -153,7 +153,7 @@ public class TrapSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        m_motorPercentageEntry.getEntry().setDouble(getExtendMotorCurrent());
+        //m_motorPercentageEntry.getEntry().setDouble(getExtendMotorCurrent());
         m_isLimitTriggeredEntry.getEntry().setBoolean(isLimitTriggered());
         m_trapCounterEntry.getEntry().setInteger(trapCounter);
 

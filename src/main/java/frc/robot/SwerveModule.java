@@ -4,13 +4,17 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+//import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
@@ -34,13 +38,15 @@ public class SwerveModule {
      * The drive motor is responsible for the actual power across the ground e.g. to
      * make it move forward/backward
      */
-    private final CANSparkMax m_driveMotor;
+    private final SparkMax m_driveMotor;
+    private final SparkMaxConfig m_driveConfig;
 
     /**
      * The turning/steering motor is responsible for the orientation of the wheel
      * e.g. to make it turn
      */
-    private final CANSparkMax m_turningMotor;
+    private final SparkMax m_turningMotor;
+    private final SparkMaxConfig m_turningConfig;
 
     /**
      * Each turning motor has an encoder. Each motor was mounted by people at
@@ -78,6 +84,8 @@ public class SwerveModule {
     // We leave them here in case you'd like to reference them
     private final SimpleMotorFeedforward m_driveFeedforward;
     private final SimpleMotorFeedforward m_turnFeedforward;
+
+    private SwerveModuleState m_desiredState = new SwerveModuleState();
 
     // private GenericEntry encoderOffset;
     // private GenericEntry absEncoderOffset;
@@ -125,22 +133,26 @@ public class SwerveModule {
         /*
          * Set up the drive motor
          */
-        m_driveMotor = new CANSparkMax(driveMotorChannel, MotorType.kBrushless);
+        m_driveMotor = new SparkMax(driveMotorChannel, MotorType.kBrushless);
+        m_driveConfig = new SparkMaxConfig();
         m_driveMotor.getEncoder().setPosition(0);
-        m_driveMotor.setSmartCurrentLimit(40);
-        m_driveMotor.getEncoder().setPositionConversionFactor(Modules.kDriveEncoderRot2Meter);
-        m_driveMotor.getEncoder().setVelocityConversionFactor(Modules.kDriveEncoderRPM2MeterPerSec);
-        m_driveMotor.setIdleMode(IdleMode.kBrake);
-        m_driveMotor.setInverted(false);
+        m_driveConfig.smartCurrentLimit(40);
+        m_driveConfig.alternateEncoder.positionConversionFactor(Modules.kDriveEncoderRot2Meter);
+        m_driveConfig.alternateEncoder.velocityConversionFactor(Modules.kDriveEncoderRPM2MeterPerSec);
+        m_driveConfig.idleMode(IdleMode.kBrake);
+        m_driveConfig.inverted(false);
+        m_driveMotor.configure(m_driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         /*
          * Set up the turning motor. We had to invert the turning motor so it agreed
          * with the turning encoder which direction was positive
          */
-        m_turningMotor = new CANSparkMax(turningMotorChannel, MotorType.kBrushless);
-        m_turningMotor.setInverted(false);
-        m_turningMotor.setSmartCurrentLimit(40);
-        m_turningMotor.setIdleMode(IdleMode.kBrake);
+        m_turningMotor = new SparkMax(turningMotorChannel, MotorType.kBrushless);
+        m_turningConfig = new SparkMaxConfig();
+        m_turningConfig.inverted(false);
+        m_turningConfig.smartCurrentLimit(40);
+        m_turningConfig.idleMode(IdleMode.kBrake);
+        m_turningMotor.configure(m_turningConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         /*
          * Set up and configure the turning encoder. Additional config is required to
@@ -148,9 +160,9 @@ public class SwerveModule {
          */
         m_turningEncoder = new CANcoder(turningEncoderID);
 
-        // Want absolute readings [0.5, 0.5)
+        // Want absolute readings [-0.5, 0.5)
         MagnetSensorConfigs turningEncoderMagnetSensorConfigs = new MagnetSensorConfigs()
-                .withAbsoluteSensorRange(AbsoluteSensorRangeValue.Signed_PlusMinusHalf)
+                .withAbsoluteSensorDiscontinuityPoint(0.5)
                 .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
         m_turningEncoder.getConfigurator().apply(turningEncoderMagnetSensorConfigs);
         m_turningEncoder.clearStickyFaults();
@@ -198,6 +210,10 @@ public class SwerveModule {
                 m_driveMotor.getEncoder().getVelocity(), new Rotation2d(getActualTurningPosition()));
     }
 
+    public SwerveModuleState getDesiredState() {
+        return m_desiredState;
+    }
+
     /**
      * Returns the current position of the module. This includes info about the
      * distance measured by the wheel and the angle of the module.
@@ -227,7 +243,7 @@ public class SwerveModule {
      * @return real orientation of wheel.
      */
     public double getActualTurningPosition() {
-        double ans = (m_turningEncoder.getAbsolutePosition().getValue() * 2 * Math.PI) - m_encoderOffset;
+        double ans = (m_turningEncoder.getAbsolutePosition().getValueAsDouble() * 2 * Math.PI) - m_encoderOffset;
         double ansMod = MathUtil.angleModulus(ans); // keep between -PI to PI
         return ansMod;
     }
@@ -243,7 +259,7 @@ public class SwerveModule {
         double targetAcceleration = (targetVelocity - this.m_turningLastSpeed)
                 / (Timer.getFPGATimestamp() - this.m_turningLastTime);
 
-        double actualVelocity = 2 * Math.PI * m_turningEncoder.getVelocity().getValue();
+        double actualVelocity = 2 * Math.PI * m_turningEncoder.getVelocity().getValueAsDouble();
 
         double pidVal = m_turningPIDController.calculate(this.getActualTurningPosition(), goalPosition);
         double FFVal = m_turnFeedforward.calculate(m_turningPIDController.getSetpoint().velocity,
@@ -294,7 +310,8 @@ public class SwerveModule {
         }
 
         this.goToPosition(state.angle.getRadians());
-
+        m_desiredState = state;
+        
         // SmartDashboard.putNumber(m_swerveModuleName + " Drive Actual Velocity",
         // currentMPS);
         // SmartDashboard.putNumber(m_swerveModuleName + " Drive Target Velocity",

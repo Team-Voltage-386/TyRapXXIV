@@ -4,8 +4,6 @@
 
 package frc.robot.Commands;
 
-import com.revrobotics.CANSparkBase.IdleMode;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Subsystems.ShooterSubsystem;
 
@@ -22,7 +20,7 @@ public class ForceShooterUpCommand extends Command {
   @Override
   public void initialize() {
     this.m_subsystem.removeDefaultCommand();
-    this.m_subsystem.getAimMotor().setIdleMode(IdleMode.kBrake);
+    this.m_subsystem.setAimToBrakeMode();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

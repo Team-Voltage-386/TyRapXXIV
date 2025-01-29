@@ -1,8 +1,11 @@
 package frc.robot.Subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -15,16 +18,18 @@ public class PickupMotorsSubsystem extends SubsystemBase {
 
     double goalRPM = 750;
 
-    // CANSparkMax frontIntakeMotor;
-    CANSparkMax backIntakeMotor;
+    SparkMax backIntakeMotor;
+    SparkMaxConfig backIntakeMotorConfig;
 
     ProfiledPIDController pickupPID = new ProfiledPIDController(0.0, 0, 0.00, new Constraints(goalRPM, 1000));
     SimpleMotorFeedforward pickupFF = new SimpleMotorFeedforward(0, 0.0089);
 
     public PickupMotorsSubsystem() {
         // holdingPieceDetector = new DigitalInput(ID.kPieceDetector);
-        backIntakeMotor = new CANSparkMax(ID.kBackPickup, MotorType.kBrushless);
-        backIntakeMotor.setIdleMode(IdleMode.kCoast);
+        backIntakeMotor = new SparkMax(ID.kBackPickup, MotorType.kBrushless);
+        backIntakeMotorConfig = new SparkMaxConfig();
+        backIntakeMotorConfig.idleMode(IdleMode.kCoast);
+        backIntakeMotor.configure(backIntakeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     /**

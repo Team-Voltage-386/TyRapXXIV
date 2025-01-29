@@ -65,6 +65,6 @@ public class lockTarget extends Command {
 
         @Override
         public boolean isFinished() {
-                return Controller.kDriveController.getHID().getLeftBumperReleased();
+                return Controller.kDriveController.getHID().getLeftBumperButtonReleased();
         }
 }

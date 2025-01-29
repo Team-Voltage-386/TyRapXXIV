@@ -1,8 +1,11 @@
 package frc.robot.Subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -32,8 +35,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     // limit switch for handoff
     private DigitalInput m_elevatorHandoffLimit;
 
-    private CANSparkMax m_elevatorMotor1;
-    private CANSparkMax m_elevatorMotor2;
+    private SparkMax m_elevatorMotor1;
+    private SparkMaxConfig m_elevatorMotor1Config;
+    private SparkMax m_elevatorMotor2;
+    private SparkMaxConfig m_elevatorMotor2Config;
 
     private ShuffleboardTab m_elevatorSubsystemTab;
     private SimpleWidget m_motorVoltageEntry;
@@ -56,20 +61,25 @@ public class ElevatorSubsystem extends SubsystemBase {
         m_LedSubsystem = ledSubsystem;
         m_manipulatorRumble = manipRumble;
 
-        m_elevatorMotor1 = new CANSparkMax(kElevatorMotor1ID, MotorType.kBrushless);
-        m_elevatorMotor2 = new CANSparkMax(kElevatorMotor2ID, MotorType.kBrushless);
+        m_elevatorMotor1 = new SparkMax(kElevatorMotor1ID, MotorType.kBrushless);
+        m_elevatorMotor1Config = new SparkMaxConfig();
+        m_elevatorMotor2 = new SparkMax(kElevatorMotor2ID, MotorType.kBrushless);
+        m_elevatorMotor2Config = new SparkMaxConfig();
 
         m_elevatorUpperLimit = new DigitalInput(kElevatorUpperLimitDIOChannel);
         m_elevatorLowerLimit = new DigitalInput(kElevatorLowerLimitDIOChannel);
         m_elevatorHandoffLimit = new DigitalInput(kElevatorHandoffLimitDIOChannel);
 
-        m_elevatorMotor1.setInverted(true);
-        m_elevatorMotor2.setInverted(false); // It's following Motor1 anyways
+        m_elevatorMotor1Config.inverted(true);
+        m_elevatorMotor2Config.inverted(false); // it's following Motor1 anyways
 
-        m_elevatorMotor1.setIdleMode(IdleMode.kBrake);
-        m_elevatorMotor2.setIdleMode(IdleMode.kBrake);
+        m_elevatorMotor1Config.idleMode(IdleMode.kBrake);
+        m_elevatorMotor2Config.idleMode(IdleMode.kBrake);
 
-        m_elevatorMotor2.follow(m_elevatorMotor1);
+        m_elevatorMotor2Config.follow(m_elevatorMotor1);
+
+        m_elevatorMotor1.configure(m_elevatorMotor1Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_elevatorMotor2.configure(m_elevatorMotor2Config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         m_elevatorSubsystemTab = Shuffleboard.getTab("Elevator Subsystem");
         m_motorVoltageEntry = m_elevatorSubsystemTab.add("Motor Voltage", 0.0).withSize(2, 1).withPosition(0, 1);
