@@ -41,7 +41,7 @@ import frc.robot.SwerveModule;
 /** Represents a swerve drive style drivetrain. */
 public class Drivetrain extends SubsystemBase {
     
-    public static final double kMaxPossibleSpeed = 4.0;
+    public static final double kMaxPossibleSpeed = 1.5;
     public static final double kMaxAngularSpeed = 1.5 * Math.PI; // per second
 
     private final Translation2d m_frontLeftLocation = new Translation2d(
